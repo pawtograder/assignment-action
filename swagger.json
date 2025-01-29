@@ -620,12 +620,6 @@
 								"type": "object"
 							}
 						},
-						"required": [
-							"hidden",
-							"visible",
-							"after_due_date",
-							"after_published"
-						],
 						"type": "object"
 					},
 					"execution_time": {

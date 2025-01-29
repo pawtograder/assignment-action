@@ -1,4 +1,7 @@
 name: Continuous Integration
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
 
 on:
   pull_request:
@@ -57,8 +60,4 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 2000
-
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+          grading_server: 'https://khoury-classroom-dev.ngrok.pizza'

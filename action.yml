@@ -10,7 +10,8 @@ branding:
 # Define your inputs here.
 inputs:
   grading_server:
-    description: URL of the grading API server, e.g. https://autograder.ripley.cloud
+    description:
+      URL of the grading API server, e.g. https://autograder.ripley.cloud
     required: true
 
 # Define your outputs here.

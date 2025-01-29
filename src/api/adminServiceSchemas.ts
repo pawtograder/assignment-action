@@ -196,19 +196,19 @@ export type AutograderFeedback = {
     score?: number;
   }[];
   output: {
-    hidden: {
+    hidden?: {
       output_format?: 'text';
       output: string;
     };
-    visible: {
+    visible?: {
       output_format?: 'text';
       output: string;
     };
-    after_due_date: {
+    after_due_date?: {
       output_format?: 'text';
       output: string;
     };
-    after_published: {
+    after_published?: {
       output_format?: 'text';
       output: string;
     };

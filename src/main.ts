@@ -12,7 +12,12 @@ export async function run(): Promise<void> {
     const token = await core.getIDToken()
     console.log('Token:', token)
     submitAssignment({
-      body: { score: 4, execution_time: 5 },
+      body: {
+        score: 4,
+        execution_time: 5,
+        tests: [],
+        output: {}
+      },
       headers: {
         Authorization: token
       }
