@@ -339,29 +339,57 @@ export const getTemplateRepos = (
     signal
   })
 
-export type SubmitAssignmentHeaders = {
+export type RetrieveAutograderHeaders = {
   Authorization: string
 }
 
-export type SubmitAssignmentError = Fetcher.ErrorWrapper<undefined>
+export type RetrieveAutograderError = Fetcher.ErrorWrapper<undefined>
 
-export type SubmitAssignmentVariables = {
-  body: Schemas.AutograderFeedback
-  headers: SubmitAssignmentHeaders
+export type RetrieveAutograderVariables = {
+  headers: RetrieveAutograderHeaders
 }
 
-export const submitAssignment = (
-  variables: SubmitAssignmentVariables,
+export const retrieveAutograder = (
+  variables: RetrieveAutograderVariables,
+  signal?: AbortSignal
+) =>
+  adminServiceFetch<
+    undefined,
+    RetrieveAutograderError,
+    undefined,
+    RetrieveAutograderHeaders,
+    {},
+    {}
+  >({ url: '/api/autograder/submission', method: 'post', ...variables, signal })
+
+export type SubmitFeedbackHeaders = {
+  Authorization: string
+}
+
+export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>
+
+export type SubmitFeedbackVariables = {
+  body: Schemas.AutograderFeedback
+  headers: SubmitFeedbackHeaders
+}
+
+export const submitFeedback = (
+  variables: SubmitFeedbackVariables,
   signal?: AbortSignal
 ) =>
   adminServiceFetch<
     Schemas.GradeResponse,
-    SubmitAssignmentError,
+    SubmitFeedbackError,
     Schemas.AutograderFeedback,
-    SubmitAssignmentHeaders,
+    SubmitFeedbackHeaders,
     {},
     {}
-  >({ url: '/api/autograder/submission', method: 'post', ...variables, signal })
+  >({
+    url: '/api/autograder/submission/feedback',
+    method: 'post',
+    ...variables,
+    signal
+  })
 
 export type CreateCourseForCanvasCoursePathParams = {
   /**

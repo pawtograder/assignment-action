@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 import * as core from '@actions/core'
-import { submitAssignment } from './api/adminServiceComponents.js'
+import {
+  retrieveAutograder,
+  submitFeedback
+} from './api/adminServiceComponents.js'
 
 /**
  * The main function for the action.
@@ -11,7 +14,13 @@ export async function run(): Promise<void> {
   try {
     //Get an OIDC token
     const token = await core.getIDToken()
-    submitAssignment({
+    await retrieveAutograder({
+      headers: {
+        Authorization: token
+      }
+    })
+
+    await submitFeedback({
       body: {
         score: 4,
         execution_time: 5,

@@ -241,15 +241,23 @@ export type GetTemplateReposVariables = {
     pathParams: GetTemplateReposPathParams;
 };
 export declare const getTemplateRepos: (variables: GetTemplateReposVariables, signal?: AbortSignal) => Promise<GetTemplateReposResponse>;
-export type SubmitAssignmentHeaders = {
+export type RetrieveAutograderHeaders = {
     Authorization: string;
 };
-export type SubmitAssignmentError = Fetcher.ErrorWrapper<undefined>;
-export type SubmitAssignmentVariables = {
-    body: Schemas.AutograderFeedback;
-    headers: SubmitAssignmentHeaders;
+export type RetrieveAutograderError = Fetcher.ErrorWrapper<undefined>;
+export type RetrieveAutograderVariables = {
+    headers: RetrieveAutograderHeaders;
 };
-export declare const submitAssignment: (variables: SubmitAssignmentVariables, signal?: AbortSignal) => Promise<Schemas.GradeResponse>;
+export declare const retrieveAutograder: (variables: RetrieveAutograderVariables, signal?: AbortSignal) => Promise<undefined>;
+export type SubmitFeedbackHeaders = {
+    Authorization: string;
+};
+export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>;
+export type SubmitFeedbackVariables = {
+    body: Schemas.AutograderFeedback;
+    headers: SubmitFeedbackHeaders;
+};
+export declare const submitFeedback: (variables: SubmitFeedbackVariables, signal?: AbortSignal) => Promise<Schemas.GradeResponse>;
 export type CreateCourseForCanvasCoursePathParams = {
     /**
      * @format double

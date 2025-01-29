@@ -34527,7 +34527,13 @@ const resolveUrl = (url, queryParams = {}, pathParams = {}) => {
     return url.replace(/\{\w*\}/g, (key) => pathParams[key.slice(1, -1)]) + query;
 };
 
-const submitAssignment = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
+const retrieveAutograder = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
+const submitFeedback = (variables, signal) => adminServiceFetch({
+    url: '/api/autograder/submission/feedback',
+    method: 'post',
+    ...variables,
+    signal
+});
 
 /* eslint-disable prettier/prettier */
 /**
@@ -34539,7 +34545,12 @@ async function run() {
     try {
         //Get an OIDC token
         const token = await coreExports.getIDToken();
-        submitAssignment({
+        await retrieveAutograder({
+            headers: {
+                Authorization: token
+            }
+        });
+        await submitFeedback({
             body: {
                 score: 4,
                 execution_time: 5,
