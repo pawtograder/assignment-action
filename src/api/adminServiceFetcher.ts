@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
 import fetch, { HeadersInit } from 'node-fetch'
-
 export type AdminServiceFetcherExtraProps = {
   /**
    * You can add some extra props to your generated fetchers.
@@ -71,6 +70,7 @@ export async function adminServiceFetch<
       delete requestHeaders['Content-Type']
     }
 
+    console.log('Making request with body:', JSON.stringify(body))
     const response = await fetch(
       `${baseUrl}${resolveUrl(url, queryParams, pathParams)}`,
       {

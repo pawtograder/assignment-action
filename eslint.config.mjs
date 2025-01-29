@@ -27,7 +27,8 @@ export default [
       '**/dist',
       '**/linter',
       '**/node_modules',
-      'src/api'
+      'src/api',
+      'openapi-codegen.config.ts'
     ]
   },
   ...compat.extends(

@@ -39,6 +39,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
+    "axios": "^1.7.9",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
