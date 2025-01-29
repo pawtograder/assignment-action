@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import fetch, { HeadersInit, } from 'node-fetch';
+import fetch, { HeadersInit } from 'node-fetch'
 
 export type AdminServiceFetcherExtraProps = {
   /**
