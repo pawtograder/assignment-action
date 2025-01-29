@@ -24,6 +24,7 @@
   },
   "scripts": {
     "bundle": "npm run format:write && npm run package",
+    "client": "openapi-codegen gen adminService",
     "ci-test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "format:write": "npx prettier --write .",
@@ -43,6 +44,8 @@
     "@eslint/compat": "^1.2.5",
     "@github/local-action": "^2.5.1",
     "@jest/globals": "^29.7.0",
+    "@openapi-codegen/cli": "^3.0.1",
+    "@openapi-codegen/typescript": "^8.1.1",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.1",

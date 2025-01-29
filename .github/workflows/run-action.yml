@@ -1,0 +1,20 @@
+name: Run the autograder action
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+on: ['push']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: npm run build
+      - name: Run the autograder action
+        uses: ./
+        with:
+          grading_server: 'https://khoury-classroom-dev.ngrok.pizza'

@@ -9,10 +9,9 @@ branding:
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  grading_server:
+    description: URL of the grading API server, e.g. https://autograder.ripley.cloud
     required: true
-    default: '1000'
 
 # Define your outputs here.
 outputs:
