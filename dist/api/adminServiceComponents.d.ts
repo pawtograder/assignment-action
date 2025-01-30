@@ -241,6 +241,17 @@ export type GetTemplateReposVariables = {
     pathParams: GetTemplateReposPathParams;
 };
 export declare const getTemplateRepos: (variables: GetTemplateReposVariables, signal?: AbortSignal) => Promise<GetTemplateReposResponse>;
+export type CreateCourseForCanvasCoursePathParams = {
+    /**
+     * @format double
+     */
+    courseId: number;
+};
+export type CreateCourseForCanvasCourseError = Fetcher.ErrorWrapper<undefined>;
+export type CreateCourseForCanvasCourseVariables = {
+    pathParams: CreateCourseForCanvasCoursePathParams;
+};
+export declare const createCourseForCanvasCourse: (variables: CreateCourseForCanvasCourseVariables, signal?: AbortSignal) => Promise<undefined>;
 export type CreateSubmissionHeaders = {
     Authorization: string;
 };
@@ -254,18 +265,7 @@ export type SubmitFeedbackHeaders = {
 };
 export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>;
 export type SubmitFeedbackVariables = {
-    body: Schemas.AutograderFeedback;
+    body: Schemas.GradingScriptResult;
     headers: SubmitFeedbackHeaders;
 };
 export declare const submitFeedback: (variables: SubmitFeedbackVariables, signal?: AbortSignal) => Promise<Schemas.GradeResponse>;
-export type CreateCourseForCanvasCoursePathParams = {
-    /**
-     * @format double
-     */
-    courseId: number;
-};
-export type CreateCourseForCanvasCourseError = Fetcher.ErrorWrapper<undefined>;
-export type CreateCourseForCanvasCourseVariables = {
-    pathParams: CreateCourseForCanvasCoursePathParams;
-};
-export declare const createCourseForCanvasCourse: (variables: CreateCourseForCanvasCourseVariables, signal?: AbortSignal) => Promise<undefined>;

@@ -339,6 +339,37 @@ export const getTemplateRepos = (
     signal
   })
 
+export type CreateCourseForCanvasCoursePathParams = {
+  /**
+   * @format double
+   */
+  courseId: number
+}
+
+export type CreateCourseForCanvasCourseError = Fetcher.ErrorWrapper<undefined>
+
+export type CreateCourseForCanvasCourseVariables = {
+  pathParams: CreateCourseForCanvasCoursePathParams
+}
+
+export const createCourseForCanvasCourse = (
+  variables: CreateCourseForCanvasCourseVariables,
+  signal?: AbortSignal
+) =>
+  adminServiceFetch<
+    undefined,
+    CreateCourseForCanvasCourseError,
+    undefined,
+    {},
+    {},
+    CreateCourseForCanvasCoursePathParams
+  >({
+    url: '/api/admin/course/{courseId}',
+    method: 'post',
+    ...variables,
+    signal
+  })
+
 export type CreateSubmissionHeaders = {
   Authorization: string
 }
@@ -369,7 +400,7 @@ export type SubmitFeedbackHeaders = {
 export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>
 
 export type SubmitFeedbackVariables = {
-  body: Schemas.AutograderFeedback
+  body: Schemas.GradingScriptResult
   headers: SubmitFeedbackHeaders
 }
 
@@ -380,43 +411,12 @@ export const submitFeedback = (
   adminServiceFetch<
     Schemas.GradeResponse,
     SubmitFeedbackError,
-    Schemas.AutograderFeedback,
+    Schemas.GradingScriptResult,
     SubmitFeedbackHeaders,
     {},
     {}
   >({
     url: '/api/autograder/submission/feedback',
-    method: 'post',
-    ...variables,
-    signal
-  })
-
-export type CreateCourseForCanvasCoursePathParams = {
-  /**
-   * @format double
-   */
-  courseId: number
-}
-
-export type CreateCourseForCanvasCourseError = Fetcher.ErrorWrapper<undefined>
-
-export type CreateCourseForCanvasCourseVariables = {
-  pathParams: CreateCourseForCanvasCoursePathParams
-}
-
-export const createCourseForCanvasCourse = (
-  variables: CreateCourseForCanvasCourseVariables,
-  signal?: AbortSignal
-) =>
-  adminServiceFetch<
-    undefined,
-    CreateCourseForCanvasCourseError,
-    undefined,
-    {},
-    {},
-    CreateCourseForCanvasCoursePathParams
-  >({
-    url: '/api/admin/course/{courseId}',
     method: 'post',
     ...variables,
     signal

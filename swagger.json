@@ -451,13 +451,6 @@
       },
       "AutograderFeedback": {
         "properties": {
-          "scriptOutput": {
-            "type": "string"
-          },
-          "retCode": {
-            "type": "number",
-            "format": "double"
-          },
           "tests": {
             "items": {
               "properties": {
@@ -568,16 +561,41 @@
             },
             "type": "object"
           },
-          "execution_time": {
-            "type": "number",
-            "format": "double"
-          },
           "score": {
             "type": "number",
             "format": "double"
           }
         },
-        "required": ["tests", "output", "execution_time"],
+        "required": ["tests", "output"],
+        "type": "object"
+      },
+      "GradingScriptResult": {
+        "properties": {
+          "grader_sha": {
+            "type": "string"
+          },
+          "feedback": {
+            "$ref": "#/components/schemas/AutograderFeedback"
+          },
+          "execution_time": {
+            "type": "number",
+            "format": "double"
+          },
+          "output": {
+            "type": "string"
+          },
+          "ret_code": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "grader_sha",
+          "feedback",
+          "execution_time",
+          "output",
+          "ret_code"
+        ],
         "type": "object"
       }
     },
@@ -1276,6 +1294,32 @@
         ]
       }
     },
+    "/api/admin/course/{courseId}": {
+      "post": {
+        "operationId": "CreateCourseForCanvasCourse",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "security": [
+          {
+            "supabase": ["admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
     "/api/autograder/submission": {
       "post": {
         "operationId": "CreateSubmission",
@@ -1341,37 +1385,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AutograderFeedback"
+                "$ref": "#/components/schemas/GradingScriptResult"
               }
             }
           }
         }
-      }
-    },
-    "/api/admin/course/{courseId}": {
-      "post": {
-        "operationId": "CreateCourseForCanvasCourse",
-        "responses": {
-          "204": {
-            "description": "No content"
-          }
-        },
-        "security": [
-          {
-            "supabase": ["admin"]
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "courseId",
-            "required": true,
-            "schema": {
-              "format": "double",
-              "type": "number"
-            }
-          }
-        ]
       }
     }
   },

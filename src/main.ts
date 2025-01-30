@@ -10,6 +10,7 @@ import {
   createSubmission,
   submitFeedback
 } from './api/adminServiceComponents.js'
+import { createHash } from 'crypto'
 
 /**
  * The main function for the action.
@@ -38,6 +39,11 @@ export async function run(): Promise<void> {
     }
     const fileStream = createWriteStream('grader.tgz')
     await finished(Readable.fromWeb(file.body).pipe(fileStream))
+    //Calculate the sha256 hash of the file
+    const hash = createHash('sha256')
+    const fileContents = await readFile('grader.tgz')
+    hash.update(fileContents)
+    const graderSha = hash.digest('hex')
     //Unzip the file to the directory "grader"
     await mkdir('grader')
     await exec('tar', [
@@ -99,10 +105,11 @@ export async function run(): Promise<void> {
 
       await submitFeedback({
         body: {
-          ...results,
-          retCode,
-          scriptOutput,
-          execution_time: Date.now() - start
+          ret_code: retCode,
+          output: scriptOutput,
+          execution_time: Date.now() - start,
+          feedback: results,
+          grader_sha: graderSha
         },
         headers: {
           Authorization: token
@@ -112,11 +119,14 @@ export async function run(): Promise<void> {
       if (error instanceof Error) {
         await submitFeedback({
           body: {
-            retCode: 1,
-            scriptOutput: `${error.message}\n${scriptOutput}`,
+            ret_code: 1,
+            output: `${error.message}\n${scriptOutput}`,
             execution_time: Date.now() - start,
-            output: {},
-            tests: []
+            grader_sha: graderSha,
+            feedback: {
+              output: {},
+              tests: []
+            }
           },
           headers: {
             Authorization: token

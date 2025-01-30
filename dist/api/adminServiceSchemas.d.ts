@@ -170,11 +170,6 @@ export type GradeResponse = {
 export type OutputFormat = 'text';
 export type OutputVisibility = 'hidden' | 'visible' | 'after_due_date' | 'after_published';
 export type AutograderFeedback = {
-    scriptOutput?: string;
-    /**
-     * @format double
-     */
-    retCode?: number;
     tests: {
         extra_data?: {
             [key: string]: string;
@@ -216,9 +211,18 @@ export type AutograderFeedback = {
     /**
      * @format double
      */
-    execution_time: number;
+    score?: number;
+};
+export type GradingScriptResult = {
+    grader_sha: string;
+    feedback: AutograderFeedback;
     /**
      * @format double
      */
-    score?: number;
+    execution_time: number;
+    output: string;
+    /**
+     * @format double
+     */
+    ret_code: number;
 };

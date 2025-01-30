@@ -1,5 +1,5 @@
 import require$$0 from 'os';
-import require$$0$1 from 'crypto';
+import require$$0$1, { createHash } from 'crypto';
 import require$$1, { createWriteStream } from 'fs';
 import require$$1$5 from 'path';
 import require$$2 from 'http';
@@ -27,7 +27,7 @@ import require$$6 from 'string_decoder';
 import require$$0$8 from 'diagnostics_channel';
 import require$$2$2, { spawn } from 'child_process';
 import require$$6$1 from 'timers';
-import { mkdir, readFile } from 'fs/promises';
+import { readFile, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import http from 'node:http';
 import https from 'node:https';
@@ -34565,6 +34565,11 @@ async function run() {
         }
         const fileStream = createWriteStream('grader.tgz');
         await finished(Readable.fromWeb(file.body).pipe(fileStream));
+        //Calculate the sha256 hash of the file
+        const hash = createHash('sha256');
+        const fileContents = await readFile('grader.tgz');
+        hash.update(fileContents);
+        const graderSha = hash.digest('hex');
         //Unzip the file to the directory "grader"
         await mkdir('grader');
         await execExports.exec('tar', [
@@ -34617,10 +34622,11 @@ async function run() {
             // checkers.AutograderFeedback.check(results)
             await submitFeedback({
                 body: {
-                    ...results,
-                    retCode,
-                    scriptOutput,
-                    execution_time: Date.now() - start
+                    ret_code: retCode,
+                    output: scriptOutput,
+                    execution_time: Date.now() - start,
+                    feedback: results,
+                    grader_sha: graderSha
                 },
                 headers: {
                     Authorization: token
@@ -34631,11 +34637,14 @@ async function run() {
             if (error instanceof Error) {
                 await submitFeedback({
                     body: {
-                        retCode: 1,
-                        scriptOutput: `${error.message}\n${scriptOutput}`,
+                        ret_code: 1,
+                        output: `${error.message}\n${scriptOutput}`,
                         execution_time: Date.now() - start,
-                        output: {},
-                        tests: []
+                        grader_sha: graderSha,
+                        feedback: {
+                            output: {},
+                            tests: []
+                        }
                     },
                     headers: {
                         Authorization: token
