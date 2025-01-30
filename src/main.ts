@@ -101,9 +101,6 @@ export async function run(): Promise<void> {
       })
 
       const results = JSON.parse(await readFile(resultsLocation, 'utf8'))
-      //TODO clean up type checking!!
-      const checkers = createCheckers(AutograderFeedback)
-      checkers.AutograderFeedback.check(results)
 
       await submitFeedback({
         body: {
