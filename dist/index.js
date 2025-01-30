@@ -35885,13 +35885,13 @@ async function run() {
         if (!file.body) {
             throw new Error('No body in response');
         }
-        const fileStream = createWriteStream('grader.zip');
+        const fileStream = createWriteStream('grader.tgz');
         await finished(Readable.fromWeb(file.body).pipe(fileStream));
         //Unzip the file to the directory "grader"
         await mkdir('grader');
         await execExports.exec('tar', [
             'xzf',
-            'grader.zip',
+            'grader.tgz',
             '-C',
             'grader',
             '--strip-components',
