@@ -35871,6 +35871,9 @@ async function run() {
     try {
         //Get an OIDC token
         const token = await coreExports.getIDToken();
+        if (!token) {
+            throw new Error('Unable to get OIDC token. Is workflow permission configured correctly?');
+        }
         const graderConfig = await createSubmission({
             headers: {
                 Authorization: token
@@ -35884,8 +35887,8 @@ async function run() {
         }
         const fileStream = createWriteStream('grader.zip');
         await finished(Readable.fromWeb(file.body).pipe(fileStream));
-        //Unzip the file
-        await execExports.exec('unzip', ['grader.zip', 'grader']);
+        //Unzip the file to the directory "grader"
+        await execExports.exec('unzip', ['grader.zip', '-d', 'grader']);
         //Run the autograder
         const cwd = process.cwd();
         const assignmentDir = `${cwd}/submission`;
