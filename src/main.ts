@@ -11,6 +11,8 @@ import {
   submitFeedback
 } from './api/adminServiceComponents.js'
 import { createHash } from 'crypto'
+import { createCheckers } from 'ts-interface-checker'
+import AutograderFeedback from './api/adminServiceSchemas-ti.js'
 
 /**
  * The main function for the action.
@@ -100,8 +102,8 @@ export async function run(): Promise<void> {
 
       const results = JSON.parse(await readFile(resultsLocation, 'utf8'))
       //TODO clean up type checking!!
-      // const checkers = createCheckers(AutograderFeedback)
-      // checkers.AutograderFeedback.check(results)
+      const checkers = createCheckers(AutograderFeedback)
+      checkers.AutograderFeedback.check(results)
 
       await submitFeedback({
         body: {
