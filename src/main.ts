@@ -2,7 +2,7 @@
 import * as core from '@actions/core'
 import { spawn } from 'child_process'
 import { createWriteStream } from 'fs'
-import { readFile } from 'fs/promises'
+import { mkdir, readFile } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import { createCheckers } from 'ts-interface-checker'
@@ -41,7 +41,15 @@ export async function run(): Promise<void> {
     const fileStream = createWriteStream('grader.zip')
     await finished(Readable.fromWeb(file.body).pipe(fileStream))
     //Unzip the file to the directory "grader"
-    await exec('unzip', ['grader.zip', '-d', 'grader'])
+    await mkdir('grader')
+    await exec('tar', [
+      'xzf',
+      'grader.zip',
+      '-C',
+      'grader',
+      '--strip-components',
+      '1'
+    ])
 
     //Run the autograder
     const cwd = process.cwd()

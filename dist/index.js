@@ -27,7 +27,7 @@ import require$$6 from 'string_decoder';
 import require$$0$8 from 'diagnostics_channel';
 import require$$2$2, { spawn } from 'child_process';
 import require$$6$1 from 'timers';
-import { readFile } from 'fs/promises';
+import { mkdir, readFile } from 'fs/promises';
 import { finished } from 'stream/promises';
 import http from 'node:http';
 import https from 'node:https';
@@ -35888,7 +35888,15 @@ async function run() {
         const fileStream = createWriteStream('grader.zip');
         await finished(Readable.fromWeb(file.body).pipe(fileStream));
         //Unzip the file to the directory "grader"
-        await execExports.exec('unzip', ['grader.zip', '-d', 'grader']);
+        await mkdir('grader');
+        await execExports.exec('tar', [
+            'xzf',
+            'grader.zip',
+            '-C',
+            'grader',
+            '--strip-components',
+            '1'
+        ]);
         //Run the autograder
         const cwd = process.cwd();
         const assignmentDir = `${cwd}/submission`;
