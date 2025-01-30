@@ -129,6 +129,6 @@ export async function run(): Promise<void> {
   } catch (error) {
     // Fail the workflow run if an error occurs
     console.trace(error)
-    if (error instanceof Error) core.setFailed(error.message)
+    core.setFailed(`An error occurred: ${error}`)
   }
 }

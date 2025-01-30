@@ -34649,8 +34649,7 @@ async function run() {
     catch (error) {
         // Fail the workflow run if an error occurs
         console.trace(error);
-        if (error instanceof Error)
-            coreExports.setFailed(error.message);
+        coreExports.setFailed(`An error occurred: ${error}`);
     }
 }
 
