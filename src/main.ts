@@ -1,17 +1,15 @@
 /* eslint-disable prettier/prettier */
 import * as core from '@actions/core'
+import { exec } from '@actions/exec'
 import { spawn } from 'child_process'
 import { createWriteStream } from 'fs'
 import { mkdir, readFile } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
-import { createCheckers } from 'ts-interface-checker'
 import {
   createSubmission,
   submitFeedback
 } from './api/adminServiceComponents.js'
-import AutograderFeedback from './api/adminServiceSchemas-ti.js'
-import { exec } from '@actions/exec'
 
 /**
  * The main function for the action.
@@ -50,11 +48,11 @@ export async function run(): Promise<void> {
       '--strip-components',
       '1'
     ])
+    const workDir = process.env.GITHUB_WORKSPACE
 
     //Run the autograder
-    const cwd = process.cwd()
-    const assignmentDir = `${cwd}/submission`
-    const graderDir = `${cwd}/grader`
+    const assignmentDir = `${workDir}/submission`
+    const graderDir = `${workDir}/grader`
     const resultsLocation = `${graderDir}/results.json`
 
     const childProcess = spawn('./run.sh', [assignmentDir, resultsLocation], {
@@ -95,8 +93,9 @@ export async function run(): Promise<void> {
       })
 
       const results = JSON.parse(await readFile(resultsLocation, 'utf8'))
-      const checkers = createCheckers(AutograderFeedback)
-      checkers.AutograderFeedback.check(results)
+      //TODO clean up type checking!!
+      // const checkers = createCheckers(AutograderFeedback)
+      // checkers.AutograderFeedback.check(results)
 
       await submitFeedback({
         body: {
