@@ -2,6 +2,7 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import { spawn } from 'child_process'
+import { createHash } from 'crypto'
 import { createWriteStream } from 'fs'
 import { mkdir, readFile } from 'fs/promises'
 import { Readable } from 'stream'
@@ -10,9 +11,6 @@ import {
   createSubmission,
   submitFeedback
 } from './api/adminServiceComponents.js'
-import { createHash } from 'crypto'
-import { createCheckers } from 'ts-interface-checker'
-import AutograderFeedback from './api/adminServiceSchemas-ti.js'
 
 /**
  * The main function for the action.
