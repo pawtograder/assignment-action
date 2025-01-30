@@ -339,25 +339,25 @@ export const getTemplateRepos = (
     signal
   })
 
-export type RetrieveAutograderHeaders = {
+export type CreateSubmissionHeaders = {
   Authorization: string
 }
 
-export type RetrieveAutograderError = Fetcher.ErrorWrapper<undefined>
+export type CreateSubmissionError = Fetcher.ErrorWrapper<undefined>
 
-export type RetrieveAutograderVariables = {
-  headers: RetrieveAutograderHeaders
+export type CreateSubmissionVariables = {
+  headers: CreateSubmissionHeaders
 }
 
-export const retrieveAutograder = (
-  variables: RetrieveAutograderVariables,
+export const createSubmission = (
+  variables: CreateSubmissionVariables,
   signal?: AbortSignal
 ) =>
   adminServiceFetch<
+    Schemas.SubmissionResponse,
+    CreateSubmissionError,
     undefined,
-    RetrieveAutograderError,
-    undefined,
-    RetrieveAutograderHeaders,
+    CreateSubmissionHeaders,
     {},
     {}
   >({ url: '/api/autograder/submission', method: 'post', ...variables, signal })

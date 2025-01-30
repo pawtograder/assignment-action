@@ -52,6 +52,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+        with:
+          path: submission
 
       - name: Test Local Action
         id: test-action

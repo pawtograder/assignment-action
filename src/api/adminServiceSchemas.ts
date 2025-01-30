@@ -165,6 +165,10 @@ export type Course = {
   restrict_enrollments_to_course_dates: boolean
 }
 
+export type SubmissionResponse = {
+  grader_url: string
+}
+
 export type GradeResponse = {
   message: string
   is_ok: boolean
@@ -179,6 +183,11 @@ export type OutputVisibility =
   | 'after_published'
 
 export type AutograderFeedback = {
+  scriptOutput?: string
+  /**
+   * @format double
+   */
+  retCode?: number
   tests: {
     extra_data?: {
       [key: string]: string

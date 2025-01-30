@@ -160,6 +160,9 @@ export type Course = {
     workflow_state: string;
     restrict_enrollments_to_course_dates: boolean;
 };
+export type SubmissionResponse = {
+    grader_url: string;
+};
 export type GradeResponse = {
     message: string;
     is_ok: boolean;
@@ -167,6 +170,11 @@ export type GradeResponse = {
 export type OutputFormat = 'text';
 export type OutputVisibility = 'hidden' | 'visible' | 'after_due_date' | 'after_published';
 export type AutograderFeedback = {
+    scriptOutput?: string;
+    /**
+     * @format double
+     */
+    retCode?: number;
     tests: {
         extra_data?: {
             [key: string]: string;

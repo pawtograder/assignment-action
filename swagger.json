@@ -419,6 +419,15 @@
         "type": "object",
         "additionalProperties": false
       },
+      "SubmissionResponse": {
+        "properties": {
+          "grader_url": {
+            "type": "string"
+          }
+        },
+        "required": ["grader_url"],
+        "type": "object"
+      },
       "GradeResponse": {
         "properties": {
           "message": {
@@ -442,6 +451,13 @@
       },
       "AutograderFeedback": {
         "properties": {
+          "scriptOutput": {
+            "type": "string"
+          },
+          "retCode": {
+            "type": "number",
+            "format": "double"
+          },
           "tests": {
             "items": {
               "properties": {
@@ -1262,10 +1278,17 @@
     },
     "/api/autograder/submission": {
       "post": {
-        "operationId": "RetrieveAutograder",
+        "operationId": "CreateSubmission",
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmissionResponse"
+                }
+              }
+            }
           },
           "401": {
             "description": "Invalid GitHub OIDC token"

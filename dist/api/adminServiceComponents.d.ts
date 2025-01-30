@@ -241,14 +241,14 @@ export type GetTemplateReposVariables = {
     pathParams: GetTemplateReposPathParams;
 };
 export declare const getTemplateRepos: (variables: GetTemplateReposVariables, signal?: AbortSignal) => Promise<GetTemplateReposResponse>;
-export type RetrieveAutograderHeaders = {
+export type CreateSubmissionHeaders = {
     Authorization: string;
 };
-export type RetrieveAutograderError = Fetcher.ErrorWrapper<undefined>;
-export type RetrieveAutograderVariables = {
-    headers: RetrieveAutograderHeaders;
+export type CreateSubmissionError = Fetcher.ErrorWrapper<undefined>;
+export type CreateSubmissionVariables = {
+    headers: CreateSubmissionHeaders;
 };
-export declare const retrieveAutograder: (variables: RetrieveAutograderVariables, signal?: AbortSignal) => Promise<undefined>;
+export declare const createSubmission: (variables: CreateSubmissionVariables, signal?: AbortSignal) => Promise<Schemas.SubmissionResponse>;
 export type SubmitFeedbackHeaders = {
     Authorization: string;
 };
