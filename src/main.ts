@@ -6,12 +6,12 @@ import { readFile } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import { createCheckers } from 'ts-interface-checker'
-import { Open as openZip } from 'unzipper'
 import {
   createSubmission,
   submitFeedback
 } from './api/adminServiceComponents.js'
 import AutograderFeedback from './api/adminServiceSchemas-ti.js'
+import { exec } from '@actions/exec'
 
 /**
  * The main function for the action.
@@ -35,9 +35,8 @@ export async function run(): Promise<void> {
     }
     const fileStream = createWriteStream('grader.zip')
     await finished(Readable.fromWeb(file.body).pipe(fileStream))
-    fileStream.close()
-    //unzip
-    await (await openZip.file('grader.zip')).extract({ path: 'grader' })
+    //Unzip the file
+    await exec('unzip', ['grader.zip', 'grader'])
 
     //Run the autograder
     const cwd = process.cwd()
