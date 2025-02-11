@@ -17,7 +17,7 @@ import {
 export default async function grade(
   solutionDir: string,
   submissionDir: string
-) {
+): Promise<AutograderFeedback> {
   const _config = await readFile(
     path.join(solutionDir, 'pawtograder.yml'),
     'utf8'
