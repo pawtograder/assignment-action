@@ -36,7 +36,7 @@ export abstract class Builder {
     let myOutput = ''
     let myError = ''
     try {
-      logger.log('hidden', `Running ${command}`)
+      logger.log('hidden', `Running ${command} ${args.join(' ')}`)
       const returnCode = await exec(command, args, {
         cwd: this.gradingDir,
         silent: true,

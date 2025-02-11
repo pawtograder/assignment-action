@@ -111,7 +111,8 @@ export default class GradleBuilder extends Builder {
     await this.executeCommandAndGetOutput(
       './gradlew',
       ['clean', 'build'],
-      this.logger
+      this.logger,
+      true
     )
   }
 }

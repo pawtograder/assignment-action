@@ -172,7 +172,6 @@ class Grader {
     )
 
     await this.copyStudentFiles('files')
-    await this.copyStudentFiles('testFiles')
 
     await this.builder.buildClean()
 

@@ -49877,7 +49877,7 @@ class Builder {
         let myOutput = '';
         let myError = '';
         try {
-            logger.log('hidden', `Running ${command}`);
+            logger.log('hidden', `Running ${command} ${args.join(' ')}`);
             const returnCode = await execExports.exec(command, args, {
                 cwd: this.gradingDir,
                 silent: true,
@@ -52352,7 +52352,7 @@ class GradleBuilder extends Builder {
     }
     async buildClean() {
         this.logger.log('hidden', 'Building clean with Gradle');
-        await this.executeCommandAndGetOutput('./gradlew', ['clean', 'build'], this.logger);
+        await this.executeCommandAndGetOutput('./gradlew', ['clean', 'build'], this.logger, true);
     }
 }
 
@@ -52545,7 +52545,6 @@ class Grader {
             await ioExports.cp(src, dest, { recursive: true });
         }));
         await this.copyStudentFiles('files');
-        await this.copyStudentFiles('testFiles');
         await this.builder.buildClean();
         const lintResult = await this.builder.lint();
         // console.log(lintResult);
