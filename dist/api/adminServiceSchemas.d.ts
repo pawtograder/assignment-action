@@ -178,7 +178,6 @@ export type AutograderFeedback = {
         output: string;
         name_format?: OutputFormat;
         name: string;
-        status?: 'pass' | 'fail';
         /**
          * @format double
          */

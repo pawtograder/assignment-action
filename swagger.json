@@ -520,13 +520,6 @@
 								"name": {
 									"type": "string"
 								},
-								"status": {
-									"type": "string",
-									"enum": [
-										"pass",
-										"fail"
-									]
-								},
 								"max_score": {
 									"type": "number",
 									"format": "double"
