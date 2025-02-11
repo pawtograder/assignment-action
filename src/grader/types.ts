@@ -1,4 +1,4 @@
-import { AutograderFeedback } from "../api/adminServiceSchemas.js"
+import { AutograderFeedback } from '../api/adminServiceSchemas.js'
 
 // Build configuration types
 interface BuildConfig {

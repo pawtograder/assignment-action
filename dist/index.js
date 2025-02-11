@@ -34538,7 +34538,12 @@ const resolveUrl = (url, queryParams = {}, pathParams = {}) => {
 };
 
 const createSubmission = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
-const submitFeedback = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission/feedback', method: 'post', ...variables, signal });
+const submitFeedback = (variables, signal) => adminServiceFetch({
+    url: '/api/autograder/submission/feedback',
+    method: 'post',
+    ...variables,
+    signal
+});
 
 var ioExports = requireIo();
 
@@ -52456,10 +52461,10 @@ class Grader {
             await ioExports.cp(src, dest, { recursive: true });
         }));
     }
-    gradePart(part, testResults, mutantResults) {
+    gradePart(part, testResults, mutantResults, mutantFailureAdvice) {
         return part.gradedUnits
             .map((unit) => {
-            const ret = this.gradeGradedUnit(unit, testResults, mutantResults);
+            const ret = this.gradeGradedUnit(unit, testResults, mutantResults, mutantFailureAdvice);
             for (const feedback of ret) {
                 feedback.tags = [`${part.name}`];
             }
@@ -52467,13 +52472,14 @@ class Grader {
         })
             .flat();
     }
-    gradeGradedUnit(unit, testResults, mutantResults) {
+    gradeGradedUnit(unit, testResults, mutantResults, mutantFailureAdvice) {
         if (isMutationTestUnit(unit)) {
             if (!mutantResults) {
                 return [
                     {
                         name: unit.name,
-                        output: 'No results from grading tests. Please check overall output for more details.',
+                        output: mutantFailureAdvice ||
+                            'No results from grading tests. Please check overall output for more details.',
                         output_format: 'text',
                         score: 0,
                         max_score: unit.breakPoints[0].pointsToAward
@@ -52548,6 +52554,7 @@ class Grader {
         // console.log(lintResult);
         const testResults = await this.builder.test();
         let mutantResults;
+        let mutantFailureAdvice;
         if (this.config.submissionFiles.testFiles.length > 0) {
             await this.resetSolutionFiles();
             await this.copyStudentFiles('testFiles');
@@ -52556,9 +52563,12 @@ class Grader {
             if (testResults.some((result) => result.status === 'fail')) {
                 console.log('some tests failed');
                 this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
+                mutantFailureAdvice =
+                    "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. Here are the failing tests:";
                 this.logger.log('visible', 'Here are your failing test results:');
                 for (const result of testResults) {
                     if (result.status === 'fail') {
+                        mutantFailureAdvice += `\n${result.name}: ${result.status}\n${result.output}\n--------------------------------\n`;
                         this.logger.log('visible', `${result.name}: ${result.status}`);
                         this.logger.log('visible', result.output);
                         this.logger.log('visible', '--------------------------------');
@@ -52570,7 +52580,7 @@ class Grader {
             }
         }
         const testFeedbacks = this.config.gradedParts
-            .map((part) => this.gradePart(part, testResults, mutantResults))
+            .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
         console.log(JSON.stringify(testFeedbacks, null, 2));
         return {

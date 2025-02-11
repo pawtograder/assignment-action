@@ -1,1519 +1,1410 @@
 {
-	"openapi": "3.0.0",
-	"components": {
-		"examples": {},
-		"headers": {},
-		"parameters": {},
-		"requestBodies": {},
-		"responses": {},
-		"schemas": {
-			"Calendar": {
-				"properties": {
-					"ics": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"ics"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Grades": {
-				"properties": {
-					"html_url": {
-						"type": "string"
-					},
-					"current_grade": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"current_score": {
-						"type": "number",
-						"format": "double"
-					},
-					"final_grade": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"final_score": {
-						"type": "number",
-						"format": "double"
-					},
-					"unposted_current_score": {
-						"type": "number",
-						"format": "double"
-					},
-					"unposted_current_grade": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"unposted_final_score": {
-						"type": "number",
-						"format": "double"
-					},
-					"unposted_final_grade": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"html_url",
-					"current_grade",
-					"current_score",
-					"final_grade",
-					"final_score",
-					"unposted_current_score",
-					"unposted_current_grade",
-					"unposted_final_score",
-					"unposted_final_grade"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"User": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"name": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"sortable_name": {
-						"type": "string"
-					},
-					"short_name": {
-						"type": "string"
-					},
-					"sis_user_id": {
-						"type": "string"
-					},
-					"integration_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"login_id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"name",
-					"created_at",
-					"sortable_name",
-					"short_name",
-					"sis_user_id",
-					"integration_id",
-					"login_id"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Enrollment": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"user_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"course_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updated_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"associated_user_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"start_at": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"end_at": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"course_section_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"root_account_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit_privileges_to_course_section": {
-						"type": "boolean"
-					},
-					"enrollment_state": {
-						"type": "string"
-					},
-					"role": {
-						"type": "string"
-					},
-					"role_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"last_activity_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"last_attended_at": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"total_activity_time": {
-						"type": "number",
-						"format": "double"
-					},
-					"grades": {
-						"$ref": "#/components/schemas/Grades"
-					},
-					"sis_account_id": {
-						"type": "string"
-					},
-					"sis_course_id": {
-						"type": "string"
-					},
-					"course_integration_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"sis_section_id": {
-						"type": "string"
-					},
-					"section_integration_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"sis_user_id": {
-						"type": "string"
-					},
-					"html_url": {
-						"type": "string"
-					},
-					"user": {
-						"$ref": "#/components/schemas/User"
-					}
-				},
-				"required": [
-					"id",
-					"user_id",
-					"course_id",
-					"type",
-					"created_at",
-					"updated_at",
-					"associated_user_id",
-					"start_at",
-					"end_at",
-					"course_section_id",
-					"root_account_id",
-					"limit_privileges_to_course_section",
-					"enrollment_state",
-					"role",
-					"role_id",
-					"last_activity_at",
-					"last_attended_at",
-					"total_activity_time",
-					"grades",
-					"sis_account_id",
-					"sis_course_id",
-					"course_integration_id",
-					"sis_section_id",
-					"section_integration_id",
-					"sis_user_id",
-					"html_url",
-					"user"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Course": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"name": {
-						"type": "string"
-					},
-					"account_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"uuid": {
-						"type": "string"
-					},
-					"start_at": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"grading_standard_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"is_public": {
-						"type": "boolean"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"course_code": {
-						"type": "string"
-					},
-					"default_view": {
-						"type": "string"
-					},
-					"root_account_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"enrollment_term_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"license": {
-						"type": "string"
-					},
-					"grade_passback_setting": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"end_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"public_syllabus": {
-						"type": "boolean"
-					},
-					"public_syllabus_to_auth": {
-						"type": "boolean"
-					},
-					"storage_quota_mb": {
-						"type": "number",
-						"format": "double"
-					},
-					"is_public_to_auth_users": {
-						"type": "boolean"
-					},
-					"homeroom_course": {
-						"type": "boolean"
-					},
-					"course_color": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"friendly_name": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"apply_assignment_group_weights": {
-						"type": "boolean"
-					},
-					"calendar": {
-						"$ref": "#/components/schemas/Calendar"
-					},
-					"time_zone": {
-						"type": "string"
-					},
-					"blueprint": {
-						"type": "boolean"
-					},
-					"template": {
-						"type": "boolean"
-					},
-					"sis_course_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"integration_id": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"enrollments": {
-						"items": {
-							"$ref": "#/components/schemas/Enrollment"
-						},
-						"type": "array"
-					},
-					"hide_final_grades": {
-						"type": "boolean"
-					},
-					"workflow_state": {
-						"type": "string"
-					},
-					"restrict_enrollments_to_course_dates": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"id",
-					"name",
-					"account_id",
-					"uuid",
-					"start_at",
-					"grading_standard_id",
-					"is_public",
-					"created_at",
-					"course_code",
-					"default_view",
-					"root_account_id",
-					"enrollment_term_id",
-					"license",
-					"grade_passback_setting",
-					"end_at",
-					"public_syllabus",
-					"public_syllabus_to_auth",
-					"storage_quota_mb",
-					"is_public_to_auth_users",
-					"homeroom_course",
-					"course_color",
-					"friendly_name",
-					"apply_assignment_group_weights",
-					"calendar",
-					"time_zone",
-					"blueprint",
-					"template",
-					"sis_course_id",
-					"integration_id",
-					"enrollments",
-					"hide_final_grades",
-					"workflow_state",
-					"restrict_enrollments_to_course_dates"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SubmissionResponse": {
-				"properties": {
-					"grader_url": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"grader_url"
-				],
-				"type": "object"
-			},
-			"GradeResponse": {
-				"properties": {
-					"message": {
-						"type": "string"
-					},
-					"is_ok": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"message",
-					"is_ok"
-				],
-				"type": "object"
-			},
-			"OutputFormat": {
-				"type": "string",
-				"enum": [
-					"text"
-				],
-				"nullable": false
-			},
-			"AutograderFeedback": {
-				"properties": {
-					"tests": {
-						"items": {
-							"properties": {
-								"extra_data": {
-									"properties": {},
-									"additionalProperties": {
-										"type": "string"
-									},
-									"type": "object"
-								},
-								"tags": {
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
-								},
-								"output_format": {
-									"$ref": "#/components/schemas/OutputFormat"
-								},
-								"output": {
-									"type": "string"
-								},
-								"name_format": {
-									"$ref": "#/components/schemas/OutputFormat"
-								},
-								"name": {
-									"type": "string"
-								},
-								"max_score": {
-									"type": "number",
-									"format": "double"
-								},
-								"score": {
-									"type": "number",
-									"format": "double"
-								}
-							},
-							"required": [
-								"output",
-								"name"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					},
-					"lint": {
-						"properties": {
-							"output_format": {
-								"$ref": "#/components/schemas/OutputFormat"
-							},
-							"output": {
-								"type": "string"
-							},
-							"status": {
-								"type": "string",
-								"enum": [
-									"pass",
-									"fail"
-								]
-							}
-						},
-						"required": [
-							"output",
-							"status"
-						],
-						"type": "object"
-					},
-					"output": {
-						"properties": {
-							"hidden": {
-								"properties": {
-									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
-									},
-									"output": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"output"
-								],
-								"type": "object"
-							},
-							"visible": {
-								"properties": {
-									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
-									},
-									"output": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"output"
-								],
-								"type": "object"
-							},
-							"after_due_date": {
-								"properties": {
-									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
-									},
-									"output": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"output"
-								],
-								"type": "object"
-							},
-							"after_published": {
-								"properties": {
-									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
-									},
-									"output": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"output"
-								],
-								"type": "object"
-							}
-						},
-						"type": "object"
-					},
-					"score": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"tests",
-					"lint",
-					"output"
-				],
-				"type": "object"
-			},
-			"GradingScriptResult": {
-				"properties": {
-					"grader_sha": {
-						"type": "string"
-					},
-					"feedback": {
-						"$ref": "#/components/schemas/AutograderFeedback"
-					},
-					"execution_time": {
-						"type": "number",
-						"format": "double"
-					},
-					"output": {
-						"type": "string"
-					},
-					"ret_code": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"grader_sha",
-					"feedback",
-					"execution_time",
-					"output",
-					"ret_code"
-				],
-				"type": "object"
-			}
-		},
-		"securitySchemes": {
-			"supabase": {
-				"type": "accessToken",
-				"name": "Authorization",
-				"in": "header"
-			}
-		}
-	},
-	"info": {
-		"title": "@pawtograder/api",
-		"version": "0.0.1",
-		"description": "API Services for the Pawtograder CS CourseOps Platform",
-		"license": {
-			"name": "GPL-3.0-only"
-		},
-		"contact": {
-			"name": "Jonathan Bell",
-			"email": "jon@jonbell.net"
-		}
-	},
-	"paths": {
-		"/api/admin/canvas/courses": {
-			"get": {
-				"operationId": "GetCanvasCourses",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Course"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"supabase": [
-							"admin"
-						]
-					}
-				],
-				"parameters": []
-			}
-		},
-		"/api/admin/canvas/courses/{courseId}": {
-			"get": {
-				"operationId": "GetCanvasCourse",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Course"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"supabase": [
-							"admin"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "courseId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/instructor/{courseId}/assignment/{assignmentId}/repositories": {
-			"post": {
-				"operationId": "CreateAssignmentRepositories",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"security": [
-					{
-						"supabase": [
-							"instructor"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "courseId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "path",
-						"name": "assignmentId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/instructor/{courseId}/enrollments": {
-			"post": {
-				"operationId": "SyncEnrollments",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"security": [
-					{
-						"supabase": [
-							"instructor"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "courseId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/instructor/{courseId}/template-repos": {
-			"get": {
-				"operationId": "GetTemplateRepos",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"properties": {
-											"security_and_analysis": {
-												"properties": {
-													"secret_scanning_ai_detection": {
-														"properties": {
-															"status": {
-																"type": "string",
-																"enum": [
-																	"enabled",
-																	"disabled"
-																]
-															}
-														},
-														"type": "object"
-													},
-													"secret_scanning_non_provider_patterns": {
-														"properties": {
-															"status": {
-																"type": "string",
-																"enum": [
-																	"enabled",
-																	"disabled"
-																]
-															}
-														},
-														"type": "object"
-													},
-													"secret_scanning_push_protection": {
-														"properties": {
-															"status": {
-																"type": "string",
-																"enum": [
-																	"enabled",
-																	"disabled"
-																]
-															}
-														},
-														"type": "object"
-													},
-													"secret_scanning": {
-														"properties": {
-															"status": {
-																"type": "string",
-																"enum": [
-																	"enabled",
-																	"disabled"
-																]
-															}
-														},
-														"type": "object"
-													},
-													"dependabot_security_updates": {
-														"properties": {
-															"status": {
-																"type": "string",
-																"enum": [
-																	"enabled",
-																	"disabled"
-																]
-															}
-														},
-														"type": "object"
-													},
-													"advanced_security": {
-														"properties": {
-															"status": {
-																"type": "string",
-																"enum": [
-																	"enabled",
-																	"disabled"
-																]
-															}
-														},
-														"type": "object"
-													}
-												},
-												"type": "object"
-											},
-											"web_commit_signoff_required": {
-												"type": "boolean"
-											},
-											"allow_forking": {
-												"type": "boolean"
-											},
-											"watchers": {
-												"type": "number",
-												"format": "double"
-											},
-											"open_issues": {
-												"type": "number",
-												"format": "double"
-											},
-											"forks": {
-												"type": "number",
-												"format": "double"
-											},
-											"license": {
-												"properties": {
-													"node_id": {
-														"type": "string"
-													},
-													"url": {
-														"type": "string"
-													},
-													"spdx_id": {
-														"type": "string"
-													},
-													"name": {
-														"type": "string"
-													},
-													"key": {
-														"type": "string"
-													}
-												},
-												"type": "object"
-											},
-											"code_of_conduct": {
-												"properties": {
-													"html_url": {
-														"type": "string"
-													},
-													"body": {
-														"type": "string"
-													},
-													"url": {
-														"type": "string"
-													},
-													"name": {
-														"type": "string"
-													},
-													"key": {
-														"type": "string"
-													}
-												},
-												"required": [
-													"html_url",
-													"url",
-													"name",
-													"key"
-												],
-												"type": "object"
-											},
-											"network_count": {
-												"type": "number",
-												"format": "double"
-											},
-											"subscribers_count": {
-												"type": "number",
-												"format": "double"
-											},
-											"delete_branch_on_merge": {
-												"type": "boolean"
-											},
-											"temp_clone_token": {
-												"type": "string"
-											},
-											"role_name": {
-												"type": "string"
-											},
-											"permissions": {
-												"properties": {
-													"pull": {
-														"type": "boolean"
-													},
-													"triage": {
-														"type": "boolean"
-													},
-													"push": {
-														"type": "boolean"
-													},
-													"maintain": {
-														"type": "boolean"
-													},
-													"admin": {
-														"type": "boolean"
-													}
-												},
-												"type": "object"
-											},
-											"updated_at": {
-												"type": "string"
-											},
-											"created_at": {
-												"type": "string"
-											},
-											"pushed_at": {
-												"type": "string"
-											},
-											"visibility": {
-												"type": "string"
-											},
-											"disabled": {
-												"type": "boolean"
-											},
-											"archived": {
-												"type": "boolean"
-											},
-											"has_discussions": {
-												"type": "boolean"
-											},
-											"has_downloads": {
-												"type": "boolean"
-											},
-											"has_pages": {
-												"type": "boolean"
-											},
-											"has_wiki": {
-												"type": "boolean"
-											},
-											"has_projects": {
-												"type": "boolean"
-											},
-											"has_issues": {
-												"type": "boolean"
-											},
-											"topics": {
-												"items": {
-													"type": "string"
-												},
-												"type": "array"
-											},
-											"is_template": {
-												"type": "boolean"
-											},
-											"open_issues_count": {
-												"type": "number",
-												"format": "double"
-											},
-											"default_branch": {
-												"type": "string"
-											},
-											"size": {
-												"type": "number",
-												"format": "double"
-											},
-											"watchers_count": {
-												"type": "number",
-												"format": "double"
-											},
-											"stargazers_count": {
-												"type": "number",
-												"format": "double"
-											},
-											"forks_count": {
-												"type": "number",
-												"format": "double"
-											},
-											"language": {
-												"type": "string"
-											},
-											"homepage": {
-												"type": "string"
-											},
-											"svn_url": {
-												"type": "string"
-											},
-											"hooks_url": {
-												"type": "string"
-											},
-											"mirror_url": {
-												"type": "string"
-											},
-											"clone_url": {
-												"type": "string"
-											},
-											"trees_url": {
-												"type": "string"
-											},
-											"teams_url": {
-												"type": "string"
-											},
-											"tags_url": {
-												"type": "string"
-											},
-											"subscription_url": {
-												"type": "string"
-											},
-											"subscribers_url": {
-												"type": "string"
-											},
-											"statuses_url": {
-												"type": "string"
-											},
-											"stargazers_url": {
-												"type": "string"
-											},
-											"ssh_url": {
-												"type": "string"
-											},
-											"releases_url": {
-												"type": "string"
-											},
-											"pulls_url": {
-												"type": "string"
-											},
-											"notifications_url": {
-												"type": "string"
-											},
-											"milestones_url": {
-												"type": "string"
-											},
-											"merges_url": {
-												"type": "string"
-											},
-											"languages_url": {
-												"type": "string"
-											},
-											"labels_url": {
-												"type": "string"
-											},
-											"keys_url": {
-												"type": "string"
-											},
-											"issues_url": {
-												"type": "string"
-											},
-											"issue_events_url": {
-												"type": "string"
-											},
-											"issue_comment_url": {
-												"type": "string"
-											},
-											"git_url": {
-												"type": "string"
-											},
-											"git_tags_url": {
-												"type": "string"
-											},
-											"git_refs_url": {
-												"type": "string"
-											},
-											"git_commits_url": {
-												"type": "string"
-											},
-											"forks_url": {
-												"type": "string"
-											},
-											"events_url": {
-												"type": "string"
-											},
-											"downloads_url": {
-												"type": "string"
-											},
-											"deployments_url": {
-												"type": "string"
-											},
-											"contributors_url": {
-												"type": "string"
-											},
-											"contents_url": {
-												"type": "string"
-											},
-											"compare_url": {
-												"type": "string"
-											},
-											"commits_url": {
-												"type": "string"
-											},
-											"comments_url": {
-												"type": "string"
-											},
-											"collaborators_url": {
-												"type": "string"
-											},
-											"branches_url": {
-												"type": "string"
-											},
-											"blobs_url": {
-												"type": "string"
-											},
-											"assignees_url": {
-												"type": "string"
-											},
-											"archive_url": {
-												"type": "string"
-											},
-											"url": {
-												"type": "string"
-											},
-											"fork": {
-												"type": "boolean"
-											},
-											"description": {
-												"type": "string"
-											},
-											"html_url": {
-												"type": "string"
-											},
-											"private": {
-												"type": "boolean"
-											},
-											"owner": {
-												"properties": {
-													"user_view_type": {
-														"type": "string"
-													},
-													"starred_at": {
-														"type": "string"
-													},
-													"site_admin": {
-														"type": "boolean"
-													},
-													"type": {
-														"type": "string"
-													},
-													"received_events_url": {
-														"type": "string"
-													},
-													"events_url": {
-														"type": "string"
-													},
-													"repos_url": {
-														"type": "string"
-													},
-													"organizations_url": {
-														"type": "string"
-													},
-													"subscriptions_url": {
-														"type": "string"
-													},
-													"starred_url": {
-														"type": "string"
-													},
-													"gists_url": {
-														"type": "string"
-													},
-													"following_url": {
-														"type": "string"
-													},
-													"followers_url": {
-														"type": "string"
-													},
-													"html_url": {
-														"type": "string"
-													},
-													"url": {
-														"type": "string"
-													},
-													"gravatar_id": {
-														"type": "string"
-													},
-													"avatar_url": {
-														"type": "string"
-													},
-													"node_id": {
-														"type": "string"
-													},
-													"id": {
-														"type": "number",
-														"format": "double"
-													},
-													"login": {
-														"type": "string"
-													},
-													"email": {
-														"type": "string"
-													},
-													"name": {
-														"type": "string"
-													}
-												},
-												"required": [
-													"site_admin",
-													"type",
-													"received_events_url",
-													"events_url",
-													"repos_url",
-													"organizations_url",
-													"subscriptions_url",
-													"starred_url",
-													"gists_url",
-													"following_url",
-													"followers_url",
-													"html_url",
-													"url",
-													"gravatar_id",
-													"avatar_url",
-													"node_id",
-													"id",
-													"login"
-												],
-												"type": "object"
-											},
-											"full_name": {
-												"type": "string"
-											},
-											"name": {
-												"type": "string"
-											},
-											"node_id": {
-												"type": "string"
-											},
-											"id": {
-												"type": "number",
-												"format": "double"
-											}
-										},
-										"required": [
-											"hooks_url",
-											"trees_url",
-											"teams_url",
-											"tags_url",
-											"subscription_url",
-											"subscribers_url",
-											"statuses_url",
-											"stargazers_url",
-											"releases_url",
-											"pulls_url",
-											"notifications_url",
-											"milestones_url",
-											"merges_url",
-											"languages_url",
-											"labels_url",
-											"keys_url",
-											"issues_url",
-											"issue_events_url",
-											"issue_comment_url",
-											"git_tags_url",
-											"git_refs_url",
-											"git_commits_url",
-											"forks_url",
-											"events_url",
-											"downloads_url",
-											"deployments_url",
-											"contributors_url",
-											"contents_url",
-											"compare_url",
-											"commits_url",
-											"comments_url",
-											"collaborators_url",
-											"branches_url",
-											"blobs_url",
-											"assignees_url",
-											"archive_url",
-											"url",
-											"fork",
-											"description",
-											"html_url",
-											"private",
-											"owner",
-											"full_name",
-											"name",
-											"node_id",
-											"id"
-										],
-										"type": "object"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"supabase": [
-							"instructor"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "courseId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/autograder/submission": {
-			"post": {
-				"operationId": "CreateSubmission",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SubmissionResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Invalid GitHub OIDC token"
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "header",
-						"name": "Authorization",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/autograder/submission/feedback": {
-			"post": {
-				"operationId": "SubmitFeedback",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/GradeResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Invalid GitHub OIDC token"
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "header",
-						"name": "Authorization",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/GradingScriptResult"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/admin/course/{courseId}": {
-			"post": {
-				"operationId": "CreateCourseForCanvasCourse",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"security": [
-					{
-						"supabase": [
-							"admin"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "courseId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		}
-	},
-	"servers": [
-		{
-			"url": "/"
-		}
-	]
+  "openapi": "3.0.0",
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "Calendar": {
+        "properties": {
+          "ics": {
+            "type": "string"
+          }
+        },
+        "required": ["ics"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Grades": {
+        "properties": {
+          "html_url": {
+            "type": "string"
+          },
+          "current_grade": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "current_score": {
+            "type": "number",
+            "format": "double"
+          },
+          "final_grade": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "final_score": {
+            "type": "number",
+            "format": "double"
+          },
+          "unposted_current_score": {
+            "type": "number",
+            "format": "double"
+          },
+          "unposted_current_grade": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "unposted_final_score": {
+            "type": "number",
+            "format": "double"
+          },
+          "unposted_final_grade": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          }
+        },
+        "required": [
+          "html_url",
+          "current_grade",
+          "current_score",
+          "final_grade",
+          "final_score",
+          "unposted_current_score",
+          "unposted_current_grade",
+          "unposted_final_score",
+          "unposted_final_grade"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "User": {
+        "properties": {
+          "id": {
+            "type": "number",
+            "format": "double"
+          },
+          "name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sortable_name": {
+            "type": "string"
+          },
+          "short_name": {
+            "type": "string"
+          },
+          "sis_user_id": {
+            "type": "string"
+          },
+          "integration_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "login_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "sortable_name",
+          "short_name",
+          "sis_user_id",
+          "integration_id",
+          "login_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Enrollment": {
+        "properties": {
+          "id": {
+            "type": "number",
+            "format": "double"
+          },
+          "user_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "course_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "associated_user_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "start_at": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "end_at": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "course_section_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "root_account_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "limit_privileges_to_course_section": {
+            "type": "boolean"
+          },
+          "enrollment_state": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "role_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "last_activity_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_attended_at": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "total_activity_time": {
+            "type": "number",
+            "format": "double"
+          },
+          "grades": {
+            "$ref": "#/components/schemas/Grades"
+          },
+          "sis_account_id": {
+            "type": "string"
+          },
+          "sis_course_id": {
+            "type": "string"
+          },
+          "course_integration_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "sis_section_id": {
+            "type": "string"
+          },
+          "section_integration_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "sis_user_id": {
+            "type": "string"
+          },
+          "html_url": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "course_id",
+          "type",
+          "created_at",
+          "updated_at",
+          "associated_user_id",
+          "start_at",
+          "end_at",
+          "course_section_id",
+          "root_account_id",
+          "limit_privileges_to_course_section",
+          "enrollment_state",
+          "role",
+          "role_id",
+          "last_activity_at",
+          "last_attended_at",
+          "total_activity_time",
+          "grades",
+          "sis_account_id",
+          "sis_course_id",
+          "course_integration_id",
+          "sis_section_id",
+          "section_integration_id",
+          "sis_user_id",
+          "html_url",
+          "user"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Course": {
+        "properties": {
+          "id": {
+            "type": "number",
+            "format": "double"
+          },
+          "name": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "start_at": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "grading_standard_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "is_public": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "course_code": {
+            "type": "string"
+          },
+          "default_view": {
+            "type": "string"
+          },
+          "root_account_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "enrollment_term_id": {
+            "type": "number",
+            "format": "double"
+          },
+          "license": {
+            "type": "string"
+          },
+          "grade_passback_setting": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "end_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "public_syllabus": {
+            "type": "boolean"
+          },
+          "public_syllabus_to_auth": {
+            "type": "boolean"
+          },
+          "storage_quota_mb": {
+            "type": "number",
+            "format": "double"
+          },
+          "is_public_to_auth_users": {
+            "type": "boolean"
+          },
+          "homeroom_course": {
+            "type": "boolean"
+          },
+          "course_color": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "friendly_name": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "apply_assignment_group_weights": {
+            "type": "boolean"
+          },
+          "calendar": {
+            "$ref": "#/components/schemas/Calendar"
+          },
+          "time_zone": {
+            "type": "string"
+          },
+          "blueprint": {
+            "type": "boolean"
+          },
+          "template": {
+            "type": "boolean"
+          },
+          "sis_course_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "integration_id": {
+            "type": "number",
+            "enum": [null],
+            "nullable": true
+          },
+          "enrollments": {
+            "items": {
+              "$ref": "#/components/schemas/Enrollment"
+            },
+            "type": "array"
+          },
+          "hide_final_grades": {
+            "type": "boolean"
+          },
+          "workflow_state": {
+            "type": "string"
+          },
+          "restrict_enrollments_to_course_dates": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "account_id",
+          "uuid",
+          "start_at",
+          "grading_standard_id",
+          "is_public",
+          "created_at",
+          "course_code",
+          "default_view",
+          "root_account_id",
+          "enrollment_term_id",
+          "license",
+          "grade_passback_setting",
+          "end_at",
+          "public_syllabus",
+          "public_syllabus_to_auth",
+          "storage_quota_mb",
+          "is_public_to_auth_users",
+          "homeroom_course",
+          "course_color",
+          "friendly_name",
+          "apply_assignment_group_weights",
+          "calendar",
+          "time_zone",
+          "blueprint",
+          "template",
+          "sis_course_id",
+          "integration_id",
+          "enrollments",
+          "hide_final_grades",
+          "workflow_state",
+          "restrict_enrollments_to_course_dates"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SubmissionResponse": {
+        "properties": {
+          "grader_url": {
+            "type": "string"
+          }
+        },
+        "required": ["grader_url"],
+        "type": "object"
+      },
+      "GradeResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "is_ok": {
+            "type": "boolean"
+          }
+        },
+        "required": ["message", "is_ok"],
+        "type": "object"
+      },
+      "OutputFormat": {
+        "type": "string",
+        "enum": ["text"],
+        "nullable": false
+      },
+      "AutograderFeedback": {
+        "properties": {
+          "tests": {
+            "items": {
+              "properties": {
+                "extra_data": {
+                  "properties": {},
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "tags": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "output_format": {
+                  "$ref": "#/components/schemas/OutputFormat"
+                },
+                "output": {
+                  "type": "string"
+                },
+                "name_format": {
+                  "$ref": "#/components/schemas/OutputFormat"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "max_score": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "score": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "required": ["output", "name"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "lint": {
+            "properties": {
+              "output_format": {
+                "$ref": "#/components/schemas/OutputFormat"
+              },
+              "output": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["pass", "fail"]
+              }
+            },
+            "required": ["output", "status"],
+            "type": "object"
+          },
+          "output": {
+            "properties": {
+              "hidden": {
+                "properties": {
+                  "output_format": {
+                    "type": "string",
+                    "enum": ["text"],
+                    "nullable": false
+                  },
+                  "output": {
+                    "type": "string"
+                  }
+                },
+                "required": ["output"],
+                "type": "object"
+              },
+              "visible": {
+                "properties": {
+                  "output_format": {
+                    "type": "string",
+                    "enum": ["text"],
+                    "nullable": false
+                  },
+                  "output": {
+                    "type": "string"
+                  }
+                },
+                "required": ["output"],
+                "type": "object"
+              },
+              "after_due_date": {
+                "properties": {
+                  "output_format": {
+                    "type": "string",
+                    "enum": ["text"],
+                    "nullable": false
+                  },
+                  "output": {
+                    "type": "string"
+                  }
+                },
+                "required": ["output"],
+                "type": "object"
+              },
+              "after_published": {
+                "properties": {
+                  "output_format": {
+                    "type": "string",
+                    "enum": ["text"],
+                    "nullable": false
+                  },
+                  "output": {
+                    "type": "string"
+                  }
+                },
+                "required": ["output"],
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["tests", "lint", "output"],
+        "type": "object"
+      },
+      "GradingScriptResult": {
+        "properties": {
+          "grader_sha": {
+            "type": "string"
+          },
+          "feedback": {
+            "$ref": "#/components/schemas/AutograderFeedback"
+          },
+          "execution_time": {
+            "type": "number",
+            "format": "double"
+          },
+          "output": {
+            "type": "string"
+          },
+          "ret_code": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "grader_sha",
+          "feedback",
+          "execution_time",
+          "output",
+          "ret_code"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "supabase": {
+        "type": "accessToken",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "info": {
+    "title": "@pawtograder/api",
+    "version": "0.0.1",
+    "description": "API Services for the Pawtograder CS CourseOps Platform",
+    "license": {
+      "name": "GPL-3.0-only"
+    },
+    "contact": {
+      "name": "Jonathan Bell",
+      "email": "jon@jonbell.net"
+    }
+  },
+  "paths": {
+    "/api/admin/canvas/courses": {
+      "get": {
+        "operationId": "GetCanvasCourses",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Course"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": ["admin"]
+          }
+        ],
+        "parameters": []
+      }
+    },
+    "/api/admin/canvas/courses/{courseId}": {
+      "get": {
+        "operationId": "GetCanvasCourse",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": ["admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/api/instructor/{courseId}/assignment/{assignmentId}/repositories": {
+      "post": {
+        "operationId": "CreateAssignmentRepositories",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "security": [
+          {
+            "supabase": ["instructor"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "in": "path",
+            "name": "assignmentId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/api/instructor/{courseId}/enrollments": {
+      "post": {
+        "operationId": "SyncEnrollments",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "security": [
+          {
+            "supabase": ["instructor"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/api/instructor/{courseId}/template-repos": {
+      "get": {
+        "operationId": "GetTemplateRepos",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "security_and_analysis": {
+                        "properties": {
+                          "secret_scanning_ai_detection": {
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": ["enabled", "disabled"]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "secret_scanning_non_provider_patterns": {
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": ["enabled", "disabled"]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "secret_scanning_push_protection": {
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": ["enabled", "disabled"]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "secret_scanning": {
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": ["enabled", "disabled"]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "dependabot_security_updates": {
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": ["enabled", "disabled"]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "advanced_security": {
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": ["enabled", "disabled"]
+                              }
+                            },
+                            "type": "object"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "web_commit_signoff_required": {
+                        "type": "boolean"
+                      },
+                      "allow_forking": {
+                        "type": "boolean"
+                      },
+                      "watchers": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "open_issues": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "forks": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "license": {
+                        "properties": {
+                          "node_id": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "spdx_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "code_of_conduct": {
+                        "properties": {
+                          "html_url": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["html_url", "url", "name", "key"],
+                        "type": "object"
+                      },
+                      "network_count": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "subscribers_count": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "delete_branch_on_merge": {
+                        "type": "boolean"
+                      },
+                      "temp_clone_token": {
+                        "type": "string"
+                      },
+                      "role_name": {
+                        "type": "string"
+                      },
+                      "permissions": {
+                        "properties": {
+                          "pull": {
+                            "type": "boolean"
+                          },
+                          "triage": {
+                            "type": "boolean"
+                          },
+                          "push": {
+                            "type": "boolean"
+                          },
+                          "maintain": {
+                            "type": "boolean"
+                          },
+                          "admin": {
+                            "type": "boolean"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "pushed_at": {
+                        "type": "string"
+                      },
+                      "visibility": {
+                        "type": "string"
+                      },
+                      "disabled": {
+                        "type": "boolean"
+                      },
+                      "archived": {
+                        "type": "boolean"
+                      },
+                      "has_discussions": {
+                        "type": "boolean"
+                      },
+                      "has_downloads": {
+                        "type": "boolean"
+                      },
+                      "has_pages": {
+                        "type": "boolean"
+                      },
+                      "has_wiki": {
+                        "type": "boolean"
+                      },
+                      "has_projects": {
+                        "type": "boolean"
+                      },
+                      "has_issues": {
+                        "type": "boolean"
+                      },
+                      "topics": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "is_template": {
+                        "type": "boolean"
+                      },
+                      "open_issues_count": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "default_branch": {
+                        "type": "string"
+                      },
+                      "size": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "watchers_count": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "stargazers_count": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "forks_count": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "language": {
+                        "type": "string"
+                      },
+                      "homepage": {
+                        "type": "string"
+                      },
+                      "svn_url": {
+                        "type": "string"
+                      },
+                      "hooks_url": {
+                        "type": "string"
+                      },
+                      "mirror_url": {
+                        "type": "string"
+                      },
+                      "clone_url": {
+                        "type": "string"
+                      },
+                      "trees_url": {
+                        "type": "string"
+                      },
+                      "teams_url": {
+                        "type": "string"
+                      },
+                      "tags_url": {
+                        "type": "string"
+                      },
+                      "subscription_url": {
+                        "type": "string"
+                      },
+                      "subscribers_url": {
+                        "type": "string"
+                      },
+                      "statuses_url": {
+                        "type": "string"
+                      },
+                      "stargazers_url": {
+                        "type": "string"
+                      },
+                      "ssh_url": {
+                        "type": "string"
+                      },
+                      "releases_url": {
+                        "type": "string"
+                      },
+                      "pulls_url": {
+                        "type": "string"
+                      },
+                      "notifications_url": {
+                        "type": "string"
+                      },
+                      "milestones_url": {
+                        "type": "string"
+                      },
+                      "merges_url": {
+                        "type": "string"
+                      },
+                      "languages_url": {
+                        "type": "string"
+                      },
+                      "labels_url": {
+                        "type": "string"
+                      },
+                      "keys_url": {
+                        "type": "string"
+                      },
+                      "issues_url": {
+                        "type": "string"
+                      },
+                      "issue_events_url": {
+                        "type": "string"
+                      },
+                      "issue_comment_url": {
+                        "type": "string"
+                      },
+                      "git_url": {
+                        "type": "string"
+                      },
+                      "git_tags_url": {
+                        "type": "string"
+                      },
+                      "git_refs_url": {
+                        "type": "string"
+                      },
+                      "git_commits_url": {
+                        "type": "string"
+                      },
+                      "forks_url": {
+                        "type": "string"
+                      },
+                      "events_url": {
+                        "type": "string"
+                      },
+                      "downloads_url": {
+                        "type": "string"
+                      },
+                      "deployments_url": {
+                        "type": "string"
+                      },
+                      "contributors_url": {
+                        "type": "string"
+                      },
+                      "contents_url": {
+                        "type": "string"
+                      },
+                      "compare_url": {
+                        "type": "string"
+                      },
+                      "commits_url": {
+                        "type": "string"
+                      },
+                      "comments_url": {
+                        "type": "string"
+                      },
+                      "collaborators_url": {
+                        "type": "string"
+                      },
+                      "branches_url": {
+                        "type": "string"
+                      },
+                      "blobs_url": {
+                        "type": "string"
+                      },
+                      "assignees_url": {
+                        "type": "string"
+                      },
+                      "archive_url": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "fork": {
+                        "type": "boolean"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "html_url": {
+                        "type": "string"
+                      },
+                      "private": {
+                        "type": "boolean"
+                      },
+                      "owner": {
+                        "properties": {
+                          "user_view_type": {
+                            "type": "string"
+                          },
+                          "starred_at": {
+                            "type": "string"
+                          },
+                          "site_admin": {
+                            "type": "boolean"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "received_events_url": {
+                            "type": "string"
+                          },
+                          "events_url": {
+                            "type": "string"
+                          },
+                          "repos_url": {
+                            "type": "string"
+                          },
+                          "organizations_url": {
+                            "type": "string"
+                          },
+                          "subscriptions_url": {
+                            "type": "string"
+                          },
+                          "starred_url": {
+                            "type": "string"
+                          },
+                          "gists_url": {
+                            "type": "string"
+                          },
+                          "following_url": {
+                            "type": "string"
+                          },
+                          "followers_url": {
+                            "type": "string"
+                          },
+                          "html_url": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "gravatar_id": {
+                            "type": "string"
+                          },
+                          "avatar_url": {
+                            "type": "string"
+                          },
+                          "node_id": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "number",
+                            "format": "double"
+                          },
+                          "login": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "site_admin",
+                          "type",
+                          "received_events_url",
+                          "events_url",
+                          "repos_url",
+                          "organizations_url",
+                          "subscriptions_url",
+                          "starred_url",
+                          "gists_url",
+                          "following_url",
+                          "followers_url",
+                          "html_url",
+                          "url",
+                          "gravatar_id",
+                          "avatar_url",
+                          "node_id",
+                          "id",
+                          "login"
+                        ],
+                        "type": "object"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "node_id": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "number",
+                        "format": "double"
+                      }
+                    },
+                    "required": [
+                      "hooks_url",
+                      "trees_url",
+                      "teams_url",
+                      "tags_url",
+                      "subscription_url",
+                      "subscribers_url",
+                      "statuses_url",
+                      "stargazers_url",
+                      "releases_url",
+                      "pulls_url",
+                      "notifications_url",
+                      "milestones_url",
+                      "merges_url",
+                      "languages_url",
+                      "labels_url",
+                      "keys_url",
+                      "issues_url",
+                      "issue_events_url",
+                      "issue_comment_url",
+                      "git_tags_url",
+                      "git_refs_url",
+                      "git_commits_url",
+                      "forks_url",
+                      "events_url",
+                      "downloads_url",
+                      "deployments_url",
+                      "contributors_url",
+                      "contents_url",
+                      "compare_url",
+                      "commits_url",
+                      "comments_url",
+                      "collaborators_url",
+                      "branches_url",
+                      "blobs_url",
+                      "assignees_url",
+                      "archive_url",
+                      "url",
+                      "fork",
+                      "description",
+                      "html_url",
+                      "private",
+                      "owner",
+                      "full_name",
+                      "name",
+                      "node_id",
+                      "id"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": ["instructor"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/api/autograder/submission": {
+      "post": {
+        "operationId": "CreateSubmission",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmissionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid GitHub OIDC token"
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/autograder/submission/feedback": {
+      "post": {
+        "operationId": "SubmitFeedback",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GradeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid GitHub OIDC token"
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GradingScriptResult"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/course/{courseId}": {
+      "post": {
+        "operationId": "CreateCourseForCanvasCourse",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "security": [
+          {
+            "supabase": ["admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ]
 }
