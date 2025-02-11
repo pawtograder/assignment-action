@@ -1,23 +1,28 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: Pawtograder
+description:
+  An action for automatically submitting and grading student coding submissions
+author: Jonathan Bell <jon@jonbell.net>
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
   icon: heart
   color: red
 
-# Define your inputs here.
 inputs:
   grading_server:
     description:
       URL of the grading API server, e.g. https://autograder.ripley.cloud
     required: true
+  handout_repo:
+    description:
+      The name of the handout repo, e.g. khoury-classroom/handout-template. This
+      is only used to check if the action is being run in the handout repo, and
+      if so, no submission will be created (so your handout built can still be
+      green).
+    required: false
 
-# Define your outputs here.
 outputs:
-  time:
-    description: Your output description here
+  score:
+    description: The score of the submission
 
 runs:
   using: node20

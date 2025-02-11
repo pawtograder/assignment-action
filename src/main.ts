@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
-import { spawn } from 'child_process'
 import { createHash } from 'crypto'
 import { createWriteStream } from 'fs'
 import { mkdir, readFile } from 'fs/promises'
@@ -11,7 +9,7 @@ import {
   createSubmission,
   submitFeedback
 } from './api/adminServiceComponents.js'
-
+import grade from './grader/Grader.js'
 /**
  * The main function for the action.
  *
@@ -25,6 +23,14 @@ export async function run(): Promise<void> {
       throw new Error(
         'Unable to get OIDC token. Is workflow permission configured correctly?'
       )
+    }
+    //Double check: is this the handout? If so, ignore the rest of the action and just log a warning
+    const handout = await core.getInput('handout_repo')
+    if (handout && handout === process.env.GITHUB_REPOSITORY) {
+      core.warning(
+        'This action appears to have been triggered by running in the handout repo. No submission has been created, and it will not be graded.'
+      )
+      return
     }
     const graderConfig = await createSubmission({
       headers: {
@@ -59,51 +65,13 @@ export async function run(): Promise<void> {
     //Run the autograder
     const assignmentDir = `${workDir}/submission`
     const graderDir = `${workDir}/grader`
-    const resultsLocation = `${graderDir}/results.json`
-
-    const childProcess = spawn('./run.sh', [assignmentDir, resultsLocation], {
-      cwd: graderDir
-    })
-    let scriptOutput = ''
-
-    childProcess.stdout.setEncoding('utf8')
-    childProcess.stdout.on('data', function (data) {
-      //Here is where the output goes
-
-      console.log(data)
-      data = data.toString()
-      scriptOutput += data
-    })
-
-    childProcess.stderr.setEncoding('utf8')
-    childProcess.stderr.on('data', function (data) {
-      //Here is where the error output goes
-
-      console.error(data)
-
-      data = data.toString()
-      scriptOutput += data
-    })
     const start = Date.now()
     try {
-      const retCode = await new Promise<number>((resolve, reject) => {
-        childProcess.on('close', function (code) {
-          if (code !== 0) {
-            reject(new Error(`Process exited with code ${code}`))
-          }
-          resolve(0)
-        })
-        childProcess.on('error', function (err) {
-          reject(err)
-        })
-      })
-
-      const results = JSON.parse(await readFile(resultsLocation, 'utf8'))
-
+      const results = await grade(assignmentDir, graderDir)
       await submitFeedback({
         body: {
-          ret_code: retCode,
-          output: scriptOutput,
+          ret_code: 0,
+          output: '',
           execution_time: Date.now() - start,
           feedback: results,
           grader_sha: graderSha
@@ -117,12 +85,16 @@ export async function run(): Promise<void> {
         await submitFeedback({
           body: {
             ret_code: 1,
-            output: `${error.message}\n${scriptOutput}`,
+            output: `${error.message}`,
             execution_time: Date.now() - start,
             grader_sha: graderSha,
             feedback: {
               output: {},
-              tests: []
+              tests: [],
+              lint: {
+                output: 'Unknown error',
+                status: 'fail'
+              }
             }
           },
           headers: {

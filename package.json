@@ -42,6 +42,7 @@
     "@actions/exec": "^1.1.1",
     "@rollup/plugin-json": "^6.1.0",
     "axios": "^1.7.9",
+    "glob": "^11.0.1",
     "node-fetch": "^3.3.2",
     "ts-interface-checker": "^1.0.2"
   },
