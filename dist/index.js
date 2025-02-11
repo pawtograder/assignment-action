@@ -52292,7 +52292,6 @@ class GradleBuilder extends Builder {
             .join('\n');
         this.logger.log('hidden', `Total errors: ${totalErrors}\n${formattedOutput}`);
         return {
-            name: 'lint',
             status: totalErrors > 0 ? 'fail' : 'pass',
             output: `Total errors: ${totalErrors}\n${formattedOutput}`,
             output_format: 'text'

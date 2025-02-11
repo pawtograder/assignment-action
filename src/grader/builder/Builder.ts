@@ -3,7 +3,6 @@ import Logger from '../Logger.js'
 import { OutputFormat } from '../types.js'
 
 export type LintResult = {
-  name: string
   status: 'pass' | 'fail'
   output: string
   output_format?: OutputFormat

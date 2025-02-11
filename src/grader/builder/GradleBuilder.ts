@@ -41,7 +41,6 @@ export default class GradleBuilder extends Builder {
     )
 
     return {
-      name: 'lint',
       status: totalErrors > 0 ? 'fail' : 'pass',
       output: `Total errors: ${totalErrors}\n${formattedOutput}`,
       output_format: 'text'
