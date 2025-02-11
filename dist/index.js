@@ -52474,7 +52474,6 @@ class Grader {
                     {
                         name: unit.name,
                         output: 'No results from grading tests. Please check overall output for more details.',
-                        status: 'fail',
                         output_format: 'text',
                         score: 0,
                         max_score: unit.breakPoints[0].pointsToAward

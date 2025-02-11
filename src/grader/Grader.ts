@@ -6,7 +6,6 @@ import { Builder, MutantResult, TestResult } from './builder/Builder.js'
 import GradleBuilder from './builder/GradleBuilder.js'
 import Logger from './Logger.js'
 import {
-  AutograderFeedback,
   AutograderTestFeedback,
   GradedPart,
   GradedUnit,
@@ -14,6 +13,7 @@ import {
   isRegularTestUnit,
   PawtograderConfig
 } from './types.js'
+import { AutograderFeedback } from '../api/adminServiceSchemas.js'
 export default async function grade(
   solutionDir: string,
   submissionDir: string
@@ -92,7 +92,6 @@ class Grader {
             name: unit.name,
             output:
               'No results from grading tests. Please check overall output for more details.',
-            status: 'fail',
             output_format: 'text',
             score: 0,
             max_score: unit.breakPoints[0].pointsToAward

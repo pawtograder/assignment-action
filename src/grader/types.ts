@@ -1,3 +1,5 @@
+import { AutograderFeedback } from "../api/adminServiceSchemas.js"
+
 // Build configuration types
 interface BuildConfig {
   preset: 'java-gradle'
@@ -65,31 +67,7 @@ export type OutputVisibility =
   | 'after_published' // Shown to students after grades are published
 
 export type AutograderTestFeedback = AutograderFeedback['tests'][0]
-export type AutograderFeedback = {
-  score?: number
-  output: {
-    [key in OutputVisibility]?: {
-      output: string
-      output_format?: OutputFormat
-    }
-  }
-  lint: {
-    status: 'pass' | 'fail'
-    output: string
-    output_format?: OutputFormat
-  }
-  tests: {
-    score?: number
-    max_score?: number
-    status?: 'pass' | 'fail'
-    name: string
-    name_format?: OutputFormat
-    output: string
-    output_format?: OutputFormat
-    tags?: string[]
-    extra_data?: { [key: string]: string }
-  }[]
-}
+
 export {
   PawtograderConfig,
   BuildConfig,
