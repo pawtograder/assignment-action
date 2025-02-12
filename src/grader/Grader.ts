@@ -1,5 +1,5 @@
 import * as io from '@actions/io'
-import { mkdtemp, readdir, readFile } from 'fs/promises'
+import { readdir, readFile } from 'fs/promises'
 import path from 'path'
 import yaml from 'yaml'
 import { Builder, MutantResult, TestResult } from './builder/Builder.js'
@@ -15,7 +15,6 @@ import {
   PawtograderConfig
 } from './types.js'
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
-import { tmpdir } from 'os'
 export default async function grade(
   solutionDir: string,
   submissionDir: string
@@ -168,8 +167,8 @@ class Grader {
     )
   }
   async grade(): Promise<AutograderFeedback> {
-    const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'))
-    // const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
+    // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
+    const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
     await io.mkdirP(tmpDir)
     const solutionFiles = await readdir(this.solutionDir)
     await Promise.all(

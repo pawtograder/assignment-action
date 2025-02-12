@@ -1,4 +1,4 @@
-import require$$0, { tmpdir } from 'os';
+import require$$0 from 'os';
 import require$$0$1, { createHash } from 'crypto';
 import require$$1, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync, readFileSync, createWriteStream } from 'fs';
 import path$1 from 'path';
@@ -27,7 +27,7 @@ import require$$6 from 'string_decoder';
 import require$$0$8 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
-import { readFile, mkdtemp, readdir as readdir$2, mkdir } from 'fs/promises';
+import { readFile, readdir as readdir$2, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import http from 'node:http';
 import https from 'node:https';
@@ -52541,8 +52541,8 @@ class Grader {
         throw new Error(`Unknown unit type in grading config: ${JSON.stringify(unit)}`);
     }
     async grade() {
-        const tmpDir = await mkdtemp(path$1.join(tmpdir(), 'pawtograder-'));
-        // const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
+        // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
+        const tmpDir = path$1.join(process.cwd(), 'pawtograder-grading');
         await ioExports.mkdirP(tmpDir);
         const solutionFiles = await readdir$2(this.solutionDir);
         await Promise.all(solutionFiles.map(async (file) => {
