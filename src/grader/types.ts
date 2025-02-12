@@ -1,7 +1,7 @@
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
 
 // Build configuration types
-interface BuildConfig {
+export interface BuildConfig {
   preset: 'java-gradle'
   cmd: string
   artifacts: string[]
@@ -12,19 +12,19 @@ interface BuildConfig {
 }
 
 // Mutation testing types
-interface BreakPoint {
+export interface BreakPoint {
   minimumMutantsDetected: number
   pointsToAward: number
 }
 
-interface MutationTestUnit {
+export interface MutationTestUnit {
   name: string
   locations: string[] // format: "file:line-line"
   breakPoints: BreakPoint[]
 }
 
 // Regular test unit types
-interface RegularTestUnit {
+export interface RegularTestUnit {
   name: string
   tests: string | string[] // format: "[T#.#]"
   points: number
@@ -32,16 +32,16 @@ interface RegularTestUnit {
 }
 
 // Combined graded unit type
-type GradedUnit = MutationTestUnit | RegularTestUnit
+export type GradedUnit = MutationTestUnit | RegularTestUnit
 
 // Graded part type
-interface GradedPart {
+export interface GradedPart {
   name: string
   gradedUnits: GradedUnit[]
 }
 
 // Main configuration type
-interface PawtograderConfig {
+export interface PawtograderConfig {
   build: BuildConfig
   gradedParts: GradedPart[]
   submissionFiles: {
@@ -51,12 +51,12 @@ interface PawtograderConfig {
 }
 
 // Type guard to check if a unit is a mutation test unit
-function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {
+export function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {
   return 'locations' in unit && 'breakPoints' in unit
 }
 
 // Type guard to check if a unit is a regular test unit
-function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit {
+export function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit {
   return 'tests' in unit && 'testCount' in unit
 }
 export type OutputFormat = 'text' // TODO also support: | 'ansi' | 'html' | 'markdown';
@@ -67,15 +67,3 @@ export type OutputVisibility =
   | 'after_published' // Shown to students after grades are published
 
 export type AutograderTestFeedback = AutograderFeedback['tests'][0]
-
-export {
-  PawtograderConfig,
-  BuildConfig,
-  GradedPart,
-  GradedUnit,
-  MutationTestUnit,
-  RegularTestUnit,
-  BreakPoint,
-  isMutationTestUnit,
-  isRegularTestUnit
-}

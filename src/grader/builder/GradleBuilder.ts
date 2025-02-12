@@ -107,11 +107,14 @@ export default class GradleBuilder extends Builder {
   }
   async buildClean(): Promise<void> {
     this.logger.log('hidden', 'Building clean with Gradle')
-    await this.executeCommandAndGetOutput(
+    const { returnCode, output } = await this.executeCommandAndGetOutput(
       './gradlew',
       ['clean', 'build'],
       this.logger,
       true
     )
+    if (returnCode !== 0) {
+      throw new Error(`Gradle build failed: ${output}`)
+    }
   }
 }

@@ -1,5 +1,5 @@
 import * as io from '@actions/io'
-import { readdir, readFile } from 'fs/promises'
+import { mkdtemp, readdir, readFile } from 'fs/promises'
 import path from 'path'
 import yaml from 'yaml'
 import { Builder, MutantResult, TestResult } from './builder/Builder.js'
@@ -11,9 +11,11 @@ import {
   GradedUnit,
   isMutationTestUnit,
   isRegularTestUnit,
+  OutputFormat,
   PawtograderConfig
 } from './types.js'
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
+import { tmpdir } from 'os'
 export default async function grade(
   solutionDir: string,
   submissionDir: string
@@ -156,7 +158,7 @@ class Grader {
           name: unit.name,
           output: `Tests passed: ${passingTests} / ${expectedTests}\n${relevantTestResults.map((result) => `${result.name}: ${result.status}${result.output ? `\n${result.output}` : ''}`).join('\n')}`,
           output_format: 'text',
-          score: passingTests,
+          score: passingTests == expectedTests ? unit.points : 0,
           max_score: unit.points
         }
       ]
@@ -166,8 +168,8 @@ class Grader {
     )
   }
   async grade(): Promise<AutograderFeedback> {
-    // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
-    const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
+    const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'))
+    // const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
     await io.mkdirP(tmpDir)
     const solutionFiles = await readdir(this.solutionDir)
     await Promise.all(
@@ -180,7 +182,54 @@ class Grader {
 
     await this.copyStudentFiles('files')
 
-    await this.builder.buildClean()
+    try {
+      await this.builder.buildClean()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      const allTests: AutograderTestFeedback[] = this.config.gradedParts
+        .map((part) =>
+          part.gradedUnits.map((gradedUnit) => {
+            if (isRegularTestUnit(gradedUnit)) {
+              return {
+                name: gradedUnit.name,
+                output:
+                  'Build failed, test not run. Please see overall output for more details.',
+                output_format: 'text' as OutputFormat,
+                score: 0,
+                max_score: gradedUnit.points
+              }
+            } else if (isMutationTestUnit(gradedUnit)) {
+              return {
+                name: gradedUnit.name,
+                output:
+                  'Build failed, test not run. Please see overall output for more details.',
+                output_format: 'text' as OutputFormat,
+                score: 0,
+                max_score: gradedUnit.breakPoints[0].pointsToAward
+              }
+            } else {
+              throw new Error(
+                `Unknown unit type in grading config: ${JSON.stringify(gradedUnit)}`
+              )
+            }
+          })
+        )
+        .flat()
+      return {
+        lint: {
+          status: 'fail',
+          output: 'Gradle build failed'
+        },
+        output: {
+          visible: {
+            output: msg,
+            output_format: 'text'
+          }
+        },
+        tests: allTests,
+        score: 0
+      }
+    }
 
     const lintResult = await this.builder.lint()
     // console.log(lintResult);
@@ -190,9 +239,20 @@ class Grader {
     if (this.config.submissionFiles.testFiles.length > 0) {
       await this.resetSolutionFiles()
       await this.copyStudentFiles('testFiles')
-      await this.builder.buildClean()
-      const testResults = await this.builder.test()
-      if (testResults.some((result) => result.status === 'fail')) {
+      try {
+        await this.builder.buildClean()
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Unknown error'
+        mutantFailureAdvice =
+          'Your tests failed to compile. Please see overall output for more details.'
+        this.logger.log(
+          'visible',
+          'Your tests failed to compile. Here is the output from building your tests with our solution:'
+        )
+        this.logger.log('visible', msg)
+      }
+      const studentTestResults = await this.builder.test()
+      if (studentTestResults.some((result) => result.status === 'fail')) {
         console.log('some tests failed')
         this.logger.log(
           'visible',
@@ -201,7 +261,7 @@ class Grader {
         mutantFailureAdvice =
           "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. Here are the failing tests:"
         this.logger.log('visible', 'Here are your failing test results:')
-        for (const result of testResults) {
+        for (const result of studentTestResults) {
           if (result.status === 'fail') {
             mutantFailureAdvice += `\n${result.name}: ${result.status}\n${result.output}\n--------------------------------\n`
             this.logger.log('visible', `${result.name}: ${result.status}`)
@@ -218,7 +278,7 @@ class Grader {
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
       )
       .flat()
-    console.log(JSON.stringify(testFeedbacks, null, 2))
+
     return {
       lint: lintResult,
       tests: testFeedbacks,

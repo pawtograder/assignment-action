@@ -17,4 +17,6 @@ const submissionDir: string = options.submissionDir
 console.log(
   `Grading submissions in ${submissionDir} against solution in ${solutionDir}`
 )
-grade(solutionDir, submissionDir)
+grade(solutionDir, submissionDir).then((feedback) => {
+  console.log(JSON.stringify(feedback, null, 2))
+})

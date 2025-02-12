@@ -31,7 +31,7 @@ export abstract class Builder {
     args: string[],
     logger: Logger,
     ignoreFailures = false
-  ): Promise<string> {
+  ): Promise<{ returnCode: number; output: string }> {
     let myOutput = ''
     let myError = ''
     try {
@@ -52,14 +52,14 @@ export abstract class Builder {
       myOutput += myError
       logger.log('hidden', `${myOutput}`)
       logger.log('hidden', `Return code: ${returnCode}`)
-      return myOutput
-    } catch (_err) {
+      return { returnCode, output: myOutput }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       logger.log(
         'visible',
         `Command ${command} failed unexpectedly with output:\n${myOutput + myError}`
       )
-      console.error(_err)
-      throw new Error(`Command failed with output:\n${myOutput + myError}`)
+      throw new Error(`Command failed with output:\n${myOutput}`)
     }
   }
 

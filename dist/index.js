@@ -1,4 +1,4 @@
-import require$$0 from 'os';
+import require$$0, { tmpdir } from 'os';
 import require$$0$1, { createHash } from 'crypto';
 import require$$1, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync, readFileSync, createWriteStream } from 'fs';
 import path$1 from 'path';
@@ -27,7 +27,7 @@ import require$$6 from 'string_decoder';
 import require$$0$8 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
-import { readFile, readdir as readdir$2, mkdir } from 'fs/promises';
+import { readFile, mkdtemp, readdir as readdir$2, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import http from 'node:http';
 import https from 'node:https';
@@ -49899,12 +49899,12 @@ class Builder {
             myOutput += myError;
             logger.log('hidden', `${myOutput}`);
             logger.log('hidden', `Return code: ${returnCode}`);
-            return myOutput;
+            return { returnCode, output: myOutput };
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         }
-        catch (_err) {
+        catch (err) {
             logger.log('visible', `Command ${command} failed unexpectedly with output:\n${myOutput + myError}`);
-            console.error(_err);
-            throw new Error(`Command failed with output:\n${myOutput + myError}`);
+            throw new Error(`Command failed with output:\n${myOutput}`);
         }
     }
 }
@@ -52356,14 +52356,16 @@ class GradleBuilder extends Builder {
     }
     async buildClean() {
         this.logger.log('hidden', 'Building clean with Gradle');
-        await this.executeCommandAndGetOutput('./gradlew', ['clean', 'build'], this.logger, true);
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', ['clean', 'build'], this.logger, true);
+        if (returnCode !== 0) {
+            throw new Error(`Gradle build failed: ${output}`);
+        }
     }
 }
 
 class Logger {
     output = [];
     log(visibility, message) {
-        console.log(message);
         this.output.push({
             output: message,
             visibility: visibility
@@ -52531,7 +52533,7 @@ class Grader {
                     name: unit.name,
                     output: `Tests passed: ${passingTests} / ${expectedTests}\n${relevantTestResults.map((result) => `${result.name}: ${result.status}${result.output ? `\n${result.output}` : ''}`).join('\n')}`,
                     output_format: 'text',
-                    score: passingTests,
+                    score: passingTests == expectedTests ? unit.points : 0,
                     max_score: unit.points
                 }
             ];
@@ -52539,8 +52541,8 @@ class Grader {
         throw new Error(`Unknown unit type in grading config: ${JSON.stringify(unit)}`);
     }
     async grade() {
-        // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
-        const tmpDir = path$1.join(process.cwd(), 'pawtograder-grading');
+        const tmpDir = await mkdtemp(path$1.join(tmpdir(), 'pawtograder-'));
+        // const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
         await ioExports.mkdirP(tmpDir);
         const solutionFiles = await readdir$2(this.solutionDir);
         await Promise.all(solutionFiles.map(async (file) => {
@@ -52549,7 +52551,51 @@ class Grader {
             await ioExports.cp(src, dest, { recursive: true });
         }));
         await this.copyStudentFiles('files');
-        await this.builder.buildClean();
+        try {
+            await this.builder.buildClean();
+        }
+        catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error';
+            const allTests = this.config.gradedParts
+                .map((part) => part.gradedUnits.map((gradedUnit) => {
+                if (isRegularTestUnit(gradedUnit)) {
+                    return {
+                        name: gradedUnit.name,
+                        output: 'Build failed, test not run. Please see overall output for more details.',
+                        output_format: 'text',
+                        score: 0,
+                        max_score: gradedUnit.points
+                    };
+                }
+                else if (isMutationTestUnit(gradedUnit)) {
+                    return {
+                        name: gradedUnit.name,
+                        output: 'Build failed, test not run. Please see overall output for more details.',
+                        output_format: 'text',
+                        score: 0,
+                        max_score: gradedUnit.breakPoints[0].pointsToAward
+                    };
+                }
+                else {
+                    throw new Error(`Unknown unit type in grading config: ${JSON.stringify(gradedUnit)}`);
+                }
+            }))
+                .flat();
+            return {
+                lint: {
+                    status: 'fail',
+                    output: 'Gradle build failed'
+                },
+                output: {
+                    visible: {
+                        output: msg,
+                        output_format: 'text'
+                    }
+                },
+                tests: allTests,
+                score: 0
+            };
+        }
         const lintResult = await this.builder.lint();
         // console.log(lintResult);
         const testResults = await this.builder.test();
@@ -52558,15 +52604,24 @@ class Grader {
         if (this.config.submissionFiles.testFiles.length > 0) {
             await this.resetSolutionFiles();
             await this.copyStudentFiles('testFiles');
-            await this.builder.buildClean();
-            const testResults = await this.builder.test();
-            if (testResults.some((result) => result.status === 'fail')) {
+            try {
+                await this.builder.buildClean();
+            }
+            catch (err) {
+                const msg = err instanceof Error ? err.message : 'Unknown error';
+                mutantFailureAdvice =
+                    'Your tests failed to compile. Please see overall output for more details.';
+                this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
+                this.logger.log('visible', msg);
+            }
+            const studentTestResults = await this.builder.test();
+            if (studentTestResults.some((result) => result.status === 'fail')) {
                 console.log('some tests failed');
                 this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
                 mutantFailureAdvice =
                     "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. Here are the failing tests:";
                 this.logger.log('visible', 'Here are your failing test results:');
-                for (const result of testResults) {
+                for (const result of studentTestResults) {
                     if (result.status === 'fail') {
                         mutantFailureAdvice += `\n${result.name}: ${result.status}\n${result.output}\n--------------------------------\n`;
                         this.logger.log('visible', `${result.name}: ${result.status}`);
@@ -52582,7 +52637,6 @@ class Grader {
         const testFeedbacks = this.config.gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
-        console.log(JSON.stringify(testFeedbacks, null, 2));
         return {
             lint: lintResult,
             tests: testFeedbacks,
