@@ -68,7 +68,7 @@ export async function run(): Promise<void> {
     const start = Date.now()
     try {
       const results = await grade(assignmentDir, graderDir)
-      await submitFeedback({
+      const gradeResponse = await submitFeedback({
         body: {
           ret_code: 0,
           output: '',
@@ -86,6 +86,25 @@ export async function run(): Promise<void> {
       const max_score =
         results.score ||
         results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0)
+
+      // Set job summary with test results
+      let summary = `# Autograder Results\n\n`
+      summary += `**Score**: ${score}/${max_score}\n\n`
+      summary += `View the complete results [in pawtograder](${gradeResponse.details_url})\n\n`
+
+      if (results.tests.length > 0) {
+        summary += '## Test Results\n\n'
+        for (const test of results.tests) {
+          const icon = test.score === test.max_score ? '✅' : '❌'
+          summary += `${icon} ${test.name}: ${test.score}/${test.max_score}\n\n`
+          if (test.output) {
+            summary += '```\n' + test.output + '\n```\n\n'
+          }
+        }
+      }
+
+      await core.summary.addRaw(summary)
+
       core.setOutput('score', score)
       core.setOutput('max_score', max_score)
       if (score != max_score) {

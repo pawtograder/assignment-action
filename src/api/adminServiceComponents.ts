@@ -3,9 +3,9 @@
  *
  * @version 0.0.1
  */
-import type * as Fetcher from './adminServiceFetcher.js'
-import { adminServiceFetch } from './adminServiceFetcher.js'
-import type * as Schemas from './adminServiceSchemas.js'
+import type * as Fetcher from './adminServiceFetcher.js';
+import { adminServiceFetch } from './adminServiceFetcher.js';
+import type * as Schemas from './adminServiceSchemas.js';
 
 export type GetCanvasCoursesError = Fetcher.ErrorWrapper<undefined>;
 
@@ -40,6 +40,47 @@ export const getCanvasCourse = (variables: GetCanvasCourseVariables, signal?: Ab
     {},
     GetCanvasCoursePathParams
   >({ url: '/api/admin/canvas/courses/{courseId}', method: 'get', ...variables, signal });
+
+export type CreateSubmissionHeaders = {
+  Authorization: string;
+};
+
+export type CreateSubmissionError = Fetcher.ErrorWrapper<undefined>;
+
+export type CreateSubmissionVariables = {
+  headers: CreateSubmissionHeaders;
+};
+
+export const createSubmission = (variables: CreateSubmissionVariables, signal?: AbortSignal) =>
+  adminServiceFetch<
+    Schemas.SubmissionResponse,
+    CreateSubmissionError,
+    undefined,
+    CreateSubmissionHeaders,
+    {},
+    {}
+  >({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
+
+export type SubmitFeedbackHeaders = {
+  Authorization: string;
+};
+
+export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>;
+
+export type SubmitFeedbackVariables = {
+  body: Schemas.GradingScriptResult;
+  headers: SubmitFeedbackHeaders;
+};
+
+export const submitFeedback = (variables: SubmitFeedbackVariables, signal?: AbortSignal) =>
+  adminServiceFetch<
+    Schemas.GradeResponse,
+    SubmitFeedbackError,
+    Schemas.GradingScriptResult,
+    SubmitFeedbackHeaders,
+    {},
+    {}
+  >({ url: '/api/autograder/submission/feedback', method: 'post', ...variables, signal });
 
 export type CreateAssignmentRepositoriesPathParams = {
   /**
@@ -305,47 +346,6 @@ export const getTemplateRepos = (variables: GetTemplateReposVariables, signal?: 
     {},
     GetTemplateReposPathParams
   >({ url: '/api/instructor/{courseId}/template-repos', method: 'get', ...variables, signal });
-
-export type CreateSubmissionHeaders = {
-  Authorization: string;
-};
-
-export type CreateSubmissionError = Fetcher.ErrorWrapper<undefined>;
-
-export type CreateSubmissionVariables = {
-  headers: CreateSubmissionHeaders;
-};
-
-export const createSubmission = (variables: CreateSubmissionVariables, signal?: AbortSignal) =>
-  adminServiceFetch<
-    Schemas.SubmissionResponse,
-    CreateSubmissionError,
-    undefined,
-    CreateSubmissionHeaders,
-    {},
-    {}
-  >({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
-
-export type SubmitFeedbackHeaders = {
-  Authorization: string;
-};
-
-export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>;
-
-export type SubmitFeedbackVariables = {
-  body: Schemas.GradingScriptResult;
-  headers: SubmitFeedbackHeaders;
-};
-
-export const submitFeedback = (variables: SubmitFeedbackVariables, signal?: AbortSignal) =>
-  adminServiceFetch<
-    Schemas.GradeResponse,
-    SubmitFeedbackError,
-    Schemas.GradingScriptResult,
-    SubmitFeedbackHeaders,
-    {},
-    {}
-  >({ url: '/api/autograder/submission/feedback', method: 'post', ...variables, signal });
 
 export type CreateCourseForCanvasCoursePathParams = {
   /**

@@ -170,6 +170,7 @@ export type SubmissionResponse = {
 };
 
 export type GradeResponse = {
+  details_url: string;
   message: string;
   is_ok: boolean;
 };
@@ -218,6 +219,10 @@ export type AutograderFeedback = {
       output: string;
     };
   };
+  /**
+   * @format double
+   */
+  max_score?: number;
   /**
    * @format double
    */
