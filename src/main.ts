@@ -90,9 +90,9 @@ export async function run(): Promise<void> {
 
       // Set job summary with test results
       core.summary.addHeading('Autograder Results')
-      core.summary.addRaw(`**Score**: ${score}/${max_score}`)
+      core.summary.addRaw(`Score: ${score}/${max_score}`, true)
       core.summary.addLink(
-        'View the complete results',
+        'View the complete results with all details and logs in Pawtograder',
         gradeResponse.details_url
       )
       if (results.output.visible?.output) {
@@ -100,9 +100,8 @@ export async function run(): Promise<void> {
       }
       core.summary.addHeading('Lint Results', 2)
       core.summary.addRaw(
-        `**Status**: ${results.lint.status === 'pass' ? '✅' : '❌'}`
+        `Status: ${results.lint.status === 'pass' ? '✅' : '❌'}`
       )
-      core.summary.addDetails('Lint Output', results.lint.output)
       if (results.tests.length > 0) {
         core.summary.addHeading('Test Results', 2)
         core.summary.addHeading('Summary', 3)
@@ -122,13 +121,6 @@ export async function run(): Promise<void> {
           rows.push([icon, test.name, `${test.score}/${test.max_score}`])
         }
         core.summary.addTable(rows)
-        core.summary.addHeading('Test Details', 3)
-        for (const test of results.tests) {
-          if (test.output) {
-            const icon = test.score === test.max_score ? '✅' : '❌'
-            core.summary.addDetails(icon + test.name, test.output)
-          }
-        }
       }
       await core.summary.write()
       if (score == 0) {
