@@ -101,7 +101,7 @@ class Grader {
             output:
               mutantFailureAdvice ||
               'No results from grading tests. Please check overall output for more details.',
-            output_format: 'text',
+            output_format: 'markdown',
             score: 0,
             max_score: unit.breakPoints[0].pointsToAward
           }
@@ -153,10 +153,23 @@ class Grader {
         (result) => result.status === 'pass'
       ).length
 
+      function icon(result: TestResult) {
+        if (result.status === 'pass') {
+          return '✅'
+        } else {
+          return '❌'
+        }
+      }
       return [
         {
           name: unit.name,
-          output: `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults.map((result) => `  * ${result.name}: ${result.status}${result.output ? '\n```\n' + result.output + '\n```' : ''}`).join('\n')}`,
+          output: `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(
+              (result) =>
+                `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
+            )
+            .join('\n')}`,
           output_format: 'markdown',
           score: passingTests == expectedTests ? unit.points : 0,
           max_score: unit.points
@@ -264,16 +277,17 @@ class Grader {
           "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "
         )
         mutantFailureAdvice =
-          "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. Here are the failing tests:"
+          "**Error**: Some of your tests failed when run against the instructor's solution.\n\n Your tests will not be graded for this submission. Please fix them before resubmitting.\n\nHere are your failing test results:\n\n"
         this.logger.log('visible', 'Here are your failing test results:')
         for (const result of studentTestResults) {
           if (result.status === 'fail') {
-            mutantFailureAdvice += `\n❌ ${result.name}: **${result.status}**`
+            mutantFailureAdvice += `\n❌ ${result.name}: **${result.status}**\n`
             mutantFailureAdvice += '```\n' + result.output + '\n```'
             this.logger.log('visible', `${result.name}: ${result.status}`)
             this.logger.log('visible', result.output)
           }
         }
+        mutantFailureAdvice += '\n\nPlease fix the above errors and resubmit.'
       } else {
         console.log('Running student tests against buggy solutions')
         mutantResults = await this.builder.mutationTest()
