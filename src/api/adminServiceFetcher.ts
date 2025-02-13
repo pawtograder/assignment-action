@@ -70,7 +70,6 @@ export async function adminServiceFetch<
       delete requestHeaders['Content-Type']
     }
 
-    console.log('Making request with body:', JSON.stringify(body))
     const response = await fetch(
       `${baseUrl}${resolveUrl(url, queryParams, pathParams)}`,
       {

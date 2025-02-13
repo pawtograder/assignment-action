@@ -80,6 +80,17 @@ export async function run(): Promise<void> {
           Authorization: token
         }
       })
+      const score =
+        results.score ||
+        results.tests.reduce((acc, test) => acc + (test.score || 0), 0)
+      const max_score =
+        results.score ||
+        results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0)
+      core.setOutput('score', score)
+      core.setOutput('max_score', max_score)
+      if (score != max_score) {
+        core.setFailed(`Partial score: ${score}/${max_score}`)
+      }
     } catch (error) {
       if (error instanceof Error) {
         await submitFeedback({

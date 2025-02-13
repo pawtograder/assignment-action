@@ -6,6 +6,9 @@ export default class Logger {
     visibility: OutputVisibility
   }[] = []
   log(visibility: OutputVisibility, message: string) {
+    if (visibility === 'visible') {
+      console.log(message)
+    }
     this.output.push({
       output: message,
       visibility: visibility

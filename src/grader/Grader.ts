@@ -252,7 +252,6 @@ class Grader {
       }
       const studentTestResults = await this.builder.test()
       if (studentTestResults.some((result) => result.status === 'fail')) {
-        console.log('some tests failed')
         this.logger.log(
           'visible',
           "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "

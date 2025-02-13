@@ -34485,7 +34485,6 @@ async function adminServiceFetch({ url, method, body, headers, pathParams, query
             .includes('multipart/form-data')) {
             delete requestHeaders['Content-Type'];
         }
-        console.log('Making request with body:', JSON.stringify(body));
         const response = await fetch$1(`${baseUrl}${resolveUrl(url, queryParams, pathParams)}`, {
             signal,
             method: method.toUpperCase(),
@@ -34538,12 +34537,7 @@ const resolveUrl = (url, queryParams = {}, pathParams = {}) => {
 };
 
 const createSubmission = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
-const submitFeedback = (variables, signal) => adminServiceFetch({
-    url: '/api/autograder/submission/feedback',
-    method: 'post',
-    ...variables,
-    signal
-});
+const submitFeedback = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission/feedback', method: 'post', ...variables, signal });
 
 var ioExports = requireIo();
 
@@ -52366,6 +52360,9 @@ class GradleBuilder extends Builder {
 class Logger {
     output = [];
     log(visibility, message) {
+        if (visibility === 'visible') {
+            console.log(message);
+        }
         this.output.push({
             output: message,
             visibility: visibility
@@ -52616,7 +52613,6 @@ class Grader {
             }
             const studentTestResults = await this.builder.test();
             if (studentTestResults.some((result) => result.status === 'fail')) {
-                console.log('some tests failed');
                 this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
                 mutantFailureAdvice =
                     "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. Here are the failing tests:";
@@ -52710,6 +52706,15 @@ async function run() {
                     Authorization: token
                 }
             });
+            const score = results.score ||
+                results.tests.reduce((acc, test) => acc + (test.score || 0), 0);
+            const max_score = results.score ||
+                results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0);
+            coreExports.setOutput('score', score);
+            coreExports.setOutput('max_score', max_score);
+            if (score != max_score) {
+                coreExports.setFailed(`Partial score: ${score}/${max_score}`);
+            }
         }
         catch (error) {
             if (error instanceof Error) {
