@@ -132,8 +132,8 @@ class Grader {
         return [
           {
             name: unit.name,
-            output: `Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}`,
-            output_format: 'text',
+            output: `**Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}**`,
+            output_format: 'markdown',
             score: breakPoint ? breakPoint.pointsToAward : 0,
             max_score: unit.breakPoints[0].pointsToAward
           }
@@ -152,11 +152,12 @@ class Grader {
       const passingTests = relevantTestResults.filter(
         (result) => result.status === 'pass'
       ).length
+
       return [
         {
           name: unit.name,
-          output: `Tests passed: ${passingTests} / ${expectedTests}\n${relevantTestResults.map((result) => `${result.name}: ${result.status}${result.output ? `\n${result.output}` : ''}`).join('\n')}`,
-          output_format: 'text',
+          output: `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults.map((result) => `  * ${result.name}: ${result.status}${result.output ? '\n```\n' + result.output + '\n```' : ''}`).join('\n')}`,
+          output_format: 'markdown',
           score: passingTests == expectedTests ? unit.points : 0,
           max_score: unit.points
         }
@@ -267,10 +268,10 @@ class Grader {
         this.logger.log('visible', 'Here are your failing test results:')
         for (const result of studentTestResults) {
           if (result.status === 'fail') {
-            mutantFailureAdvice += `\n${result.name}: ${result.status}\n${result.output}\n--------------------------------\n`
+            mutantFailureAdvice += `\n❌ ${result.name}: **${result.status}**`
+            mutantFailureAdvice += '```\n' + result.output + '\n```'
             this.logger.log('visible', `${result.name}: ${result.status}`)
             this.logger.log('visible', result.output)
-            this.logger.log('visible', '--------------------------------')
           }
         }
       } else {

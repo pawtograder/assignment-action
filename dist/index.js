@@ -52288,8 +52288,8 @@ class GradleBuilder extends Builder {
             .map((file) => {
             return file.files
                 .map((f) => {
-                return `${f.name}: ${f.errors.length} errors:
-                    ${f.errors.map((e) => `\t${e.line}: ${e.message}`).join('\n')}`;
+                return ` * ${f.name}: ${f.errors.length} errors:
+                    ${f.errors.map((e) => `\t${e.line}: ` + '`' + e.message + '`').join('\n')}`;
             })
                 .join('\n');
         })
@@ -52298,7 +52298,7 @@ class GradleBuilder extends Builder {
         return {
             status: totalErrors > 0 ? 'fail' : 'pass',
             output: `Total errors: ${totalErrors}\n${formattedOutput}`,
-            output_format: 'text'
+            output_format: 'markdown'
         };
     }
     async test() {
@@ -52510,8 +52510,8 @@ class Grader {
                 return [
                     {
                         name: unit.name,
-                        output: `Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}`,
-                        output_format: 'text',
+                        output: `**Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}**`,
+                        output_format: 'markdown',
                         score: breakPoint ? breakPoint.pointsToAward : 0,
                         max_score: unit.breakPoints[0].pointsToAward
                     }
@@ -52533,8 +52533,8 @@ class Grader {
             return [
                 {
                     name: unit.name,
-                    output: `Tests passed: ${passingTests} / ${expectedTests}\n${relevantTestResults.map((result) => `${result.name}: ${result.status}${result.output ? `\n${result.output}` : ''}`).join('\n')}`,
-                    output_format: 'text',
+                    output: `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults.map((result) => `  * ${result.name}: ${result.status}${result.output ? '\n```\n' + result.output + '\n```' : ''}`).join('\n')}`,
+                    output_format: 'markdown',
                     score: passingTests == expectedTests ? unit.points : 0,
                     max_score: unit.points
                 }
@@ -52628,10 +52628,10 @@ class Grader {
                 this.logger.log('visible', 'Here are your failing test results:');
                 for (const result of studentTestResults) {
                     if (result.status === 'fail') {
-                        mutantFailureAdvice += `\n${result.name}: ${result.status}\n${result.output}\n--------------------------------\n`;
+                        mutantFailureAdvice += `\n❌ ${result.name}: **${result.status}**`;
+                        mutantFailureAdvice += '```\n' + result.output + '\n```';
                         this.logger.log('visible', `${result.name}: ${result.status}`);
                         this.logger.log('visible', result.output);
-                        this.logger.log('visible', '--------------------------------');
                     }
                 }
             }
@@ -52731,28 +52731,32 @@ async function run() {
             coreExports.summary.addHeading('Lint Results', 2);
             coreExports.summary.addRaw(`**Status**: ${results.lint.status === 'pass' ? '✅' : '❌'}`);
             coreExports.summary.addDetails('Lint Output', results.lint.output);
-            coreExports.summary.addHeading('Test Results', 2);
             if (results.tests.length > 0) {
+                coreExports.summary.addHeading('Test Results', 2);
+                coreExports.summary.addHeading('Summary', 3);
                 const rows = [];
                 rows.push([
                     { data: 'Status', header: true },
-                    { data: 'Part', header: true },
                     { data: 'Name', header: true },
                     { data: 'Score', header: true }
                 ]);
+                let lastPart = undefined;
                 for (const test of results.tests) {
                     const icon = test.score === test.max_score ? '✅' : '❌';
-                    rows.push([
-                        icon,
-                        test.part || '',
-                        test.name,
-                        `${test.score}/${test.max_score}`
-                    ]);
-                    if (test.output) {
-                        coreExports.summary.addDetails(test.name, test.output);
+                    if (test.part !== lastPart && test.part) {
+                        lastPart = test.part;
+                        rows.push([{ data: test.part, colspan: '3' }]);
                     }
+                    rows.push([icon, test.name, `${test.score}/${test.max_score}`]);
                 }
                 coreExports.summary.addTable(rows);
+                coreExports.summary.addHeading('Test Details', 3);
+                for (const test of results.tests) {
+                    if (test.output) {
+                        const icon = test.score === test.max_score ? '✅' : '❌';
+                        coreExports.summary.addDetails(icon + test.name, test.output);
+                    }
+                }
             }
             await coreExports.summary.write();
             if (score != max_score) {

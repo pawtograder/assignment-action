@@ -38,6 +38,6 @@ export interface PawtograderConfig {
 }
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
 export declare function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit;
-export type OutputFormat = 'text';
+export type OutputFormat = 'text' | 'ansi' | 'markdown';
 export type OutputVisibility = 'hidden' | 'visible' | 'after_due_date' | 'after_published';
 export type AutograderTestFeedback = AutograderFeedback['tests'][0];

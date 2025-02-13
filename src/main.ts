@@ -103,28 +103,32 @@ export async function run(): Promise<void> {
         `**Status**: ${results.lint.status === 'pass' ? '✅' : '❌'}`
       )
       core.summary.addDetails('Lint Output', results.lint.output)
-      core.summary.addHeading('Test Results', 2)
       if (results.tests.length > 0) {
+        core.summary.addHeading('Test Results', 2)
+        core.summary.addHeading('Summary', 3)
         const rows: SummaryTableRow[] = []
         rows.push([
           { data: 'Status', header: true },
-          { data: 'Part', header: true },
           { data: 'Name', header: true },
           { data: 'Score', header: true }
         ])
+        let lastPart = undefined
         for (const test of results.tests) {
           const icon = test.score === test.max_score ? '✅' : '❌'
-          rows.push([
-            icon,
-            test.part || '',
-            test.name,
-            `${test.score}/${test.max_score}`
-          ])
-          if (test.output) {
-            core.summary.addDetails(test.name, test.output)
+          if (test.part !== lastPart && test.part) {
+            lastPart = test.part
+            rows.push([{ data: test.part, colspan: '3' }])
           }
+          rows.push([icon, test.name, `${test.score}/${test.max_score}`])
         }
         core.summary.addTable(rows)
+        core.summary.addHeading('Test Details', 3)
+        for (const test of results.tests) {
+          if (test.output) {
+            const icon = test.score === test.max_score ? '✅' : '❌'
+            core.summary.addDetails(icon + test.name, test.output)
+          }
+        }
       }
       await core.summary.write()
 

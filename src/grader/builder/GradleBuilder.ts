@@ -29,8 +29,8 @@ export default class GradleBuilder extends Builder {
       .map((file: CheckstyleReport) => {
         return file.files
           .map((f: CheckstyleFile) => {
-            return `${f.name}: ${f.errors.length} errors:
-                    ${f.errors.map((e) => `\t${e.line}: ${e.message}`).join('\n')}`
+            return ` * ${f.name}: ${f.errors.length} errors:
+                    ${f.errors.map((e) => `\t${e.line}: ` + '`' + e.message + '`').join('\n')}`
           })
           .join('\n')
       })
@@ -43,7 +43,7 @@ export default class GradleBuilder extends Builder {
     return {
       status: totalErrors > 0 ? 'fail' : 'pass',
       output: `Total errors: ${totalErrors}\n${formattedOutput}`,
-      output_format: 'text'
+      output_format: 'markdown'
     }
   }
   async test(): Promise<TestResult[]> {

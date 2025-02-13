@@ -59,7 +59,7 @@ export function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {
 export function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit {
   return 'tests' in unit && 'testCount' in unit
 }
-export type OutputFormat = 'text' // TODO also support: | 'ansi' | 'html' | 'markdown';
+export type OutputFormat = 'text' | 'ansi' | 'markdown'
 export type OutputVisibility =
   | 'hidden' // Never shown to students
   | 'visible' // Always shown to students
