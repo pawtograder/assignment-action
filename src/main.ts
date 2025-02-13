@@ -131,9 +131,12 @@ export async function run(): Promise<void> {
         }
       }
       await core.summary.write()
-
-      if (score != max_score) {
-        core.setFailed(`Partial score: ${score}/${max_score}`)
+      if (score == 0) {
+        core.error('Score: 0')
+      } else if (score != max_score) {
+        core.warning(`Score: ${score}/${max_score}`)
+      } else {
+        core.notice(`🚀 Score: ${score}/${max_score} `)
       }
     } catch (error) {
       if (error instanceof Error) {

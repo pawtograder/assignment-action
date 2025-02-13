@@ -52759,8 +52759,14 @@ async function run() {
                 }
             }
             await coreExports.summary.write();
-            if (score != max_score) {
-                coreExports.setFailed(`Partial score: ${score}/${max_score}`);
+            if (score == 0) {
+                coreExports.error('Score: 0');
+            }
+            else if (score != max_score) {
+                coreExports.warning(`Score: ${score}/${max_score}`);
+            }
+            else {
+                coreExports.notice(`🚀 Score: ${score}/${max_score} `);
             }
         }
         catch (error) {
