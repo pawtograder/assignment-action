@@ -175,14 +175,14 @@ export type GradeResponse = {
   is_ok: boolean;
 };
 
-export type OutputFormat = 'text';
+export type OutputFormat = 'text' | 'markdown' | 'ansi';
 
 export type AutograderFeedback = {
   tests: {
     extra_data?: {
       [key: string]: string;
     };
-    tags?: string[];
+    part?: string;
     output_format?: OutputFormat;
     output: string;
     name_format?: OutputFormat;
@@ -203,19 +203,19 @@ export type AutograderFeedback = {
   };
   output: {
     hidden?: {
-      output_format?: 'text';
+      output_format?: OutputFormat;
       output: string;
     };
     visible?: {
-      output_format?: 'text';
+      output_format?: OutputFormat;
       output: string;
     };
     after_due_date?: {
-      output_format?: 'text';
+      output_format?: OutputFormat;
       output: string;
     };
     after_published?: {
-      output_format?: 'text';
+      output_format?: OutputFormat;
       output: string;
     };
   };

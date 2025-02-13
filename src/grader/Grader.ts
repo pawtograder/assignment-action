@@ -81,7 +81,7 @@ class Grader {
           mutantFailureAdvice
         )
         for (const feedback of ret) {
-          feedback.tags = [`${part.name}`]
+          feedback.part = part.name
         }
         return ret
       })
@@ -183,7 +183,9 @@ class Grader {
     await this.copyStudentFiles('files')
 
     try {
-      console.log('Building project and running tests')
+      console.log(
+        'Building project with student submission and running instructor tests'
+      )
       await this.builder.buildClean()
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
@@ -234,7 +236,6 @@ class Grader {
 
     console.log('Checking results')
     const lintResult = await this.builder.lint()
-    // console.log(lintResult);
     const testResults = await this.builder.test()
     let mutantResults: MutantResult[] | undefined
     let mutantFailureAdvice: string | undefined

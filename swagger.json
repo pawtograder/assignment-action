@@ -490,9 +490,10 @@
 			"OutputFormat": {
 				"type": "string",
 				"enum": [
-					"text"
-				],
-				"nullable": false
+					"text",
+					"markdown",
+					"ansi"
+				]
 			},
 			"AutograderFeedback": {
 				"properties": {
@@ -506,11 +507,8 @@
 									},
 									"type": "object"
 								},
-								"tags": {
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
+								"part": {
+									"type": "string"
 								},
 								"output_format": {
 									"$ref": "#/components/schemas/OutputFormat"
@@ -568,11 +566,7 @@
 							"hidden": {
 								"properties": {
 									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
+										"$ref": "#/components/schemas/OutputFormat"
 									},
 									"output": {
 										"type": "string"
@@ -586,11 +580,7 @@
 							"visible": {
 								"properties": {
 									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
+										"$ref": "#/components/schemas/OutputFormat"
 									},
 									"output": {
 										"type": "string"
@@ -604,11 +594,7 @@
 							"after_due_date": {
 								"properties": {
 									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
+										"$ref": "#/components/schemas/OutputFormat"
 									},
 									"output": {
 										"type": "string"
@@ -622,11 +608,7 @@
 							"after_published": {
 								"properties": {
 									"output_format": {
-										"type": "string",
-										"enum": [
-											"text"
-										],
-										"nullable": false
+										"$ref": "#/components/schemas/OutputFormat"
 									},
 									"output": {
 										"type": "string"

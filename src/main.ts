@@ -10,6 +10,7 @@ import {
   submitFeedback
 } from './api/adminServiceComponents.js'
 import grade from './grader/Grader.js'
+import { SummaryTableRow } from '@actions/core/lib/summary.js'
 /**
  * The main function for the action.
  *
@@ -88,25 +89,45 @@ export async function run(): Promise<void> {
         results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0)
 
       // Set job summary with test results
-      let summary = `# Autograder Results\n\n`
-      summary += `**Score**: ${score}/${max_score}\n\n`
-      summary += `View the complete results [in pawtograder](${gradeResponse.details_url})\n\n`
-
+      core.summary.addHeading('Autograder Results')
+      core.summary.addRaw(`**Score**: ${score}/${max_score}`)
+      core.summary.addLink(
+        'View the complete results',
+        gradeResponse.details_url
+      )
+      if (results.output.visible?.output) {
+        core.summary.addDetails('Grader Output', results.output.visible.output)
+      }
+      core.summary.addHeading('Lint Results', 2)
+      core.summary.addRaw(
+        `**Status**: ${results.lint.status === 'pass' ? '✅' : '❌'}`
+      )
+      core.summary.addDetails('Lint Output', results.lint.output)
+      core.summary.addHeading('Test Results', 2)
       if (results.tests.length > 0) {
-        summary += '## Test Results\n\n'
+        const rows: SummaryTableRow[] = []
+        rows.push([
+          { data: 'Status', header: true },
+          { data: 'Part', header: true },
+          { data: 'Name', header: true },
+          { data: 'Score', header: true }
+        ])
         for (const test of results.tests) {
           const icon = test.score === test.max_score ? '✅' : '❌'
-          summary += `${icon} ${test.name}: ${test.score}/${test.max_score}\n\n`
+          rows.push([
+            icon,
+            test.part || '',
+            test.name,
+            `${test.score}/${test.max_score}`
+          ])
           if (test.output) {
-            summary += '```\n' + test.output + '\n```\n\n'
+            core.summary.addDetails(test.name, test.output)
           }
         }
+        core.summary.addTable(rows)
       }
+      await core.summary.write()
 
-      await core.summary.addRaw(summary).write()
-
-      core.setOutput('score', score)
-      core.setOutput('max_score', max_score)
       if (score != max_score) {
         core.setFailed(`Partial score: ${score}/${max_score}`)
       }

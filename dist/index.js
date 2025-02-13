@@ -34537,7 +34537,12 @@ const resolveUrl = (url, queryParams = {}, pathParams = {}) => {
 };
 
 const createSubmission = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
-const submitFeedback = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission/feedback', method: 'post', ...variables, signal });
+const submitFeedback = (variables, signal) => adminServiceFetch({
+    url: '/api/autograder/submission/feedback',
+    method: 'post',
+    ...variables,
+    signal
+});
 
 var ioExports = requireIo();
 
@@ -52465,7 +52470,7 @@ class Grader {
             .map((unit) => {
             const ret = this.gradeGradedUnit(unit, testResults, mutantResults, mutantFailureAdvice);
             for (const feedback of ret) {
-                feedback.tags = [`${part.name}`];
+                feedback.part = part.name;
             }
             return ret;
         })
@@ -52550,7 +52555,7 @@ class Grader {
         }));
         await this.copyStudentFiles('files');
         try {
-            console.log('Building project and running tests');
+            console.log('Building project with student submission and running instructor tests');
             await this.builder.buildClean();
         }
         catch (err) {
@@ -52597,7 +52602,6 @@ class Grader {
         }
         console.log('Checking results');
         const lintResult = await this.builder.lint();
-        // console.log(lintResult);
         const testResults = await this.builder.test();
         let mutantResults;
         let mutantFailureAdvice;
@@ -52718,22 +52722,39 @@ async function run() {
             const max_score = results.score ||
                 results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0);
             // Set job summary with test results
-            let summary = `# Autograder Results\n\n`;
-            summary += `**Score**: ${score}/${max_score}\n\n`;
-            summary += `View the complete results [in pawtograder](${gradeResponse.details_url})\n\n`;
+            coreExports.summary.addHeading('Autograder Results');
+            coreExports.summary.addRaw(`**Score**: ${score}/${max_score}`);
+            coreExports.summary.addLink('View the complete results', gradeResponse.details_url);
+            if (results.output.visible?.output) {
+                coreExports.summary.addDetails('Grader Output', results.output.visible.output);
+            }
+            coreExports.summary.addHeading('Lint Results', 2);
+            coreExports.summary.addRaw(`**Status**: ${results.lint.status === 'pass' ? '✅' : '❌'}`);
+            coreExports.summary.addDetails('Lint Output', results.lint.output);
+            coreExports.summary.addHeading('Test Results', 2);
             if (results.tests.length > 0) {
-                summary += '## Test Results\n\n';
+                const rows = [];
+                rows.push([
+                    { data: 'Status', header: true },
+                    { data: 'Part', header: true },
+                    { data: 'Name', header: true },
+                    { data: 'Score', header: true }
+                ]);
                 for (const test of results.tests) {
                     const icon = test.score === test.max_score ? '✅' : '❌';
-                    summary += `${icon} ${test.name}: ${test.score}/${test.max_score}\n\n`;
+                    rows.push([
+                        icon,
+                        test.part || '',
+                        test.name,
+                        `${test.score}/${test.max_score}`
+                    ]);
                     if (test.output) {
-                        summary += '```\n' + test.output + '\n```\n\n';
+                        coreExports.summary.addDetails(test.name, test.output);
                     }
                 }
+                coreExports.summary.addTable(rows);
             }
-            await coreExports.summary.addRaw(summary).write();
-            coreExports.setOutput('score', score);
-            coreExports.setOutput('max_score', max_score);
+            await coreExports.summary.write();
             if (score != max_score) {
                 coreExports.setFailed(`Partial score: ${score}/${max_score}`);
             }
