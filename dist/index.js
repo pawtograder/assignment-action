@@ -52539,6 +52539,7 @@ class Grader {
     }
     async grade() {
         // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
+        console.log('Beginning grading');
         const tmpDir = path$1.join(process.cwd(), 'pawtograder-grading');
         await ioExports.mkdirP(tmpDir);
         const solutionFiles = await readdir$2(this.solutionDir);
@@ -52549,6 +52550,7 @@ class Grader {
         }));
         await this.copyStudentFiles('files');
         try {
+            console.log('Building project and running tests');
             await this.builder.buildClean();
         }
         catch (err) {
@@ -52593,14 +52595,17 @@ class Grader {
                 score: 0
             };
         }
+        console.log('Checking results');
         const lintResult = await this.builder.lint();
         // console.log(lintResult);
         const testResults = await this.builder.test();
         let mutantResults;
         let mutantFailureAdvice;
         if (this.config.submissionFiles.testFiles.length > 0) {
+            console.log('Grading student tests');
             await this.resetSolutionFiles();
             await this.copyStudentFiles('testFiles');
+            console.log('Building solution and running student tests');
             try {
                 await this.builder.buildClean();
             }
@@ -52627,9 +52632,11 @@ class Grader {
                 }
             }
             else {
+                console.log('Running student tests against buggy solutions');
                 mutantResults = await this.builder.mutationTest();
             }
         }
+        console.log('Wrapping up');
         const testFeedbacks = this.config.gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
@@ -52724,7 +52731,7 @@ async function run() {
                     }
                 }
             }
-            await coreExports.summary.addRaw(summary);
+            await coreExports.summary.addRaw(summary).write();
             coreExports.setOutput('score', score);
             coreExports.setOutput('max_score', max_score);
             if (score != max_score) {
