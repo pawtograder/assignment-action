@@ -103,7 +103,7 @@ export async function run(): Promise<void> {
         }
       }
 
-      await core.summary.addRaw(summary)
+      await core.summary.addRaw(summary).write()
 
       core.setOutput('score', score)
       core.setOutput('max_score', max_score)

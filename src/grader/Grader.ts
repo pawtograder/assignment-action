@@ -168,6 +168,7 @@ class Grader {
   }
   async grade(): Promise<AutograderFeedback> {
     // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
+    console.log('Beginning grading')
     const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
     await io.mkdirP(tmpDir)
     const solutionFiles = await readdir(this.solutionDir)
@@ -182,6 +183,7 @@ class Grader {
     await this.copyStudentFiles('files')
 
     try {
+      console.log('Building project and running tests')
       await this.builder.buildClean()
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
@@ -230,14 +232,17 @@ class Grader {
       }
     }
 
+    console.log('Checking results')
     const lintResult = await this.builder.lint()
     // console.log(lintResult);
     const testResults = await this.builder.test()
     let mutantResults: MutantResult[] | undefined
     let mutantFailureAdvice: string | undefined
     if (this.config.submissionFiles.testFiles.length > 0) {
+      console.log('Grading student tests')
       await this.resetSolutionFiles()
       await this.copyStudentFiles('testFiles')
+      console.log('Building solution and running student tests')
       try {
         await this.builder.buildClean()
       } catch (err) {
@@ -268,9 +273,11 @@ class Grader {
           }
         }
       } else {
+        console.log('Running student tests against buggy solutions')
         mutantResults = await this.builder.mutationTest()
       }
     }
+    console.log('Wrapping up')
     const testFeedbacks = this.config.gradedParts
       .map((part) =>
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
