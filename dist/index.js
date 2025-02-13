@@ -52723,14 +52723,13 @@ async function run() {
                 results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0);
             // Set job summary with test results
             coreExports.summary.addHeading('Autograder Results');
-            coreExports.summary.addRaw(`**Score**: ${score}/${max_score}`);
-            coreExports.summary.addLink('View the complete results', gradeResponse.details_url);
+            coreExports.summary.addRaw(`Score: ${score}/${max_score}`, true);
+            coreExports.summary.addLink('View the complete results with all details and logs in Pawtograder', gradeResponse.details_url);
             if (results.output.visible?.output) {
                 coreExports.summary.addDetails('Grader Output', results.output.visible.output);
             }
             coreExports.summary.addHeading('Lint Results', 2);
-            coreExports.summary.addRaw(`**Status**: ${results.lint.status === 'pass' ? '✅' : '❌'}`);
-            coreExports.summary.addDetails('Lint Output', results.lint.output);
+            coreExports.summary.addRaw(`Status: ${results.lint.status === 'pass' ? '✅' : '❌'}`);
             if (results.tests.length > 0) {
                 coreExports.summary.addHeading('Test Results', 2);
                 coreExports.summary.addHeading('Summary', 3);
@@ -52750,13 +52749,6 @@ async function run() {
                     rows.push([icon, test.name, `${test.score}/${test.max_score}`]);
                 }
                 coreExports.summary.addTable(rows);
-                coreExports.summary.addHeading('Test Details', 3);
-                for (const test of results.tests) {
-                    if (test.output) {
-                        const icon = test.score === test.max_score ? '✅' : '❌';
-                        coreExports.summary.addDetails(icon + test.name, test.output);
-                    }
-                }
             }
             await coreExports.summary.write();
             if (score == 0) {
