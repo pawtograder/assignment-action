@@ -73,11 +73,7 @@ export default class GradleBuilder extends Builder {
           const tr: TestResult = {
             name: `${suite.name}.${test.name}`,
             status: test.failure || test.error ? 'fail' : 'pass',
-            output: test.failure
-              ? test.failure.message +
-                '\n' +
-                trimStackTrace(test.failure.stackTrace)
-              : '',
+            output: test.failure ? trimStackTrace(test.failure.stackTrace) : '',
             output_format: 'text'
           }
           return tr

@@ -52322,11 +52322,7 @@ class GradleBuilder extends Builder {
                     const tr = {
                         name: `${suite.name}.${test.name}`,
                         status: test.failure || test.error ? 'fail' : 'pass',
-                        output: test.failure
-                            ? test.failure.message +
-                                '\n' +
-                                trimStackTrace(test.failure.stackTrace)
-                            : '',
+                        output: test.failure ? trimStackTrace(test.failure.stackTrace) : '',
                         output_format: 'text'
                     };
                     return tr;
@@ -52635,11 +52631,11 @@ class Grader {
             if (studentTestResults.some((result) => result.status === 'fail')) {
                 this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
                 mutantFailureAdvice =
-                    "**Error**: Some of your tests failed when run against the instructor's solution.\n\n Your tests will not be graded for this submission. Please fix them before resubmitting.\n\nHere are your failing test results:\n\n";
+                    "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n";
                 this.logger.log('visible', 'Here are your failing test results:');
                 for (const result of studentTestResults) {
                     if (result.status === 'fail') {
-                        mutantFailureAdvice += `\n❌ ${result.name}: **${result.status}**\n`;
+                        mutantFailureAdvice += `\n❌ ${result.name}\n`;
                         mutantFailureAdvice += '```\n' + result.output + '\n```';
                         this.logger.log('visible', `${result.name}: ${result.status}`);
                         this.logger.log('visible', result.output);
