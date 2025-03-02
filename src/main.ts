@@ -139,8 +139,8 @@ export async function run(): Promise<void> {
     const { action_ref, action_repository } = JSON.parse(
       process.env.GITHUB_CONTEXT || '{}'
     )
+    console.log(process.env.GITHUB_CONTEXT)
     if (!action_ref || !action_repository) {
-      console.log(process.env.GITHUB_CONTEXT)
       throw new Error('GITHUB_CONTEXT is not set')
     }
 
