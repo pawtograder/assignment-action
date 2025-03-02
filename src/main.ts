@@ -29,6 +29,7 @@ async function downloadTarballAndExtractTo(url: string, dir: string) {
     '1'
   ])
 }
+
 async function prepareForGrading(
   graderConfig: Awaited<ReturnType<typeof createSubmission>>
 ) {
@@ -135,6 +136,14 @@ export async function run(): Promise<void> {
       return
     }
 
+    const { action_ref, action_repository } = JSON.parse(
+      process.env.GITHUB_CONTEXT || '{}'
+    )
+    if (!action_ref || !action_repository) {
+      console.log(process.env.GITHUB_CONTEXT)
+      throw new Error('GITHUB_CONTEXT is not set')
+    }
+
     let graderSha, graderDir, assignmentDir: string
     if (regressionTestJob) {
       const graderConfig = await createRegressionTestRun({
@@ -174,7 +183,9 @@ export async function run(): Promise<void> {
           output: '',
           execution_time: Date.now() - start,
           feedback: results,
-          grader_sha: graderSha
+          grader_sha: graderSha,
+          action_repository,
+          action_ref
         },
         queryParams: {
           autograder_regression_test_id: regressionTestJob
@@ -201,7 +212,9 @@ export async function run(): Promise<void> {
                 output: 'Unknown error',
                 status: 'fail'
               }
-            }
+            },
+            action_ref,
+            action_repository
           },
           headers: {
             Authorization: token

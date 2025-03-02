@@ -75,6 +75,8 @@ export type AutograderFeedback = {
 
 export type GradingScriptResult = {
   regression_test_repo?: string;
+  action_repository: string;
+  action_ref: string;
   grader_sha: string;
   feedback: AutograderFeedback;
   /**

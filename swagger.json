@@ -212,6 +212,12 @@
 					"regression_test_repo": {
 						"type": "string"
 					},
+					"action_repository": {
+						"type": "string"
+					},
+					"action_ref": {
+						"type": "string"
+					},
 					"grader_sha": {
 						"type": "string"
 					},
@@ -231,6 +237,8 @@
 					}
 				},
 				"required": [
+					"action_repository",
+					"action_ref",
 					"grader_sha",
 					"feedback",
 					"execution_time",

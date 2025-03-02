@@ -52783,6 +52783,11 @@ async function run() {
             coreExports.warning('This action appears to have been triggered by running in the handout repo. No submission has been created, and it will not be graded.');
             return;
         }
+        const { action_ref, action_repository } = JSON.parse(process.env.GITHUB_CONTEXT || '{}');
+        if (!action_ref || !action_repository) {
+            console.log(process.env.GITHUB_CONTEXT);
+            throw new Error('GITHUB_CONTEXT is not set');
+        }
         let graderSha, graderDir, assignmentDir;
         if (regressionTestJob) {
             const graderConfig = await createRegressionTestRun({
@@ -52818,7 +52823,9 @@ async function run() {
                     output: '',
                     execution_time: Date.now() - start,
                     feedback: results,
-                    grader_sha: graderSha
+                    grader_sha: graderSha,
+                    action_repository,
+                    action_ref
                 },
                 queryParams: {
                     autograder_regression_test_id: regressionTestJob
@@ -52846,7 +52853,9 @@ async function run() {
                                 output: 'Unknown error',
                                 status: 'fail'
                             }
-                        }
+                        },
+                        action_ref,
+                        action_repository
                     },
                     headers: {
                         Authorization: token
