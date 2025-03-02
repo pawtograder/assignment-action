@@ -19,6 +19,11 @@ inputs:
       if so, no submission will be created (so your handout built can still be
       green).
     required: false
+  regression_test_job:
+    description:
+      The name of the job to run the regression test on, e.g.
+      khoury-classroom/handout-template.
+    required: false
 
 outputs:
   score:

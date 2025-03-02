@@ -1,5 +1,5 @@
 import require$$0 from 'os';
-import require$$0$1, { createHash } from 'crypto';
+import require$$0$1 from 'crypto';
 import require$$1, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync, readFileSync, createWriteStream } from 'fs';
 import path$1 from 'path';
 import require$$2 from 'http';
@@ -27,7 +27,7 @@ import require$$6 from 'string_decoder';
 import require$$0$8 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
-import { readFile, readdir as readdir$2, mkdir } from 'fs/promises';
+import { readFile, readdir as readdir$2, rename, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import http from 'node:http';
 import https from 'node:https';
@@ -34537,6 +34537,12 @@ const resolveUrl = (url, queryParams = {}, pathParams = {}) => {
 };
 
 const createSubmission = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
+const createRegressionTestRun = (variables, signal) => adminServiceFetch({
+    url: '/api/autograder/regression-test-run',
+    method: 'post',
+    ...variables,
+    signal
+});
 const submitFeedback = (variables, signal) => adminServiceFetch({
     url: '/api/autograder/submission/feedback',
     method: 'post',
@@ -52660,6 +52666,84 @@ class Grader {
     }
 }
 
+async function downloadTarballAndExtractTo(url, dir) {
+    const file = await fetch(url);
+    if (!file.body) {
+        throw new Error('No body in response');
+    }
+    const fileStream = createWriteStream('archive.tgz');
+    await finished(Readable.fromWeb(file.body).pipe(fileStream));
+    await mkdir(dir);
+    await execExports.exec('tar', [
+        'xzf',
+        'archive.tgz',
+        '-C',
+        dir,
+        '--strip-components',
+        '1'
+    ]);
+}
+async function prepareForGrading(graderConfig) {
+    await downloadTarballAndExtractTo(graderConfig.grader_url, `grader`);
+    const workDir = process.env.GITHUB_WORKSPACE;
+    //Run the autograder
+    const assignmentDir = `${workDir}/submission`;
+    const graderDir = `${workDir}/grader`;
+    return { assignmentDir, graderDir };
+}
+async function prepareForRegressionTest(graderConfig) {
+    await rename(`submission`, `grader`);
+    await downloadTarballAndExtractTo(graderConfig.regression_test_url, `submission`);
+    const workDir = process.env.GITHUB_WORKSPACE;
+    const assignmentDir = `${workDir}/submission`;
+    const graderDir = `${workDir}/grader`;
+    return { assignmentDir, graderDir };
+}
+async function generateSummaryReport(results, gradeResponse) {
+    const score = results.score ||
+        results.tests.reduce((acc, test) => acc + (test.score || 0), 0);
+    const max_score = results.score ||
+        results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0);
+    // Set job summary with test results
+    coreExports.summary.addHeading('Autograder Results');
+    coreExports.summary.addRaw(`Score: ${score}/${max_score}`, true);
+    coreExports.summary.addLink('View the complete results with all details and logs in Pawtograder', gradeResponse.details_url);
+    if (results.output.visible?.output) {
+        coreExports.summary.addDetails('Grader Output', results.output.visible.output);
+    }
+    coreExports.summary.addHeading('Lint Results', 2);
+    coreExports.summary.addRaw(`Status: ${results.lint.status === 'pass' ? '✅' : '❌'}`);
+    if (results.tests.length > 0) {
+        coreExports.summary.addHeading('Test Results', 2);
+        coreExports.summary.addHeading('Summary', 3);
+        const rows = [];
+        rows.push([
+            { data: 'Status', header: true },
+            { data: 'Name', header: true },
+            { data: 'Score', header: true }
+        ]);
+        let lastPart = undefined;
+        for (const test of results.tests) {
+            const icon = test.score === test.max_score ? '✅' : '❌';
+            if (test.part !== lastPart && test.part) {
+                lastPart = test.part;
+                rows.push([{ data: test.part, colspan: '3' }]);
+            }
+            rows.push([icon, test.name, `${test.score}/${test.max_score}`]);
+        }
+        coreExports.summary.addTable(rows);
+    }
+    await coreExports.summary.write();
+    if (score == 0) {
+        coreExports.error('Score: 0');
+    }
+    else if (score != max_score) {
+        coreExports.warning(`Score: ${score}/${max_score}`);
+    }
+    else {
+        coreExports.notice(`🚀 Score: ${score}/${max_score} `);
+    }
+}
 /**
  * The main function for the action.
  *
@@ -52674,100 +52758,57 @@ async function run() {
         }
         //Double check: is this the handout? If so, ignore the rest of the action and just log a warning
         const handout = await coreExports.getInput('handout_repo');
+        const regressionTestJob = await coreExports.getInput('regression_test_job');
+        if (regressionTestJob) {
+            coreExports.info(`Running regression test for ${regressionTestJob} on ${process.env.GITHUB_REPOSITORY}`);
+        }
         if (handout && handout === process.env.GITHUB_REPOSITORY) {
             coreExports.warning('This action appears to have been triggered by running in the handout repo. No submission has been created, and it will not be graded.');
             return;
         }
-        const graderConfig = await createSubmission({
-            headers: {
-                Authorization: token
-            }
-        });
-        // Download the autograder
-        const file = await fetch(graderConfig.grader_url);
-        //Save to disk
-        if (!file.body) {
-            throw new Error('No body in response');
+        let graderSha, graderDir, assignmentDir;
+        if (regressionTestJob) {
+            const graderConfig = await createRegressionTestRun({
+                headers: {
+                    Authorization: token
+                },
+                queryParams: {
+                    regression_test_repo: regressionTestJob
+                }
+            });
+            const config = await prepareForRegressionTest(graderConfig);
+            graderDir = config.graderDir;
+            assignmentDir = config.assignmentDir;
+            graderSha = process.env.GITHUB_SHA;
         }
-        const fileStream = createWriteStream('grader.tgz');
-        await finished(Readable.fromWeb(file.body).pipe(fileStream));
-        //Calculate the sha256 hash of the file
-        const hash = createHash('sha256');
-        const fileContents = await readFile('grader.tgz');
-        hash.update(fileContents);
-        const graderSha = hash.digest('hex');
-        //Unzip the file to the directory "grader"
-        await mkdir('grader');
-        await execExports.exec('tar', [
-            'xzf',
-            'grader.tgz',
-            '-C',
-            'grader',
-            '--strip-components',
-            '1'
-        ]);
-        const workDir = process.env.GITHUB_WORKSPACE;
-        //Run the autograder
-        const assignmentDir = `${workDir}/submission`;
-        const graderDir = `${workDir}/grader`;
+        else {
+            const graderConfig = await createSubmission({
+                headers: {
+                    Authorization: token
+                }
+            });
+            const config = await prepareForGrading(graderConfig);
+            graderDir = config.graderDir;
+            assignmentDir = config.assignmentDir;
+            graderSha = graderConfig.grader_sha;
+        }
         const start = Date.now();
         try {
-            const results = await grade(assignmentDir, graderDir);
+            const results = await grade(graderDir, assignmentDir);
             const gradeResponse = await submitFeedback({
                 body: {
                     ret_code: 0,
                     output: '',
                     execution_time: Date.now() - start,
                     feedback: results,
-                    grader_sha: graderSha
+                    grader_sha: graderSha,
+                    regression_test_repo: regressionTestJob
                 },
                 headers: {
                     Authorization: token
                 }
             });
-            const score = results.score ||
-                results.tests.reduce((acc, test) => acc + (test.score || 0), 0);
-            const max_score = results.score ||
-                results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0);
-            // Set job summary with test results
-            coreExports.summary.addHeading('Autograder Results');
-            coreExports.summary.addRaw(`Score: ${score}/${max_score}`, true);
-            coreExports.summary.addLink('View the complete results with all details and logs in Pawtograder', gradeResponse.details_url);
-            if (results.output.visible?.output) {
-                coreExports.summary.addDetails('Grader Output', results.output.visible.output);
-            }
-            coreExports.summary.addHeading('Lint Results', 2);
-            coreExports.summary.addRaw(`Status: ${results.lint.status === 'pass' ? '✅' : '❌'}`);
-            if (results.tests.length > 0) {
-                coreExports.summary.addHeading('Test Results', 2);
-                coreExports.summary.addHeading('Summary', 3);
-                const rows = [];
-                rows.push([
-                    { data: 'Status', header: true },
-                    { data: 'Name', header: true },
-                    { data: 'Score', header: true }
-                ]);
-                let lastPart = undefined;
-                for (const test of results.tests) {
-                    const icon = test.score === test.max_score ? '✅' : '❌';
-                    if (test.part !== lastPart && test.part) {
-                        lastPart = test.part;
-                        rows.push([{ data: test.part, colspan: '3' }]);
-                    }
-                    rows.push([icon, test.name, `${test.score}/${test.max_score}`]);
-                }
-                coreExports.summary.addTable(rows);
-            }
-            await coreExports.summary.write();
-            if (score == 0) {
-                coreExports.error('Score: 0');
-            }
-            else if (score != max_score) {
-                coreExports.warning(`Score: ${score}/${max_score}`);
-            }
-            else {
-                coreExports.notice(`🚀 Score: ${score}/${max_score} `);
-            }
+            await generateSummaryReport(results, gradeResponse);
         }
         catch (error) {
             if (error instanceof Error) {
