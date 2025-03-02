@@ -20,9 +20,7 @@ inputs:
       green).
     required: false
   regression_test_job:
-    description:
-      The name of the job to run the regression test on, e.g.
-      khoury-classroom/handout-template.
+    description: The ID of the Pawtograder regression test job to run
     required: false
 
 outputs:

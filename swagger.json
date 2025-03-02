@@ -1094,12 +1094,13 @@
 										"configs": {
 											"items": {
 												"properties": {
-													"repo": {
-														"type": "string"
+													"id": {
+														"type": "number",
+														"format": "double"
 													}
 												},
 												"required": [
-													"repo"
+													"id"
 												],
 												"type": "object"
 											},
@@ -1155,19 +1156,11 @@
 						"schema": {
 							"type": "string"
 						}
-					},
-					{
-						"in": "query",
-						"name": "regression_test_repo",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
 					}
 				]
 			}
 		},
-		"/api/autograder/regression-test-run": {
+		"/api/autograder/regression-test-run/{regression_test_id}": {
 			"post": {
 				"operationId": "CreateRegressionTestRun",
 				"responses": {
@@ -1196,11 +1189,12 @@
 						}
 					},
 					{
-						"in": "query",
-						"name": "regression_test_repo",
-						"required": false,
+						"in": "path",
+						"name": "regression_test_id",
+						"required": true,
 						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
@@ -1232,6 +1226,15 @@
 						"required": true,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "autograder_regression_test_id",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				],

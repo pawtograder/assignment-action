@@ -141,8 +141,8 @@ export async function run(): Promise<void> {
         headers: {
           Authorization: token
         },
-        queryParams: {
-          regression_test_repo: regressionTestJob
+        pathParams: {
+          regressionTestId: Number(regressionTestJob)
         }
       })
       const config = await prepareForRegressionTest(graderConfig)
@@ -170,8 +170,12 @@ export async function run(): Promise<void> {
           output: '',
           execution_time: Date.now() - start,
           feedback: results,
-          grader_sha: graderSha,
-          regression_test_repo: regressionTestJob
+          grader_sha: graderSha
+        },
+        queryParams: {
+          autograder_regression_test_id: regressionTestJob
+            ? Number.parseInt(regressionTestJob)
+            : undefined
         },
         headers: {
           Authorization: token
