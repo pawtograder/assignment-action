@@ -44,13 +44,13 @@ export abstract class Builder {
           stdout: (data: Buffer) => {
             myOutput += data.toString()
             if (this.regressionTestJob) {
-              console.log(`CIDebug: ${myOutput}`)
+              console.log(`CIDebug: ${data.toString()}`)
             }
           },
           stderr: (data: Buffer) => {
             myError += data.toString()
             if (this.regressionTestJob) {
-              console.log(`CIDebug: ${myError}`)
+              console.log(`CIDebug: ${data.toString()}`)
             }
           }
         },
