@@ -52783,10 +52783,10 @@ async function run() {
             coreExports.warning('This action appears to have been triggered by running in the handout repo. No submission has been created, and it will not be graded.');
             return;
         }
-        const { action_ref, action_repository } = JSON.parse(process.env.GITHUB_CONTEXT || '{}');
-        console.log(process.env.GITHUB_CONTEXT);
+        const action_ref = coreExports.getInput('action_ref');
+        const action_repository = coreExports.getInput('action_repository');
         if (!action_ref || !action_repository) {
-            throw new Error('GITHUB_CONTEXT is not set');
+            throw new Error('action_ref and action_repository must be set');
         }
         let graderSha, graderDir, assignmentDir;
         if (regressionTestJob) {
