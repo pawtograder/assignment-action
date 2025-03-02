@@ -23,11 +23,10 @@ inputs:
     description: The ID of the Pawtograder regression test job to run
     required: false
   action_ref:
-    description: The ref of the action, e.g. ${{ github.action_ref }}
+    description: The ref of the action, e.g. github.action_ref
     required: true
   action_repository:
-    description:
-      The repository of the action, e.g. ${{ github.action_repository }}
+    description: The repository of the action, e.g.  github.action_repository
     required: true
 
 outputs:
