@@ -24,7 +24,8 @@ export type MutantResult = {
 export abstract class Builder {
   constructor(
     protected logger: Logger,
-    protected gradingDir: string
+    protected gradingDir: string,
+    protected regressionTestJob?: number
   ) {}
   async executeCommandAndGetOutput(
     command: string,
@@ -42,9 +43,15 @@ export abstract class Builder {
         listeners: {
           stdout: (data: Buffer) => {
             myOutput += data.toString()
+            if (this.regressionTestJob) {
+              console.log(`CIDebug: ${myOutput}`)
+            }
           },
           stderr: (data: Buffer) => {
             myError += data.toString()
+            if (this.regressionTestJob) {
+              console.log(`CIDebug: ${myError}`)
+            }
           }
         },
         ignoreReturnCode: ignoreFailures

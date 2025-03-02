@@ -17,7 +17,8 @@ import {
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
 export default async function grade(
   solutionDir: string,
-  submissionDir: string
+  submissionDir: string,
+  regressionTestJob?: number
 ): Promise<AutograderFeedback> {
   const _config = await readFile(
     path.join(solutionDir, 'pawtograder.yml'),
@@ -26,7 +27,13 @@ export default async function grade(
   const config = yaml.parse(_config) as PawtograderConfig
   const gradingDir = path.join(process.cwd(), 'pawtograder-grading')
   await io.mkdirP(gradingDir)
-  const grader = new Grader(solutionDir, submissionDir, config, gradingDir)
+  const grader = new Grader(
+    solutionDir,
+    submissionDir,
+    config,
+    gradingDir,
+    regressionTestJob
+  )
   const ret = await grader.grade()
 
   return ret
@@ -38,10 +45,15 @@ class Grader {
     private solutionDir: string,
     private submissionDir: string,
     private config: PawtograderConfig,
-    private gradingDir: string
+    private gradingDir: string,
+    private regressionTestJob?: number
   ) {
-    this.logger = new Logger()
-    this.builder = new GradleBuilder(this.logger, this.gradingDir)
+    this.logger = new Logger(regressionTestJob)
+    this.builder = new GradleBuilder(
+      this.logger,
+      this.gradingDir,
+      this.regressionTestJob
+    )
   }
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]

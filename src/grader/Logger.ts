@@ -5,9 +5,13 @@ export default class Logger {
     output: string
     visibility: OutputVisibility
   }[] = []
+  constructor(private regressionTestJob?: number) {}
+
   log(visibility: OutputVisibility, message: string) {
     if (visibility === 'visible') {
       console.log(message)
+    } else if (this.regressionTestJob) {
+      console.log(`CIDebug: ${message}`)
     }
     this.output.push({
       output: message,

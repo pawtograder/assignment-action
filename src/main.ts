@@ -163,7 +163,11 @@ export async function run(): Promise<void> {
 
     const start = Date.now()
     try {
-      const results = await grade(graderDir, assignmentDir)
+      const results = await grade(
+        graderDir,
+        assignmentDir,
+        regressionTestJob ? Number.parseInt(regressionTestJob) : undefined
+      )
       const gradeResponse = await submitFeedback({
         body: {
           ret_code: 0,

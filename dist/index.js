@@ -49879,9 +49879,11 @@ glob.glob = glob;
 class Builder {
     logger;
     gradingDir;
-    constructor(logger, gradingDir) {
+    regressionTestJob;
+    constructor(logger, gradingDir, regressionTestJob) {
         this.logger = logger;
         this.gradingDir = gradingDir;
+        this.regressionTestJob = regressionTestJob;
     }
     async executeCommandAndGetOutput(command, args, logger, ignoreFailures = false) {
         let myOutput = '';
@@ -49894,9 +49896,15 @@ class Builder {
                 listeners: {
                     stdout: (data) => {
                         myOutput += data.toString();
+                        if (this.regressionTestJob) {
+                            console.log(`CIDebug: ${myOutput}`);
+                        }
                     },
                     stderr: (data) => {
                         myError += data.toString();
+                        if (this.regressionTestJob) {
+                            console.log(`CIDebug: ${myError}`);
+                        }
                     }
                 },
                 ignoreReturnCode: ignoreFailures
@@ -52365,10 +52373,17 @@ class GradleBuilder extends Builder {
 }
 
 class Logger {
+    regressionTestJob;
     output = [];
+    constructor(regressionTestJob) {
+        this.regressionTestJob = regressionTestJob;
+    }
     log(visibility, message) {
         if (visibility === 'visible') {
             console.log(message);
+        }
+        else if (this.regressionTestJob) {
+            console.log(`CIDebug: ${message}`);
         }
         this.output.push({
             output: message,
@@ -52427,12 +52442,12 @@ function isRegularTestUnit(unit) {
     return 'tests' in unit && 'testCount' in unit;
 }
 
-async function grade(solutionDir, submissionDir) {
+async function grade(solutionDir, submissionDir, regressionTestJob) {
     const _config = await readFile(path$1.join(solutionDir, 'pawtograder.yml'), 'utf8');
     const config = YAML.parse(_config);
     const gradingDir = path$1.join(process.cwd(), 'pawtograder-grading');
     await ioExports.mkdirP(gradingDir);
-    const grader = new Grader(solutionDir, submissionDir, config, gradingDir);
+    const grader = new Grader(solutionDir, submissionDir, config, gradingDir, regressionTestJob);
     const ret = await grader.grade();
     return ret;
 }
@@ -52441,15 +52456,17 @@ class Grader {
     submissionDir;
     config;
     gradingDir;
+    regressionTestJob;
     builder;
     logger;
-    constructor(solutionDir, submissionDir, config, gradingDir) {
+    constructor(solutionDir, submissionDir, config, gradingDir, regressionTestJob) {
         this.solutionDir = solutionDir;
         this.submissionDir = submissionDir;
         this.config = config;
         this.gradingDir = gradingDir;
-        this.logger = new Logger();
-        this.builder = new GradleBuilder(this.logger, this.gradingDir);
+        this.regressionTestJob = regressionTestJob;
+        this.logger = new Logger(regressionTestJob);
+        this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
     }
     async copyStudentFiles(whichFiles) {
         const files = this.config.submissionFiles[whichFiles];
@@ -52794,7 +52811,7 @@ async function run() {
         }
         const start = Date.now();
         try {
-            const results = await grade(graderDir, assignmentDir);
+            const results = await grade(graderDir, assignmentDir, regressionTestJob ? Number.parseInt(regressionTestJob) : undefined);
             const gradeResponse = await submitFeedback({
                 body: {
                     ret_code: 0,

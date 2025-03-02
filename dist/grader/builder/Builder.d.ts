@@ -21,7 +21,8 @@ export type MutantResult = {
 export declare abstract class Builder {
     protected logger: Logger;
     protected gradingDir: string;
-    constructor(logger: Logger, gradingDir: string);
+    protected regressionTestJob?: number | undefined;
+    constructor(logger: Logger, gradingDir: string, regressionTestJob?: number | undefined);
     executeCommandAndGetOutput(command: string, args: string[], logger: Logger, ignoreFailures?: boolean): Promise<{
         returnCode: number;
         output: string;
