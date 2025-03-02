@@ -34538,7 +34538,7 @@ const resolveUrl = (url, queryParams = {}, pathParams = {}) => {
 
 const createSubmission = (variables, signal) => adminServiceFetch({ url: '/api/autograder/submission', method: 'post', ...variables, signal });
 const createRegressionTestRun = (variables, signal) => adminServiceFetch({
-    url: '/api/autograder/regression-test-run',
+    url: '/api/autograder/regression-test-run/{regressionTestId}',
     method: 'post',
     ...variables,
     signal
@@ -52772,8 +52772,8 @@ async function run() {
                 headers: {
                     Authorization: token
                 },
-                queryParams: {
-                    regression_test_repo: regressionTestJob
+                pathParams: {
+                    regressionTestId: Number(regressionTestJob)
                 }
             });
             const config = await prepareForRegressionTest(graderConfig);
@@ -52801,8 +52801,12 @@ async function run() {
                     output: '',
                     execution_time: Date.now() - start,
                     feedback: results,
-                    grader_sha: graderSha,
-                    regression_test_repo: regressionTestJob
+                    grader_sha: graderSha
+                },
+                queryParams: {
+                    autograder_regression_test_id: regressionTestJob
+                        ? Number.parseInt(regressionTestJob)
+                        : undefined
                 },
                 headers: {
                     Authorization: token

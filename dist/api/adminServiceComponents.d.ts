@@ -17,27 +17,29 @@ export type RetrieveAutograderRegressionTestsHeaders = {
 export type RetrieveAutograderRegressionTestsError = Fetcher.ErrorWrapper<undefined>;
 export type RetrieveAutograderRegressionTestsResponse = {
     configs: {
-        repo: string;
+        /**
+         * @format double
+         */
+        id: number;
     }[];
 };
 export type RetrieveAutograderRegressionTestsVariables = {
     headers: RetrieveAutograderRegressionTestsHeaders;
 };
 export declare const retrieveAutograderRegressionTests: (variables: RetrieveAutograderRegressionTestsVariables, signal?: AbortSignal) => Promise<RetrieveAutograderRegressionTestsResponse>;
-export type CreateSubmissionQueryParams = {
-    regression_test_repo?: string;
-};
 export type CreateSubmissionHeaders = {
     Authorization: string;
 };
 export type CreateSubmissionError = Fetcher.ErrorWrapper<undefined>;
 export type CreateSubmissionVariables = {
     headers: CreateSubmissionHeaders;
-    queryParams?: CreateSubmissionQueryParams;
 };
 export declare const createSubmission: (variables: CreateSubmissionVariables, signal?: AbortSignal) => Promise<Schemas.SubmissionResponse>;
-export type CreateRegressionTestRunQueryParams = {
-    regression_test_repo?: string;
+export type CreateRegressionTestRunPathParams = {
+    /**
+     * @format double
+     */
+    regressionTestId: number;
 };
 export type CreateRegressionTestRunHeaders = {
     Authorization: string;
@@ -45,9 +47,15 @@ export type CreateRegressionTestRunHeaders = {
 export type CreateRegressionTestRunError = Fetcher.ErrorWrapper<undefined>;
 export type CreateRegressionTestRunVariables = {
     headers: CreateRegressionTestRunHeaders;
-    queryParams?: CreateRegressionTestRunQueryParams;
+    pathParams: CreateRegressionTestRunPathParams;
 };
 export declare const createRegressionTestRun: (variables: CreateRegressionTestRunVariables, signal?: AbortSignal) => Promise<Schemas.RegressionTestRunResponse>;
+export type SubmitFeedbackQueryParams = {
+    /**
+     * @format double
+     */
+    autograder_regression_test_id?: number;
+};
 export type SubmitFeedbackHeaders = {
     Authorization: string;
 };
@@ -55,6 +63,7 @@ export type SubmitFeedbackError = Fetcher.ErrorWrapper<undefined>;
 export type SubmitFeedbackVariables = {
     body: Schemas.GradingScriptResult;
     headers: SubmitFeedbackHeaders;
+    queryParams?: SubmitFeedbackQueryParams;
 };
 export declare const submitFeedback: (variables: SubmitFeedbackVariables, signal?: AbortSignal) => Promise<Schemas.GradeResponse>;
 export type GetCanvasCoursesError = Fetcher.ErrorWrapper<undefined>;
