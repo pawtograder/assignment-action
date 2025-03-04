@@ -175,6 +175,11 @@ export async function run(): Promise<void> {
         assignmentDir,
         regressionTestJob ? Number.parseInt(regressionTestJob) : undefined
       )
+      const queryParams = regressionTestJob
+        ? {
+            autograder_regression_test_id: Number.parseInt(regressionTestJob)
+          }
+        : undefined
       const gradeResponse = await submitFeedback({
         body: {
           ret_code: 0,
@@ -185,11 +190,7 @@ export async function run(): Promise<void> {
           action_repository,
           action_ref
         },
-        queryParams: {
-          autograder_regression_test_id: regressionTestJob
-            ? Number.parseInt(regressionTestJob)
-            : undefined
-        },
+        queryParams,
         headers: {
           Authorization: token
         }
