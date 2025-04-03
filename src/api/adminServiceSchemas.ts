@@ -4,263 +4,263 @@
  * @version 0.0.1
  */
 export type SubmissionResponse = {
-  grader_sha: string;
-  grader_url: string;
-};
+  grader_sha: string
+  grader_url: string
+}
 
 export type RegressionTestRunResponse = {
-  regression_test_sha: string;
-  regression_test_url: string;
-};
+  regression_test_sha: string
+  regression_test_url: string
+}
 
 export type GradeResponse = {
-  details_url: string;
-  message: string;
-  is_ok: boolean;
-};
+  details_url: string
+  message: string
+  is_ok: boolean
+}
 
-export type OutputFormat = 'text' | 'markdown' | 'ansi';
+export type OutputFormat = 'text' | 'markdown' | 'ansi'
 
 export type AutograderFeedback = {
   tests: {
     extra_data?: {
-      [key: string]: string;
-    };
-    part?: string;
-    output_format?: OutputFormat;
-    output: string;
-    name_format?: OutputFormat;
-    name: string;
+      [key: string]: string
+    }
+    part?: string
+    output_format?: OutputFormat
+    output: string
+    name_format?: OutputFormat
+    name: string
     /**
      * @format double
      */
-    max_score?: number;
+    max_score?: number
     /**
      * @format double
      */
-    score?: number;
-  }[];
+    score?: number
+  }[]
   lint: {
-    output_format?: OutputFormat;
-    output: string;
-    status: 'pass' | 'fail';
-  };
+    output_format?: OutputFormat
+    output: string
+    status: 'pass' | 'fail'
+  }
   output: {
     visible?: {
-      output_format?: OutputFormat;
-      output: string;
-    };
+      output_format?: OutputFormat
+      output: string
+    }
     hidden?: {
-      output_format?: OutputFormat;
-      output: string;
-    };
+      output_format?: OutputFormat
+      output: string
+    }
     after_due_date?: {
-      output_format?: OutputFormat;
-      output: string;
-    };
+      output_format?: OutputFormat
+      output: string
+    }
     after_published?: {
-      output_format?: OutputFormat;
-      output: string;
-    };
-  };
+      output_format?: OutputFormat
+      output: string
+    }
+  }
   /**
    * @format double
    */
-  max_score?: number;
+  max_score?: number
   /**
    * @format double
    */
-  score?: number;
-};
+  score?: number
+}
 
 export type GradingScriptResult = {
-  regression_test_repo?: string;
-  action_repository: string;
-  action_ref: string;
-  grader_sha: string;
-  feedback: AutograderFeedback;
+  regression_test_repo?: string
+  action_repository: string
+  action_ref: string
+  grader_sha: string
+  feedback: AutograderFeedback
   /**
    * @format double
    */
-  execution_time: number;
-  output: string;
+  execution_time: number
+  output: string
   /**
    * @format double
    */
-  ret_code: number;
-};
+  ret_code: number
+}
 
 export type Calendar = {
-  ics: string;
-};
+  ics: string
+}
 
 export type Grades = {
-  html_url: string;
-  current_grade: any | null;
+  html_url: string
+  current_grade: any | null
   /**
    * @format double
    */
-  current_score: number;
-  final_grade: any | null;
+  current_score: number
+  final_grade: any | null
   /**
    * @format double
    */
-  final_score: number;
+  final_score: number
   /**
    * @format double
    */
-  unposted_current_score: number;
-  unposted_current_grade: any | null;
+  unposted_current_score: number
+  unposted_current_grade: any | null
   /**
    * @format double
    */
-  unposted_final_score: number;
-  unposted_final_grade: any | null;
-};
+  unposted_final_score: number
+  unposted_final_grade: any | null
+}
 
 export type User = {
   /**
    * @format double
    */
-  id: number;
-  name: string;
+  id: number
+  name: string
   /**
    * @format date-time
    */
-  created_at: string;
-  sortable_name: string;
-  short_name: string;
-  sis_user_id: string;
-  integration_id: any | null;
-  login_id: string;
-};
+  created_at: string
+  sortable_name: string
+  short_name: string
+  sis_user_id: string
+  integration_id: any | null
+  login_id: string
+}
 
 export type Enrollment = {
   /**
    * @format double
    */
-  id: number;
+  id: number
   /**
    * @format double
    */
-  user_id: number;
+  user_id: number
   /**
    * @format double
    */
-  course_id: number;
-  type: string;
+  course_id: number
+  type: string
   /**
    * @format date-time
    */
-  created_at: string;
+  created_at: string
   /**
    * @format date-time
    */
-  updated_at: string;
-  associated_user_id: any | null;
-  start_at: any | null;
-  end_at: any | null;
+  updated_at: string
+  associated_user_id: any | null
+  start_at: any | null
+  end_at: any | null
   /**
    * @format double
    */
-  course_section_id: number;
+  course_section_id: number
   /**
    * @format double
    */
-  root_account_id: number;
-  limit_privileges_to_course_section: boolean;
-  enrollment_state: string;
-  role: string;
+  root_account_id: number
+  limit_privileges_to_course_section: boolean
+  enrollment_state: string
+  role: string
   /**
    * @format double
    */
-  role_id: number;
+  role_id: number
   /**
    * @format date-time
    */
-  last_activity_at: string;
-  last_attended_at: any | null;
+  last_activity_at: string
+  last_attended_at: any | null
   /**
    * @format double
    */
-  total_activity_time: number;
-  grades: Grades;
-  sis_account_id: string;
-  sis_course_id: string;
-  course_integration_id: any | null;
-  sis_section_id: string;
-  section_integration_id: any | null;
-  sis_user_id: string;
-  html_url: string;
-  user: User;
-};
+  total_activity_time: number
+  grades: Grades
+  sis_account_id: string
+  sis_course_id: string
+  course_integration_id: any | null
+  sis_section_id: string
+  section_integration_id: any | null
+  sis_user_id: string
+  html_url: string
+  user: User
+}
 
 export type Course = {
   /**
    * @format double
    */
-  id: number;
-  name: string;
+  id: number
+  name: string
   /**
    * @format double
    */
-  account_id: number;
-  uuid: string;
-  start_at: any | null;
-  grading_standard_id: any | null;
-  is_public: boolean;
+  account_id: number
+  uuid: string
+  start_at: any | null
+  grading_standard_id: any | null
+  is_public: boolean
   /**
    * @format date-time
    */
-  created_at: string;
-  course_code: string;
-  default_view: string;
+  created_at: string
+  course_code: string
+  default_view: string
   /**
    * @format double
    */
-  root_account_id: number;
+  root_account_id: number
   /**
    * @format double
    */
-  enrollment_term_id: number;
-  license: string;
-  grade_passback_setting: any | null;
+  enrollment_term_id: number
+  license: string
+  grade_passback_setting: any | null
   /**
    * @format date-time
    */
-  end_at: string;
-  public_syllabus: boolean;
-  public_syllabus_to_auth: boolean;
+  end_at: string
+  public_syllabus: boolean
+  public_syllabus_to_auth: boolean
   /**
    * @format double
    */
-  storage_quota_mb: number;
-  is_public_to_auth_users: boolean;
-  homeroom_course: boolean;
-  course_color: any | null;
-  friendly_name: any | null;
-  apply_assignment_group_weights: boolean;
-  calendar: Calendar;
-  time_zone: string;
-  blueprint: boolean;
-  template: boolean;
-  sis_course_id: any | null;
-  integration_id: any | null;
-  enrollments: Enrollment[];
-  hide_final_grades: boolean;
-  workflow_state: string;
-  restrict_enrollments_to_course_dates: boolean;
-};
+  storage_quota_mb: number
+  is_public_to_auth_users: boolean
+  homeroom_course: boolean
+  course_color: any | null
+  friendly_name: any | null
+  apply_assignment_group_weights: boolean
+  calendar: Calendar
+  time_zone: string
+  blueprint: boolean
+  template: boolean
+  sis_course_id: any | null
+  integration_id: any | null
+  enrollments: Enrollment[]
+  hide_final_grades: boolean
+  workflow_state: string
+  restrict_enrollments_to_course_dates: boolean
+}
 
 export type FileListing = {
-  sha: string;
+  sha: string
   /**
    * @format double
    */
-  size: number;
-  path: string;
-  name: string;
-};
+  size: number
+  path: string
+  name: string
+}
 
 /**
  * <p>A set of endpoints used by clients to connect to the media service group for an Amazon Chime SDK meeting.</p>
@@ -269,15 +269,15 @@ export type MediaPlacement = {
   /**
    * <p>The audio host URL.</p>
    */
-  AudioHostUrl?: string;
+  AudioHostUrl?: string
   /**
    * <p>The audio fallback URL.</p>
    */
-  AudioFallbackUrl?: string;
+  AudioFallbackUrl?: string
   /**
    * <p>The signaling URL.</p>
    */
-  SignalingUrl?: string;
+  SignalingUrl?: string
   /**
    * <p>The turn control URL.</p>
    *          <important>
@@ -286,7 +286,7 @@ export type MediaPlacement = {
    *             </p>
    *          </important>
    */
-  TurnControlUrl?: string;
+  TurnControlUrl?: string
   /**
    * <p>The screen data URL.</p>
    *          <important>
@@ -295,7 +295,7 @@ export type MediaPlacement = {
    *             </p>
    *          </important>
    */
-  ScreenDataUrl?: string;
+  ScreenDataUrl?: string
   /**
    * <p>The screen viewing URL.</p>
    *          <important>
@@ -304,7 +304,7 @@ export type MediaPlacement = {
    *             </p>
    *          </important>
    */
-  ScreenViewingUrl?: string;
+  ScreenViewingUrl?: string
   /**
    * <p>The screen sharing URL.</p>
    *          <important>
@@ -313,14 +313,14 @@ export type MediaPlacement = {
    *             </p>
    *          </important>
    */
-  ScreenSharingUrl?: string;
+  ScreenSharingUrl?: string
   /**
    * <p>The event ingestion URL.</p>
    */
-  EventIngestionUrl?: string;
-};
+  EventIngestionUrl?: string
+}
 
-export type MeetingFeatureStatus = 'AVAILABLE' | 'UNAVAILABLE';
+export type MeetingFeatureStatus = 'AVAILABLE' | 'UNAVAILABLE'
 
 /**
  * <p>An optional category of meeting features that contains audio-specific configurations, such as operating parameters for Amazon Voice Focus. </p>
@@ -329,10 +329,10 @@ export type AudioFeatures = {
   /**
    * <p>Makes echo reduction available to clients who connect to the meeting.</p>
    */
-  EchoReduction?: MeetingFeatureStatus;
-};
+  EchoReduction?: MeetingFeatureStatus
+}
 
-export type VideoResolution = 'FHD' | 'HD' | 'None';
+export type VideoResolution = 'FHD' | 'HD' | 'None'
 
 /**
  * <p>The video features set for the meeting. Applies to all attendees.</p>
@@ -349,10 +349,10 @@ export type VideoFeatures = {
    *             limit of 250 attendees.</p>
    *          </note>
    */
-  MaxResolution?: VideoResolution;
-};
+  MaxResolution?: VideoResolution
+}
 
-export type ContentResolution = 'FHD' | 'None' | 'UHD';
+export type ContentResolution = 'FHD' | 'None' | 'UHD'
 
 /**
  * <p>Lists the content (screen share) features for the meeting. Applies to all attendees.</p>
@@ -369,8 +369,8 @@ export type ContentFeatures = {
    *          value and override the default size limit of 250 attendees.</p>
    *          </note>
    */
-  MaxResolution?: ContentResolution;
-};
+  MaxResolution?: ContentResolution
+}
 
 /**
  * <p>Lists the maximum number of attendees allowed into the meeting.</p>
@@ -385,8 +385,8 @@ export type AttendeeFeatures = {
    *
    * @format double
    */
-  MaxCount?: number;
-};
+  MaxCount?: number
+}
 
 /**
  * <p>The configuration settings of the features available to a meeting.</p>
@@ -395,20 +395,20 @@ export type MeetingFeaturesConfiguration = {
   /**
    * <p>The configuration settings for the audio features available to a meeting.</p>
    */
-  Audio?: AudioFeatures;
+  Audio?: AudioFeatures
   /**
    * <p>The configuration settings for the video features available to a meeting.</p>
    */
-  Video?: VideoFeatures;
+  Video?: VideoFeatures
   /**
    * <p>The configuration settings for the content features available to a meeting.</p>
    */
-  Content?: ContentFeatures;
+  Content?: ContentFeatures
   /**
    * <p>The configuration settings for the attendee features available to a meeting.</p>
    */
-  Attendee?: AttendeeFeatures;
-};
+  Attendee?: AttendeeFeatures
+}
 
 /**
  * <p>A meeting created using the Amazon Chime SDK.</p>
@@ -417,11 +417,11 @@ export type Meeting = {
   /**
    * <p>The Amazon Chime SDK meeting ID.</p>
    */
-  MeetingId?: string;
+  MeetingId?: string
   /**
    * <p>Reserved.</p>
    */
-  MeetingHostId?: string;
+  MeetingHostId?: string
   /**
    * <p>The external meeting ID.</p>
    *          <p>Pattern: <code>[-_&@+=,()\{\}\[\]\/«».:|'"#a-zA-Z0-9À-ÿ\s]*</code>
@@ -429,7 +429,7 @@ export type Meeting = {
    *          <p>Values that begin with <code>aws:</code> are reserved. You can't configure a value that uses this prefix.
    *             Case insensitive.</p>
    */
-  ExternalMeetingId?: string;
+  ExternalMeetingId?: string
   /**
    * <p>The Region in which you create the meeting. Available values: <code>af-south-1</code>, <code>ap-northeast-1</code>,
    *             <code>ap-northeast-2</code>, <code>ap-south-1</code>, <code>ap-southeast-1</code>, <code>ap-southeast-2</code>, <code>ca-central-1</code>,
@@ -439,28 +439,28 @@ export type Meeting = {
    *             <code>us-west-1</code>, <code>us-west-2</code>.</p>
    *          <p>Available values in Amazon Web Services GovCloud (US) Regions: <code>us-gov-east-1</code>, <code>us-gov-west-1</code>.</p>
    */
-  MediaRegion?: string;
+  MediaRegion?: string
   /**
    * <p>The media placement for the meeting.</p>
    */
-  MediaPlacement?: MediaPlacement;
+  MediaPlacement?: MediaPlacement
   /**
    * <p>The features available to a meeting, such as echo reduction.</p>
    */
-  MeetingFeatures?: MeetingFeaturesConfiguration;
+  MeetingFeatures?: MeetingFeaturesConfiguration
   /**
    * <p>When specified, replicates the media from the primary meeting to this meeting.</p>
    */
-  PrimaryMeetingId?: string;
+  PrimaryMeetingId?: string
   /**
    * <p>Array of strings.</p>
    */
-  TenantIds?: string[];
+  TenantIds?: string[]
   /**
    * <p>The ARN of the meeting.</p>
    */
-  MeetingArn?: string;
-};
+  MeetingArn?: string
+}
 
 export type ResponseMetadata = {
   /**
@@ -468,48 +468,48 @@ export type ResponseMetadata = {
    *
    * @format double
    */
-  httpStatusCode?: number;
+  httpStatusCode?: number
   /**
    * A unique identifier for the last request sent for this operation. Often
    * requested by AWS service teams to aid in debugging.
    */
-  requestId?: string;
+  requestId?: string
   /**
    * A secondary identifier for the last request sent. Used for debugging.
    */
-  extendedRequestId?: string;
+  extendedRequestId?: string
   /**
    * A tertiary identifier for the last request sent. Used for debugging.
    */
-  cfId?: string;
+  cfId?: string
   /**
    * The number of times this operation was attempted.
    *
    * @format double
    */
-  attempts?: number;
+  attempts?: number
   /**
    * The total amount of time (in milliseconds) that was spent waiting between
    * retry attempts.
    *
    * @format double
    */
-  totalRetryDelay?: number;
-};
+  totalRetryDelay?: number
+}
 
 export type CreateMeetingCommandOutput = {
   /**
    * <p>The meeting information, including the meeting ID and
    *            <code>MediaPlacement</code>.</p>
    */
-  Meeting?: Meeting;
+  Meeting?: Meeting
   /**
    * Metadata pertaining to this request.
    */
-  $metadata: ResponseMetadata;
-};
+  $metadata: ResponseMetadata
+}
 
-export type MediaCapabilities = 'None' | 'Receive' | 'Send' | 'SendReceive';
+export type MediaCapabilities = 'None' | 'Receive' | 'Send' | 'SendReceive'
 
 /**
  * <p>The media capabilities of an attendee: audio, video, or content.</p>
@@ -546,16 +546,16 @@ export type AttendeeCapabilities = {
   /**
    * <p>The audio capability assigned to an attendee.</p>
    */
-  Audio?: MediaCapabilities;
+  Audio?: MediaCapabilities
   /**
    * <p>The video capability assigned to an attendee.</p>
    */
-  Video?: MediaCapabilities;
+  Video?: MediaCapabilities
   /**
    * <p>The content capability assigned to an attendee.</p>
    */
-  Content?: MediaCapabilities;
-};
+  Content?: MediaCapabilities
+}
 
 /**
  * <p>An Amazon Chime SDK meeting attendee. Includes a unique
@@ -579,15 +579,15 @@ export type Attendee = {
    *          <p>Values that begin with <code>aws:</code> are reserved. You can't configure a value that uses this prefix.
    *             Case insensitive.</p>
    */
-  ExternalUserId?: string;
+  ExternalUserId?: string
   /**
    * <p>The Amazon Chime SDK attendee ID.</p>
    */
-  AttendeeId?: string;
+  AttendeeId?: string
   /**
    * <p>The join token used by the Amazon Chime SDK attendee.</p>
    */
-  JoinToken?: string;
+  JoinToken?: string
   /**
    * <p>The capabilities assigned to an attendee: audio, video, or content.</p>
    *          <note>
@@ -619,21 +619,21 @@ export type Attendee = {
    *             </li>
    *          </ul>
    */
-  Capabilities?: AttendeeCapabilities;
-};
+  Capabilities?: AttendeeCapabilities
+}
 
 export type CreateAttendeeCommandOutput = {
   /**
    * <p>The attendee information, including attendee ID and join token.</p>
    */
-  Attendee?: Attendee;
+  Attendee?: Attendee
   /**
    * Metadata pertaining to this request.
    */
-  $metadata: ResponseMetadata;
-};
+  $metadata: ResponseMetadata
+}
 
 export type JoinMeetingResponse = {
-  Attendee: CreateAttendeeCommandOutput;
-  Meeting: CreateMeetingCommandOutput;
-};
+  Attendee: CreateAttendeeCommandOutput
+  Meeting: CreateMeetingCommandOutput
+}

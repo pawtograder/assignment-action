@@ -9,7 +9,7 @@ import {
   createRegressionTestRun,
   createSubmission,
   submitFeedback
-} from './api/adminServiceComponents.js'
+} from './SupabaseAPI.js'
 import grade from './grader/Grader.js'
 
 async function downloadTarballAndExtractTo(url: string, dir: string) {
@@ -144,24 +144,16 @@ export async function run(): Promise<void> {
 
     let graderSha, graderDir, assignmentDir: string
     if (regressionTestJob) {
-      const graderConfig = await createRegressionTestRun({
-        headers: {
-          Authorization: token
-        },
-        pathParams: {
-          regressionTestId: Number(regressionTestJob)
-        }
-      })
+      const graderConfig = await createRegressionTestRun(
+        token,
+        Number(regressionTestJob)
+      )
       const config = await prepareForRegressionTest(graderConfig)
       graderDir = config.graderDir
       assignmentDir = config.assignmentDir
       graderSha = process.env.GITHUB_SHA!
     } else {
-      const graderConfig = await createSubmission({
-        headers: {
-          Authorization: token
-        }
-      })
+      const graderConfig = await createSubmission(token)
       const config = await prepareForGrading(graderConfig)
       graderDir = config.graderDir
       assignmentDir = config.assignmentDir
@@ -180,8 +172,8 @@ export async function run(): Promise<void> {
             autograder_regression_test_id: Number.parseInt(regressionTestJob)
           }
         : undefined
-      const gradeResponse = await submitFeedback({
-        body: {
+      const gradeResponse = await submitFeedback(
+        {
           ret_code: 0,
           output: '',
           execution_time: Date.now() - start,
@@ -190,16 +182,14 @@ export async function run(): Promise<void> {
           action_repository,
           action_ref
         },
-        queryParams,
-        headers: {
-          Authorization: token
-        }
-      })
+        token,
+        queryParams
+      )
       await generateSummaryReport(results, gradeResponse)
     } catch (error) {
       if (error instanceof Error) {
-        await submitFeedback({
-          body: {
+        await submitFeedback(
+          {
             ret_code: 1,
             output: `${error.message}`,
             execution_time: Date.now() - start,
@@ -215,10 +205,8 @@ export async function run(): Promise<void> {
             action_ref,
             action_repository
           },
-          headers: {
-            Authorization: token
-          }
-        })
+          token
+        )
         core.setFailed(error.message)
         console.error(error)
       }
