@@ -31,7 +31,13 @@ export async function submitFeedback(
   if (!response.ok) {
     throw new Error(`Failed to submit feedback: ${response.statusText}`)
   }
-  return response.json() as Promise<GradeResponse>
+  const resp = (await response.json()) as GradeResponse
+  if (resp.error) {
+    throw new Error(
+      `Failed to submit feedback: ${resp.error.message} ${resp.error.details}`
+    )
+  }
+  return resp
 }
 
 export async function createSubmission(token: string) {
@@ -49,7 +55,13 @@ export async function createSubmission(token: string) {
   if (!response.ok) {
     throw new Error(`Failed to create submission: ${response.statusText}`)
   }
-  return response.json() as Promise<SubmissionResponse>
+  const resp = (await response.json()) as SubmissionResponse
+  if (resp.error) {
+    throw new Error(
+      `Failed to create submission: ${resp.error.message} ${resp.error.details}`
+    )
+  }
+  return resp
 }
 
 export async function createRegressionTestRun(
@@ -72,5 +84,11 @@ export async function createRegressionTestRun(
       `Failed to create regression test run: ${response.statusText}`
     )
   }
-  return response.json() as Promise<RegressionTestRunResponse>
+  const resp = (await response.json()) as RegressionTestRunResponse
+  if (resp.error) {
+    throw new Error(
+      `Failed to create regression test run: ${resp.error.message} ${resp.error.details}`
+    )
+  }
+  return resp
 }

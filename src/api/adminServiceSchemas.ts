@@ -6,17 +6,32 @@
 export type SubmissionResponse = {
   grader_sha: string
   grader_url: string
+  error?: {
+    message: string
+    recoverable: boolean
+    details: string
+  }
 }
 
 export type RegressionTestRunResponse = {
   regression_test_sha: string
   regression_test_url: string
+  error?: {
+    message: string
+    recoverable: boolean
+    details: string
+  }
 }
 
 export type GradeResponse = {
   details_url: string
   message: string
   is_ok: boolean
+  error?: {
+    message: string
+    recoverable: boolean
+    details: string
+  }
 }
 
 export type OutputFormat = 'text' | 'markdown' | 'ansi'
