@@ -27266,7 +27266,11 @@ async function submitFeedback(body, token, queryParams) {
     if (!response.ok) {
         throw new Error(`Failed to submit feedback: ${response.statusText}`);
     }
-    return response.json();
+    const resp = (await response.json());
+    if (resp.error) {
+        throw new Error(`Failed to submit feedback: ${resp.error.message} ${resp.error.details}`);
+    }
+    return resp;
 }
 async function createSubmission(token) {
     const gradingServerURL = coreExports.getInput('grading_server');
@@ -27280,7 +27284,11 @@ async function createSubmission(token) {
     if (!response.ok) {
         throw new Error(`Failed to create submission: ${response.statusText}`);
     }
-    return response.json();
+    const resp = (await response.json());
+    if (resp.error) {
+        throw new Error(`Failed to create submission: ${resp.error.message} ${resp.error.details}`);
+    }
+    return resp;
 }
 async function createRegressionTestRun(token, regression_test_id) {
     const gradingServerURL = coreExports.getInput('grading_server');
@@ -27294,7 +27302,11 @@ async function createRegressionTestRun(token, regression_test_id) {
     if (!response.ok) {
         throw new Error(`Failed to create regression test run: ${response.statusText}`);
     }
-    return response.json();
+    const resp = (await response.json());
+    if (resp.error) {
+        throw new Error(`Failed to create regression test run: ${resp.error.message} ${resp.error.details}`);
+    }
+    return resp;
 }
 
 var ioExports = requireIo();
