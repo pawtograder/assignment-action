@@ -45583,6 +45583,8 @@ async function run() {
         }
         catch (error) {
             if (error instanceof Error) {
+                coreExports.setFailed(error.message);
+                console.error(error);
                 await submitFeedback({
                     ret_code: 1,
                     output: `${error.message}`,
@@ -45599,8 +45601,6 @@ async function run() {
                     action_ref,
                     action_repository
                 }, token);
-                coreExports.setFailed(error.message);
-                console.error(error);
             }
         }
     }

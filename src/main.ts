@@ -188,6 +188,8 @@ export async function run(): Promise<void> {
       await generateSummaryReport(results, gradeResponse)
     } catch (error) {
       if (error instanceof Error) {
+        core.setFailed(error.message)
+        console.error(error)
         await submitFeedback(
           {
             ret_code: 1,
@@ -207,8 +209,6 @@ export async function run(): Promise<void> {
           },
           token
         )
-        core.setFailed(error.message)
-        console.error(error)
       }
     }
   } catch (error) {
