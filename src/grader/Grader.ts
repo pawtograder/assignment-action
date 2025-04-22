@@ -184,6 +184,7 @@ class Grader {
             .join('\n')}`,
           output_format: 'markdown',
           score: passingTests == expectedTests ? unit.points : 0,
+          hide_until_released: unit.hide_until_released,
           max_score: unit.points
         }
       ]

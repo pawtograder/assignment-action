@@ -29,6 +29,7 @@ export interface RegularTestUnit {
   tests: string | string[] // format: "[T#.#]"
   points: number
   testCount: number
+  hide_until_released?: boolean
 }
 
 // Combined graded unit type

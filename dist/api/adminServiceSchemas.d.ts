@@ -50,6 +50,7 @@ export type AutograderFeedback = {
          * @format double
          */
         score?: number;
+        hide_until_released?: boolean;
     }[];
     lint: {
         output_format?: OutputFormat;
