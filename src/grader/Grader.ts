@@ -1,4 +1,5 @@
 import * as io from '@actions/io'
+import * as glob from '@actions/glob'
 import { readdir, readFile } from 'fs/promises'
 import path from 'path'
 import yaml from 'yaml'
@@ -57,11 +58,19 @@ class Grader {
   }
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]
+    //DEBUG print out all files in cwd
+    console.log((await readdir(process.cwd(), { recursive: true })).join('\n'))
+    // Expand glob patterns
+    const globber = await glob.create(
+      files.map((f) => path.join(this.submissionDir, f)).join('\n')
+    )
+    const expandedFiles = await globber.glob()
+
     await Promise.all(
-      files.map(async (file) => {
-        const src = path.join(this.submissionDir, file)
-        const dest = path.join(this.gradingDir, file)
-        await io.cp(src, dest, { recursive: true })
+      expandedFiles.map(async (file: string) => {
+        const relativePath = path.relative(this.submissionDir, file)
+        const dest = path.join(this.gradingDir, relativePath)
+        await io.cp(file, dest, { recursive: true })
       })
     )
   }
@@ -69,8 +78,23 @@ class Grader {
     const files = this.config.submissionFiles['files'].concat(
       this.config.submissionFiles['testFiles']
     )
+    //First, delete any files that we copied over, since we might have copied over files that don't exist in the solution due to glob patterns
+    const gradingDirGlobber = await glob.create(
+      files.map((f) => path.join(this.gradingDir, f)).join('\n')
+    )
+    const expandedFiles = await gradingDirGlobber.glob()
     await Promise.all(
-      files.map(async (file) => {
+      expandedFiles.map(async (file: string) => {
+        await io.rmRF(file)
+      })
+    )
+
+    const solutionFilesGlobber = await glob.create(
+      files.map((f) => path.join(this.solutionDir, f)).join('\n')
+    )
+    const expandedSolutionFiles = await solutionFilesGlobber.glob()
+    await Promise.all(
+      expandedSolutionFiles.map(async (file: string) => {
         const src = path.join(this.solutionDir, file)
         const dest = path.join(this.gradingDir, file)
         await io.cp(src, dest, { recursive: true })
