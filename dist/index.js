@@ -47665,8 +47665,6 @@ class Grader {
     }
     async copyStudentFiles(whichFiles) {
         const files = this.config.submissionFiles[whichFiles];
-        //DEBUG print out all files in cwd
-        console.log((await readdir$2(process.cwd(), { recursive: true })).join('\n'));
         // Expand glob patterns
         const globber = await globExports.create(files.map((f) => path$1.join(this.submissionDir, f)).join('\n'));
         const expandedFiles = await globber.glob();
@@ -47806,6 +47804,7 @@ class Grader {
         }
         catch (err) {
             const msg = err instanceof Error ? err.message : 'Unknown error';
+            this.logger.log('hidden', `Build failed: ${msg}`);
             const allTests = this.config.gradedParts
                 .map((part) => part.gradedUnits.map((gradedUnit) => {
                 if (isRegularTestUnit(gradedUnit)) {
@@ -47838,12 +47837,7 @@ class Grader {
                     status: 'fail',
                     output: 'Gradle build failed'
                 },
-                output: {
-                    visible: {
-                        output: msg,
-                        output_format: 'text'
-                    }
-                },
+                output: this.logger.getEachOutput(),
                 tests: allTests,
                 score: 0
             };
