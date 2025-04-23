@@ -7,6 +7,9 @@ export interface BuildConfig {
         preset: 'checkstyle';
         policy: 'fail' | 'warn' | 'ignore';
     };
+    student_tests: {
+        grading: 'none' | 'mutation';
+    };
 }
 export interface BreakPoint {
     minimumMutantsDetected: number;

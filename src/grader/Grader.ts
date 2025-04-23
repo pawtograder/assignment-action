@@ -226,6 +226,7 @@ class Grader {
                   'Build failed, test not run. Please see overall output for more details.',
                 output_format: 'text' as OutputFormat,
                 score: 0,
+                part: part.name,
                 max_score: gradedUnit.points
               }
             } else if (isMutationTestUnit(gradedUnit)) {
@@ -235,6 +236,7 @@ class Grader {
                   'Build failed, test not run. Please see overall output for more details.',
                 output_format: 'text' as OutputFormat,
                 score: 0,
+                part: part.name,
                 max_score: gradedUnit.breakPoints[0].pointsToAward
               }
             } else {
@@ -266,7 +268,10 @@ class Grader {
     const testResults = await this.builder.test()
     let mutantResults: MutantResult[] | undefined
     let mutantFailureAdvice: string | undefined
-    if (this.config.submissionFiles.testFiles.length > 0) {
+    if (
+      this.config.submissionFiles.testFiles.length > 0 &&
+      this.config.build.student_tests.grading !== 'none'
+    ) {
       console.log('Grading student tests')
       await this.resetSolutionFiles()
       await this.copyStudentFiles('testFiles')
