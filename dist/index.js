@@ -47512,6 +47512,10 @@ class GradleBuilder extends Builder {
     }
     async test() {
         this.logger.log('hidden', 'Testing with Gradle');
+        const { returnCode } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'test'], this.logger, true);
+        if (returnCode !== 0) {
+            this.logger.log('hidden', `Gradle test failed, return code: ${returnCode}`);
+        }
         const testResultsContents = await Promise.all((await glob(`${this.gradingDir}/build/test-results/test/TEST-*.xml`)).map(async (file) => {
             this.logger.log('hidden', `Reading test results from ${file}`);
             const ret = await parseSurefireXml(file);
@@ -47542,7 +47546,7 @@ class GradleBuilder extends Builder {
     }
     async mutationTest() {
         this.logger.log('hidden', 'Running Pitest');
-        await this.executeCommandAndGetOutput('./gradlew', ['pitest'], this.logger);
+        await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'pitest'], this.logger);
         this.logger.log('hidden', 'Reading mutation test results');
         const mutationTestResults = `${this.gradingDir}/build/reports/pitest/mutations.xml`;
         const mutationTestResultsContents = await parsePitestXml(mutationTestResults);
@@ -47560,7 +47564,7 @@ class GradleBuilder extends Builder {
     }
     async buildClean() {
         this.logger.log('hidden', 'Building clean with Gradle');
-        const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', ['clean', 'build'], this.logger, true);
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'clean', '-x', 'test', 'build'], this.logger, true);
         if (returnCode !== 0) {
             throw new Error(`Gradle build failed: ${output}`);
         }
