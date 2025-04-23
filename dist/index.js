@@ -45316,6 +45316,13 @@ class Grader {
                     return '❌';
                 }
             }
+            let score = 0;
+            if (unit.allow_partial_credit) {
+                score = (passingTests / expectedTests) * unit.points;
+            }
+            else {
+                score = passingTests == expectedTests ? unit.points : 0;
+            }
             return [
                 {
                     name: unit.name,
@@ -45324,7 +45331,7 @@ class Grader {
                         .map((result) => `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`)
                         .join('\n')}`,
                     output_format: 'markdown',
-                    score: passingTests == expectedTests ? unit.points : 0,
+                    score,
                     hide_until_released: unit.hide_until_released,
                     max_score: unit.points
                 }

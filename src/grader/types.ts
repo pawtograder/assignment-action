@@ -32,6 +32,7 @@ export interface RegularTestUnit {
   tests: string | string[] // format: "[T#.#]"
   points: number
   testCount: number
+  allow_partial_credit?: boolean
   hide_until_released?: boolean
 }
 

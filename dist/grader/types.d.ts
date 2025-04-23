@@ -25,6 +25,7 @@ export interface RegularTestUnit {
     tests: string | string[];
     points: number;
     testCount: number;
+    allow_partial_credit?: boolean;
     hide_until_released?: boolean;
 }
 export type GradedUnit = MutationTestUnit | RegularTestUnit;
