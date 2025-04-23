@@ -45246,7 +45246,7 @@ class Grader {
     gradePart(part, testResults, mutantResults, mutantFailureAdvice) {
         return part.gradedUnits
             .map((unit) => {
-            const ret = this.gradeGradedUnit(unit, testResults, mutantResults, mutantFailureAdvice);
+            const ret = this.gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice);
             for (const feedback of ret) {
                 feedback.part = part.name;
             }
@@ -45254,7 +45254,7 @@ class Grader {
         })
             .flat();
     }
-    gradeGradedUnit(unit, testResults, mutantResults, mutantFailureAdvice) {
+    gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice) {
         if (isMutationTestUnit(unit)) {
             if (!mutantResults) {
                 return [
@@ -45332,7 +45332,7 @@ class Grader {
                         .join('\n')}`,
                     output_format: 'markdown',
                     score,
-                    hide_until_released: unit.hide_until_released,
+                    hide_until_released: part.hide_until_released,
                     max_score: unit.points
                 }
             ];

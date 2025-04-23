@@ -33,7 +33,6 @@ export interface RegularTestUnit {
   points: number
   testCount: number
   allow_partial_credit?: boolean
-  hide_until_released?: boolean
 }
 
 // Combined graded unit type
@@ -43,6 +42,7 @@ export type GradedUnit = MutationTestUnit | RegularTestUnit
 export interface GradedPart {
   name: string
   gradedUnits: GradedUnit[]
+  hide_until_released?: boolean
 }
 
 // Main configuration type

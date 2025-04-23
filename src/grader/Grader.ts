@@ -88,6 +88,7 @@ class Grader {
       .map((unit) => {
         const ret = this.gradeGradedUnit(
           unit,
+          part,
           testResults,
           mutantResults,
           mutantFailureAdvice
@@ -101,6 +102,7 @@ class Grader {
   }
   private gradeGradedUnit(
     unit: GradedUnit,
+    part: GradedPart,
     testResults: TestResult[],
     mutantResults?: MutantResult[],
     mutantFailureAdvice?: string
@@ -190,7 +192,7 @@ class Grader {
             .join('\n')}`,
           output_format: 'markdown',
           score,
-          hide_until_released: unit.hide_until_released,
+          hide_until_released: part.hide_until_released,
           max_score: unit.points
         }
       ]

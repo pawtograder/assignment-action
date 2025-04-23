@@ -26,12 +26,12 @@ export interface RegularTestUnit {
     points: number;
     testCount: number;
     allow_partial_credit?: boolean;
-    hide_until_released?: boolean;
 }
 export type GradedUnit = MutationTestUnit | RegularTestUnit;
 export interface GradedPart {
     name: string;
     gradedUnits: GradedUnit[];
+    hide_until_released?: boolean;
 }
 export interface PawtograderConfig {
     build: BuildConfig;
