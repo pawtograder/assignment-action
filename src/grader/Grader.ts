@@ -68,6 +68,7 @@ class Grader {
       expandedFiles.map(async (file: string) => {
         const relativePath = path.relative(this.submissionDir, file)
         const dest = path.join(this.gradingDir, relativePath)
+        console.log('Copying file:', file, 'to', dest)
         await io.cp(file, dest, { recursive: true })
       })
     )
@@ -234,6 +235,7 @@ class Grader {
       solutionFiles.map(async (file) => {
         const src = path.join(this.solutionDir, file)
         const dest = path.join(tmpDir, file)
+        console.log('Copying file:', src, 'to', dest)
         await io.cp(src, dest, { recursive: true })
       })
     )

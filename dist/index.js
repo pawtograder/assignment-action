@@ -47675,6 +47675,7 @@ class Grader {
         await Promise.all(expandedFiles.map(async (file) => {
             const relativePath = path$1.relative(this.submissionDir, file);
             const dest = path$1.join(this.gradingDir, relativePath);
+            console.log('Copying file:', file, 'to', dest);
             await ioExports.cp(file, dest, { recursive: true });
         }));
     }
@@ -47800,6 +47801,7 @@ class Grader {
         await Promise.all(solutionFiles.map(async (file) => {
             const src = path$1.join(this.solutionDir, file);
             const dest = path$1.join(tmpDir, file);
+            console.log('Copying file:', src, 'to', dest);
             await ioExports.cp(src, dest, { recursive: true });
         }));
         await this.copyStudentFiles('files');
