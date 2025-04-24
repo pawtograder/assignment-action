@@ -1,17 +1,17 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
+  "name": "pawtograder-assignment-action",
+  "description": "Pawtograder Assignment Action",
   "version": "0.0.0",
-  "author": "",
+  "author": "Jonathan Bell",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/pawtograder/assignment-action",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/pawtograder/assignment-action.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/pawtograder/assignment-action/issues"
   },
   "keywords": [
     "actions"
