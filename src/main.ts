@@ -60,10 +60,14 @@ async function generateSummaryReport(
 ) {
   const score =
     results.score ||
-    results.tests.reduce((acc, test) => acc + (test.score || 0), 0)
+    results.tests
+      .filter((t) => !t.hide_until_released)
+      .reduce((acc, test) => acc + (test.score || 0), 0)
   const max_score =
     results.score ||
-    results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0)
+    results.tests
+      .filter((t) => !t.hide_until_released)
+      .reduce((acc, test) => acc + (test.max_score || 0), 0)
 
   // Set job summary with test results
   core.summary.addHeading('Autograder Results')
@@ -87,7 +91,7 @@ async function generateSummaryReport(
       { data: 'Score', header: true }
     ])
     let lastPart = undefined
-    for (const test of results.tests) {
+    for (const test of results.tests.filter((t) => !t.hide_until_released)) {
       const icon = test.score === test.max_score ? '✅' : '❌'
       if (test.part !== lastPart && test.part) {
         lastPart = test.part

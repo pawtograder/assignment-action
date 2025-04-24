@@ -47936,9 +47936,13 @@ async function prepareForRegressionTest(graderConfig) {
 }
 async function generateSummaryReport(results, gradeResponse) {
     const score = results.score ||
-        results.tests.reduce((acc, test) => acc + (test.score || 0), 0);
+        results.tests
+            .filter((t) => !t.hide_until_released)
+            .reduce((acc, test) => acc + (test.score || 0), 0);
     const max_score = results.score ||
-        results.tests.reduce((acc, test) => acc + (test.max_score || 0), 0);
+        results.tests
+            .filter((t) => !t.hide_until_released)
+            .reduce((acc, test) => acc + (test.max_score || 0), 0);
     // Set job summary with test results
     coreExports.summary.addHeading('Autograder Results');
     coreExports.summary.addRaw(`Score: ${score}/${max_score}`, true);
@@ -47958,7 +47962,7 @@ async function generateSummaryReport(results, gradeResponse) {
             { data: 'Score', header: true }
         ]);
         let lastPart = undefined;
-        for (const test of results.tests) {
+        for (const test of results.tests.filter((t) => !t.hide_until_released)) {
             const icon = test.score === test.max_score ? '✅' : '❌';
             if (test.part !== lastPart && test.part) {
                 lastPart = test.part;
