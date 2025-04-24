@@ -47684,6 +47684,7 @@ class Grader {
         const gradingDirGlobber = await globExports.create(files.map((f) => path$1.join(this.gradingDir, f)).join('\n'));
         const expandedFiles = await gradingDirGlobber.glob();
         await Promise.all(expandedFiles.map(async (file) => {
+            console.log('Deleting file:', file);
             await ioExports.rmRF(file);
         }));
         const solutionFilesGlobber = await globExports.create(files.map((f) => path$1.join(this.solutionDir, f)).join('\n'));
@@ -47759,10 +47760,6 @@ class Grader {
             });
             const expectedTests = unit.testCount;
             const passingTests = relevantTestResults.filter((result) => result.status === 'pass').length;
-            console.log('Relevant tests:');
-            console.log(relevantTestResults);
-            console.log('Passing tests:');
-            console.log(passingTests);
             function icon(result) {
                 if (result.status === 'pass') {
                     return '✅';
