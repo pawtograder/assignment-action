@@ -47759,6 +47759,10 @@ class Grader {
             });
             const expectedTests = unit.testCount;
             const passingTests = relevantTestResults.filter((result) => result.status === 'pass').length;
+            console.log('Relevant tests:');
+            console.log(relevantTestResults);
+            console.log('Passing tests:');
+            console.log(passingTests);
             function icon(result) {
                 if (result.status === 'pass') {
                     return '✅';
