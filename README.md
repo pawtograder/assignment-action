@@ -7,7 +7,6 @@ This action works closely with the
 two key Pawtograder Edge Functions, as shown below:
 
 ```mermaid
-stateDiagram
 sequenceDiagram
     participant A as Action
     participant CS as autograder-create-submission
