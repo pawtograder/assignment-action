@@ -48048,6 +48048,9 @@ async function run() {
                 action_ref
             }, token, queryParams);
             await generateSummaryReport(results, gradeResponse);
+            if (results.score === 0) {
+                coreExports.setFailed('Score for this submission is 0. Please check to be sure that it conforms with the assignment instructions.');
+            }
         }
         catch (error) {
             if (error instanceof Error) {

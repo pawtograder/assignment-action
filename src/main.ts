@@ -190,6 +190,11 @@ export async function run(): Promise<void> {
         queryParams
       )
       await generateSummaryReport(results, gradeResponse)
+      if (results.score === 0) {
+        core.setFailed(
+          'Score for this submission is 0. Please check to be sure that it conforms with the assignment instructions.'
+        )
+      }
     } catch (error) {
       if (error instanceof Error) {
         core.setFailed(error.message)
