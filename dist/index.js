@@ -47896,6 +47896,8 @@ class Grader {
         const testFeedbacks = this.config.gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
+        console.log('Test feedbacks:');
+        console.log(testFeedbacks);
         return {
             lint: lintResult,
             tests: testFeedbacks,

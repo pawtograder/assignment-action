@@ -350,6 +350,8 @@ class Grader {
       )
       .flat()
 
+    console.log('Test feedbacks:')
+    console.log(testFeedbacks)
     return {
       lint: lintResult,
       tests: testFeedbacks,
