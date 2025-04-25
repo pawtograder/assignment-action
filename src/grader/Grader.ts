@@ -55,11 +55,11 @@ class Grader {
       this.gradingDir,
       this.regressionTestJob
     )
-    if (regressionTestJob) {
-      console.log(
-        `Autograder configuration: ${JSON.stringify(this.config, null, 2)}`
-      )
-    }
+    // if (regressionTestJob) {
+    console.log(
+      `Autograder configuration: ${JSON.stringify(this.config, null, 2)}`
+    )
+    // }
   }
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]

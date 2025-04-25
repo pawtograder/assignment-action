@@ -47666,6 +47666,9 @@ class Grader {
         this.regressionTestJob = regressionTestJob;
         this.logger = new Logger(regressionTestJob);
         this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
+        // if (regressionTestJob) {
+        console.log(`Autograder configuration: ${JSON.stringify(this.config, null, 2)}`);
+        // }
     }
     async copyStudentFiles(whichFiles) {
         const files = this.config.submissionFiles[whichFiles];
