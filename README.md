@@ -43,3 +43,49 @@ npm run build
 
 The CI workflow will fail if the `dist/` directory does not match what is
 expected from the build.
+
+## About the configuration file
+
+The `pawtograder.yml` file is used to configure the autograder, and defines the
+way to build the project and run the tests. This file is parsed by the
+`pawtograder/assignment-action` to grade student code. That action abstracts the
+details of building a project, linting it, grading unit tests, and even running
+a mutation analysis on the student's tests. It also handles parsing output from
+those tests and analyses.
+
+The action takes the files that match the names and/or glob patterns in
+`submissionFiles`.`files` and copies them into the corresponding location in
+_the solution_ repository. Then, it runs the tests defined in _the solution_
+repository. If you collect students' tests, you must define them in the
+`submissionFiles`.`testFiles` section - this way you don't need to worry about
+whether or not a student's test can overwrite one of yours (and we can do
+mutation and other analyses on the test files).
+
+## About the grading specification
+
+The `gradedParts` section defines the parts of the assignment that are graded.
+Each part has a name, and a list of units that are graded. `Parts` can be used
+to seggregate functionality by multiple checkpoints of an assignment (e.g. show
+"Part 1" tests all in one visual group with a part-level score, then show "Part
+2" tests and so on). A `Part` can also be set to `hide_until_released` to
+prevent students from seeing the output or score of tests in this part until
+their submission is graded and released.
+
+`gradedUnits` defines the units that are graded for a part, this is the lowest
+level of granularity that can be graded. There are two kinds of `gradedUnit`:
+
+- Regular test units are used for traditional test cases with point values. They
+  have a name (displayed to students), a point value, and an array of test
+  names. For JUnit, names are matched as prefixes of the test name using the
+  Fully.Qualified.ClassName.testMethod pattern. Note that because it's both
+  extremely convenient to specify many tests using a prefix and easy to mess up
+  the points, you need to speciy the number of tests you expect to run. By
+  default, points are only awarded if all tests are run and pass, or use
+  `allow_partial_credit: true` to award `points*(Passed/Total)` points.
+- Mutation test units are used for grading mutation analysis of student tests.
+  Each Mutation test unit has a name, a list of locations (in the solution code)
+  to expect mutants to be detected by students' tests (format:
+  "file.name:lineStart-lineEnd"), and a list of scoring breakpoints. Breakpoints
+  define the number of points to award based on the number of mutants detected
+  within the specified locations, and are objects with keys
+  `minimumMutantsDetected` and `pointsToAward`.
