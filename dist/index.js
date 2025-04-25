@@ -47566,7 +47566,7 @@ class GradleBuilder extends Builder {
         this.logger.log('hidden', 'Building clean with Gradle');
         const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'clean', '-x', 'test', 'build'], this.logger, true);
         if (returnCode !== 0) {
-            throw new Error(`Gradle build failed: ${output}`);
+            throw new Error(`Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`);
         }
     }
 }
@@ -47812,7 +47812,8 @@ class Grader {
         }
         catch (err) {
             const msg = err instanceof Error ? err.message : 'Unknown error';
-            this.logger.log('hidden', `Build failed: ${msg}`);
+            this.logger.log('visible', `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`);
+            this.logger.log('visible', msg);
             const allTests = this.config.gradedParts
                 .filter((part) => !part.hide_until_released)
                 .map((part) => part.gradedUnits.map((gradedUnit) => {

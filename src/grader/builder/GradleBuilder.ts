@@ -126,7 +126,9 @@ export default class GradleBuilder extends Builder {
       true
     )
     if (returnCode !== 0) {
-      throw new Error(`Gradle build failed: ${output}`)
+      throw new Error(
+        `Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`
+      )
     }
   }
 }

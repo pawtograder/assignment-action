@@ -252,7 +252,11 @@ class Grader {
       await this.builder.buildClean()
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
-      this.logger.log('hidden', `Build failed: ${msg}`)
+      this.logger.log(
+        'visible',
+        `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`
+      )
+      this.logger.log('visible', msg)
       const allTests: AutograderTestFeedback[] = this.config.gradedParts
         .filter((part) => !part.hide_until_released)
         .map((part) =>
