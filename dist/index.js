@@ -47666,9 +47666,9 @@ class Grader {
         this.regressionTestJob = regressionTestJob;
         this.logger = new Logger(regressionTestJob);
         this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
-        // if (regressionTestJob) {
-        console.log(`Autograder configuration: ${JSON.stringify(this.config, null, 2)}`);
-        // }
+        if (regressionTestJob) {
+            console.log(`Autograder configuration: ${JSON.stringify(this.config, null, 2)}`);
+        }
     }
     async copyStudentFiles(whichFiles) {
         const files = this.config.submissionFiles[whichFiles];
@@ -47814,6 +47814,7 @@ class Grader {
             const msg = err instanceof Error ? err.message : 'Unknown error';
             this.logger.log('hidden', `Build failed: ${msg}`);
             const allTests = this.config.gradedParts
+                .filter((part) => !part.hide_until_released)
                 .map((part) => part.gradedUnits.map((gradedUnit) => {
                 if (isRegularTestUnit(gradedUnit)) {
                     return {
@@ -47896,8 +47897,6 @@ class Grader {
         const testFeedbacks = this.config.gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
-        console.log('Test feedbacks:');
-        console.log(testFeedbacks);
         return {
             lint: lintResult,
             tests: testFeedbacks,

@@ -55,11 +55,11 @@ class Grader {
       this.gradingDir,
       this.regressionTestJob
     )
-    // if (regressionTestJob) {
-    console.log(
-      `Autograder configuration: ${JSON.stringify(this.config, null, 2)}`
-    )
-    // }
+    if (regressionTestJob) {
+      console.log(
+        `Autograder configuration: ${JSON.stringify(this.config, null, 2)}`
+      )
+    }
   }
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]
@@ -254,6 +254,7 @@ class Grader {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       this.logger.log('hidden', `Build failed: ${msg}`)
       const allTests: AutograderTestFeedback[] = this.config.gradedParts
+        .filter((part) => !part.hide_until_released)
         .map((part) =>
           part.gradedUnits.map((gradedUnit) => {
             if (isRegularTestUnit(gradedUnit)) {
@@ -350,8 +351,6 @@ class Grader {
       )
       .flat()
 
-    console.log('Test feedbacks:')
-    console.log(testFeedbacks)
     return {
       lint: lintResult,
       tests: testFeedbacks,
