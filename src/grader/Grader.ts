@@ -63,6 +63,18 @@ class Grader {
   }
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]
+
+    // Delete any files that match the glob patterns in the solution directory, so that students can overwrite/replace them
+    const solutionGlobber = await glob.create(
+      files.map((f) => path.join(this.gradingDir, f)).join('\n')
+    )
+    const expandedSolutionFiles = await solutionGlobber.glob()
+    await Promise.all(
+      expandedSolutionFiles.map(async (file: string) => {
+        await io.rmRF(file)
+      })
+    )
+
     // Expand glob patterns
     const globber = await glob.create(
       files.map((f) => path.join(this.submissionDir, f)).join('\n')
