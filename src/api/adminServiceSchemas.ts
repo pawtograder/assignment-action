@@ -27,6 +27,13 @@ export type GradeResponse = {
   details_url: string
   message: string
   is_ok: boolean
+  artifacts?: {
+    name: string
+    upload_url: string
+    path: string
+  }[]
+  supabase_url: string
+  supabase_anon_key: string
   error?: {
     message: string
     recoverable: boolean
@@ -87,6 +94,11 @@ export type AutograderFeedback = {
    * @format double
    */
   score?: number
+  artifacts?: {
+    name: string
+    path: string // Local path in the grader container
+    data?: object
+  }[]
 }
 
 export type GradingScriptResult = {

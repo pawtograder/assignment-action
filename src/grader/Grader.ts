@@ -1,6 +1,6 @@
 import * as io from '@actions/io'
 import * as glob from '@actions/glob'
-import { readdir, readFile } from 'fs/promises'
+import { readdir, readFile, access } from 'fs/promises'
 import path from 'path'
 import yaml from 'yaml'
 import { Builder, MutantResult, TestResult } from './builder/Builder.js'
@@ -367,10 +367,33 @@ class Grader {
       )
       .flat()
 
+    //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
+    const expectedArtifacts = this.config.build.artifacts || []
+    //Check that each expected artifact is present in the grading directory
+    const artifactPaths = await Promise.all(
+      expectedArtifacts.map(async (artifact) => {
+        const artifactPath = path.join(this.gradingDir, artifact.path)
+        try {
+          await access(artifactPath)
+          return {
+            name: artifact.name,
+            path: artifactPath,
+            data: artifact.data
+          }
+        } catch {
+          console.error(
+            `Missing expected artifact: ${artifact.name} at path ${artifact.path}`
+          )
+          return undefined
+        }
+      })
+    )
+
     return {
       lint: lintResult,
       tests: testFeedbacks,
-      output: this.logger.getEachOutput()
+      output: this.logger.getEachOutput(),
+      artifacts: artifactPaths.filter((path) => path !== undefined)
     }
   }
 }

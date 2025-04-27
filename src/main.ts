@@ -2,6 +2,8 @@ import * as core from '@actions/core'
 import { SummaryTableRow } from '@actions/core/lib/summary.js'
 import { exec } from '@actions/exec'
 import { createWriteStream } from 'fs'
+import { createClient } from '@supabase/supabase-js'
+
 import { mkdir, rename } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
@@ -189,6 +191,36 @@ export async function run(): Promise<void> {
         token,
         queryParams
       )
+      //If there are artifacts, we need to upload them.
+      if (results.artifacts) {
+        const supabase = createClient(
+          gradeResponse.supabase_url,
+          gradeResponse.supabase_anon_key
+        )
+        await Promise.all(
+          results.artifacts.map(async (artifact) => {
+            const artifactRemote = gradeResponse.artifacts?.find(
+              (ra) => ra.name === artifact.name
+            )
+            if (artifactRemote) {
+              const { error } = await supabase.storage
+                .from('submission_artifacts')
+                .uploadToSignedUrl(
+                  artifactRemote.path,
+                  artifactRemote.upload_url,
+                  artifact.path
+                )
+              if (error) {
+                console.error(error)
+              }
+            } else {
+              console.error(
+                `Artifact ${artifact.name} not found in gradeResponse`
+              )
+            }
+          })
+        )
+      }
       await generateSummaryReport(results, gradeResponse)
       if (results.score === 0) {
         core.setFailed(
