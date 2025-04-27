@@ -2,7 +2,7 @@ import { AutograderFeedback } from '../api/adminServiceSchemas.js';
 export interface BuildConfig {
     preset: 'java-gradle';
     cmd: string;
-    artifacts: string[];
+    artifacts?: GraderArtifact[];
     linter: {
         preset: 'checkstyle';
         policy: 'fail' | 'warn' | 'ignore';
@@ -10,6 +10,11 @@ export interface BuildConfig {
     student_tests: {
         grading: 'none' | 'mutation';
     };
+}
+export interface GraderArtifact {
+    name: string;
+    path: string;
+    data?: object;
 }
 export interface BreakPoint {
     minimumMutantsDetected: number;

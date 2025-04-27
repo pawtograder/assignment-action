@@ -308,7 +308,8 @@ class Grader {
         },
         output: this.logger.getEachOutput(),
         tests: allTests,
-        score: 0
+        score: 0,
+        artifacts: []
       }
     }
 
@@ -319,7 +320,7 @@ class Grader {
     let mutantFailureAdvice: string | undefined
     if (
       this.config.submissionFiles.testFiles.length > 0 &&
-      this.config.build.student_tests.grading !== 'none'
+      this.config.build.student_tests?.grading !== 'none'
     ) {
       console.log('Grading student tests')
       await this.resetSolutionFiles()
