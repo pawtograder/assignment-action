@@ -204,7 +204,7 @@ export async function run(): Promise<void> {
             )
             if (artifactRemote) {
               const { error } = await supabase.storage
-                .from('submission_artifacts')
+                .from('submission-artifacts')
                 .uploadToSignedUrl(
                   artifactRemote.path,
                   artifactRemote.upload_url,

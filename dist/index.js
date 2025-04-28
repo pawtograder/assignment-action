@@ -137357,7 +137357,7 @@ async function run() {
                     const artifactRemote = gradeResponse.artifacts?.find((ra) => ra.name === artifact.name);
                     if (artifactRemote) {
                         const { error } = await supabase.storage
-                            .from('submission_artifacts')
+                            .from('submission-artifacts')
                             .uploadToSignedUrl(artifactRemote.path, artifactRemote.upload_url, artifact.path);
                         if (error) {
                             console.error(error);
