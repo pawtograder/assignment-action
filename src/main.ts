@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import { SummaryTableRow } from '@actions/core/lib/summary.js'
 import { exec } from '@actions/exec'
-import { createWriteStream } from 'fs'
+import { createWriteStream, readFileSync } from 'fs'
 import { createClient } from '@supabase/supabase-js'
 
 import { mkdir, rename } from 'fs/promises'
@@ -208,7 +208,7 @@ export async function run(): Promise<void> {
                 .uploadToSignedUrl(
                   artifactRemote.path,
                   artifactRemote.upload_url,
-                  artifact.path
+                  readFileSync(artifact.path)
                 )
               if (error) {
                 console.error(error)

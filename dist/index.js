@@ -137358,7 +137358,7 @@ async function run() {
                     if (artifactRemote) {
                         const { error } = await supabase.storage
                             .from('submission-artifacts')
-                            .uploadToSignedUrl(artifactRemote.path, artifactRemote.upload_url, artifact.path);
+                            .uploadToSignedUrl(artifactRemote.path, artifactRemote.upload_url, readFileSync(artifact.path));
                         if (error) {
                             console.error(error);
                         }
