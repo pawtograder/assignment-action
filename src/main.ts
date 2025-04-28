@@ -217,12 +217,11 @@ export async function run(): Promise<void> {
                 fileToUpload = readFileSync(artifact.path)
               }
 
-              console.log(artifactRemote)
               const { error } = await supabase.storage
                 .from('submission-artifacts')
                 .uploadToSignedUrl(
                   artifactRemote.path,
-                  artifactRemote.upload_url,
+                  artifactRemote.token,
                   fileToUpload
                 )
               if (error) {

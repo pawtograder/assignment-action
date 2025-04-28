@@ -27,7 +27,7 @@ export type GradeResponse = {
     is_ok: boolean;
     artifacts?: {
         name: string;
-        upload_url: string;
+        token: string;
         path: string;
     }[];
     supabase_url: string;
