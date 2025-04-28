@@ -136976,9 +136976,9 @@ class Grader {
         const solutionFilesGlobber = await globExports.create(files.map((f) => path$1.join(this.solutionDir, f)).join('\n'));
         const expandedSolutionFiles = await solutionFilesGlobber.glob();
         await Promise.all(expandedSolutionFiles.map(async (file) => {
-            const src = path$1.join(this.solutionDir, file);
-            const dest = path$1.join(this.gradingDir, file);
-            await ioExports.cp(src, dest, { recursive: true });
+            const relativePath = path$1.relative(this.solutionDir, file);
+            const dest = path$1.join(this.gradingDir, relativePath);
+            await ioExports.cp(file, dest, { recursive: true });
         }));
     }
     gradePart(part, testResults, mutantResults, mutantFailureAdvice) {

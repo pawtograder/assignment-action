@@ -114,9 +114,9 @@ class Grader {
     const expandedSolutionFiles = await solutionFilesGlobber.glob()
     await Promise.all(
       expandedSolutionFiles.map(async (file: string) => {
-        const src = path.join(this.solutionDir, file)
-        const dest = path.join(this.gradingDir, file)
-        await io.cp(src, dest, { recursive: true })
+        const relativePath = path.relative(this.solutionDir, file)
+        const dest = path.join(this.gradingDir, relativePath)
+        await io.cp(file, dest, { recursive: true })
       })
     )
   }
