@@ -136966,8 +136966,16 @@ class Grader {
         const gradingDirGlobber = await globExports.create(files.map((f) => path$1.join(this.gradingDir, f)).join('\n'));
         const expandedFiles = await gradingDirGlobber.glob();
         await Promise.all(expandedFiles.map(async (file) => {
-            console.log('Deleting file:', file);
-            await ioExports.rmRF(file);
+            try {
+                await ioExports.rmRF(file);
+            }
+            catch (err) {
+                if (err instanceof Error &&
+                    err.message.includes('no such file or directory')) ;
+                else {
+                    throw err;
+                }
+            }
         }));
         const solutionFilesGlobber = await globExports.create(files.map((f) => path$1.join(this.solutionDir, f)).join('\n'));
         const expandedSolutionFiles = await solutionFilesGlobber.glob();
