@@ -5,6 +5,7 @@ import { createWriteStream, readFileSync } from 'fs'
 import { createClient } from '@supabase/supabase-js'
 
 import { mkdir, rename } from 'fs/promises'
+import { stat } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import {
@@ -203,12 +204,25 @@ export async function run(): Promise<void> {
               (ra) => ra.name === artifact.name
             )
             if (artifactRemote) {
+              //Check to see if it is a directory or a file
+              const stats = await stat(artifact.path)
+              let fileToUpload: Buffer
+
+              if (stats.isDirectory()) {
+                // Create a zip file for the directory
+                const zipPath = `${artifact.path}.zip`
+                await exec('zip', ['-r', zipPath, artifact.path])
+                fileToUpload = readFileSync(zipPath)
+              } else {
+                fileToUpload = readFileSync(artifact.path)
+              }
+
               const { error } = await supabase.storage
                 .from('submission-artifacts')
                 .uploadToSignedUrl(
                   artifactRemote.path,
                   artifactRemote.upload_url,
-                  readFileSync(artifact.path)
+                  fileToUpload
                 )
               if (error) {
                 console.error(error)

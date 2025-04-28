@@ -28,7 +28,7 @@ import require$$0$a from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
 import require$$0$b from 'punycode';
-import { readFile, readdir as readdir$2, access, rename, mkdir } from 'fs/promises';
+import { readFile, readdir as readdir$2, access, stat, rename, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import { fileURLToPath } from 'node:url';
 import { win32, posix } from 'node:path';
@@ -137356,9 +137356,21 @@ async function run() {
                 await Promise.all(results.artifacts.map(async (artifact) => {
                     const artifactRemote = gradeResponse.artifacts?.find((ra) => ra.name === artifact.name);
                     if (artifactRemote) {
+                        //Check to see if it is a directory or a file
+                        const stats = await stat(artifact.path);
+                        let fileToUpload;
+                        if (stats.isDirectory()) {
+                            // Create a zip file for the directory
+                            const zipPath = `${artifact.path}.zip`;
+                            await execExports.exec('zip', ['-r', zipPath, artifact.path]);
+                            fileToUpload = readFileSync(zipPath);
+                        }
+                        else {
+                            fileToUpload = readFileSync(artifact.path);
+                        }
                         const { error } = await supabase.storage
                             .from('submission-artifacts')
-                            .uploadToSignedUrl(artifactRemote.path, artifactRemote.upload_url, readFileSync(artifact.path));
+                            .uploadToSignedUrl(artifactRemote.path, artifactRemote.upload_url, fileToUpload);
                         if (error) {
                             console.error(error);
                         }
