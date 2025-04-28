@@ -102,15 +102,8 @@ class Grader {
       expandedFiles.map(async (file: string) => {
         try {
           await io.rmRF(file)
-        } catch (err) {
-          if (
-            err instanceof Error &&
-            err.message.includes('no such file or directory')
-          ) {
-            // File might not exist because it was deleted by a previous glob
-          } else {
-            throw err
-          }
+        } catch {
+          // File might not exist because it was deleted by a previous glob
         }
       })
     )

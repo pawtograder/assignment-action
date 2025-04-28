@@ -136969,12 +136969,8 @@ class Grader {
             try {
                 await ioExports.rmRF(file);
             }
-            catch (err) {
-                if (err instanceof Error &&
-                    err.message.includes('no such file or directory')) ;
-                else {
-                    throw err;
-                }
+            catch {
+                // File might not exist because it was deleted by a previous glob
             }
         }));
         const solutionFilesGlobber = await globExports.create(files.map((f) => path$1.join(this.solutionDir, f)).join('\n'));
