@@ -138948,7 +138948,7 @@ class Grader {
         let mutantFailureAdvice;
         let studentTestResults;
         if (this.config.submissionFiles.testFiles.length > 0 &&
-            this.config.build.student_tests?.grading !== 'none') {
+            this.config.build.student_tests?.grading === 'mutation') {
             console.log('Resetting to have student tests with the instructor solution');
             await this.resetSolutionFiles();
             await this.copyStudentFiles('testFiles');
@@ -138964,27 +138964,35 @@ class Grader {
                 this.logger.log('visible', msg);
             }
             studentTestResults = await this.builder.test();
-            if (this.config.build.student_tests.grading === 'mutation') {
-                if (studentTestResults.some((result) => result.status === 'fail')) {
-                    this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
-                    mutantFailureAdvice =
-                        "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n";
-                    this.logger.log('visible', 'Here are your failing test results:');
-                    for (const result of studentTestResults) {
-                        if (result.status === 'fail') {
-                            mutantFailureAdvice += `\n❌ ${result.name}\n`;
-                            mutantFailureAdvice += '```\n' + result.output + '\n```';
-                            this.logger.log('visible', `${result.name}: ${result.status}`);
-                            this.logger.log('visible', result.output);
-                        }
+            if (studentTestResults.some((result) => result.status === 'fail')) {
+                this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
+                mutantFailureAdvice =
+                    "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n";
+                this.logger.log('visible', 'Here are your failing test results:');
+                for (const result of studentTestResults) {
+                    if (result.status === 'fail') {
+                        mutantFailureAdvice += `\n❌ ${result.name}\n`;
+                        mutantFailureAdvice += '```\n' + result.output + '\n```';
+                        this.logger.log('visible', `${result.name}: ${result.status}`);
+                        this.logger.log('visible', result.output);
                     }
-                    mutantFailureAdvice += '\n\nPlease fix the above errors and resubmit.';
                 }
-                else {
-                    console.log('Running student tests against buggy solutions');
-                    mutantResults = await this.builder.mutationTest();
-                }
+                mutantFailureAdvice += '\n\nPlease fix the above errors and resubmit.';
             }
+            else {
+                console.log('Running student tests against buggy solutions');
+                mutantResults = await this.builder.mutationTest();
+            }
+        }
+        else if (this.config.build.student_tests.grading ===
+            'student-impl-coverage-report-only' &&
+            this.config.submissionFiles.testFiles.length > 0) {
+            console.log('Running student tests against student implementation');
+            await this.resetSolutionFiles();
+            await this.copyStudentFiles('testFiles');
+            await this.copyStudentFiles('files');
+            await this.builder.buildClean();
+            studentTestResults = await this.builder.test();
         }
         console.log('Wrapping up');
         const testFeedbacks = this.config.gradedParts
@@ -138992,7 +139000,8 @@ class Grader {
             .flat();
         //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
         const expectedArtifacts = this.config.build.artifacts || [];
-        if (this.config.build.student_tests.grading === 'coverage-report-only') {
+        if (this.config.build.student_tests.grading ===
+            'student-impl-coverage-report-only') {
             const passingTestCount = studentTestResults?.filter((result) => result.status === 'pass').length;
             const totalTestCount = studentTestResults?.length;
             let studentTestOutput = 'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational:\n\n';
