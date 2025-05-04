@@ -9,8 +9,7 @@ branding:
 
 inputs:
   grading_server:
-    description:
-      URL of the grading API server, e.g. https://autograder.ripley.cloud
+    description: URL of the grading API server, e.g. https://api.pawtograder.com
     required: true
   handout_repo:
     description:
