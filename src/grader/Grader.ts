@@ -422,26 +422,28 @@ class Grader {
 
     //Check that each expected artifact is present in the grading directory
     const artifactPaths = await Promise.all(
-      expectedArtifacts.map(async (artifact) => {
-        this.logger.log(
-          'visible',
-          `Checking for artifact: ${artifact.name} at ${artifact.path}`
-        )
-        const artifactPath = path.join(this.gradingDir, artifact.path)
-        try {
-          await access(artifactPath)
-          return {
-            name: artifact.name,
-            path: artifactPath,
-            data: artifact.data
-          }
-        } catch {
-          console.error(
-            `Missing expected artifact: ${artifact.name} at path ${artifact.path}`
+      expectedArtifacts
+        .filter((a) => a.path)
+        .map(async (artifact) => {
+          this.logger.log(
+            'visible',
+            `Checking for artifact: ${artifact.name} at ${artifact.path}`
           )
-          return undefined
-        }
-      })
+          const artifactPath = path.join(this.gradingDir, artifact.path)
+          try {
+            await access(artifactPath)
+            return {
+              name: artifact.name,
+              path: artifactPath,
+              data: artifact.data
+            }
+          } catch {
+            console.error(
+              `Missing expected artifact: ${artifact.name} at path ${artifact.path}`
+            )
+            return undefined
+          }
+        })
     )
 
     return {
