@@ -22,6 +22,7 @@
   "engines": {
     "node": ">=20"
   },
+  "main": "./dist/index.js",
   "scripts": {
     "bundle": "npm run format:write && npm run package",
     "client": "openapi-codegen gen adminService",
