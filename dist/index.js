@@ -139014,9 +139014,11 @@ class Grader {
                 part: 'Student-Written Tests'
             });
             const artifactDir = this.builder.getCoverageReportDir();
-            if (await access(artifactDir)
-                .then(() => true)
-                .catch(() => false)) {
+            this.logger.log('hidden', `Coverage report dir: ${artifactDir}`);
+            if (artifactDir &&
+                (await access(artifactDir)
+                    .then(() => true)
+                    .catch(() => false))) {
                 expectedArtifacts.push({
                     name: 'Student-Written Test Coverage Report',
                     path: artifactDir,

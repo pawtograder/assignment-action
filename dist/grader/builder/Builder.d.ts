@@ -32,5 +32,5 @@ export declare abstract class Builder {
     abstract mutationTest(): Promise<MutantResult[]>;
     abstract buildClean(): Promise<void>;
     abstract getCoverageReport(): Promise<string>;
-    abstract getCoverageReportDir(): string;
+    abstract getCoverageReportDir(): string | null;
 }
