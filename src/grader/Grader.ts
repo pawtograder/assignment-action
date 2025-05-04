@@ -387,12 +387,12 @@ class Grader {
       let studentTestOutput =
         'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational:\n\n'
       studentTestOutput += `**Student-written tests passed: ${passingTestCount} / ${totalTestCount}**\n`
-      if (studentTestResults) {
+      if (studentTestResults && studentTestResults.length > 0) {
         for (const result of studentTestResults) {
           studentTestOutput += `\n${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
         }
+        studentTestOutput += `\n\n${await this.builder.getCoverageReport()}`
       }
-      studentTestOutput += `\n\n${await this.builder.getCoverageReport()}`
       testFeedbacks.push({
         name: 'Student-Written Test Results',
         output: studentTestOutput,
@@ -402,13 +402,7 @@ class Grader {
         part: 'Student-Written Tests'
       })
       const artifactDir = this.builder.getCoverageReportDir()
-      this.logger.log('visible', `Coverage report dir: ${artifactDir}`)
-      if (
-        artifactDir &&
-        (await access(artifactDir)
-          .then(() => true)
-          .catch(() => false))
-      ) {
+      if (artifactDir) {
         expectedArtifacts.push({
           name: 'Student-Written Test Coverage Report',
           path: artifactDir,
