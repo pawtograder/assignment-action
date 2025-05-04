@@ -401,14 +401,21 @@ class Grader {
         max_score: 0,
         part: 'Student-Written Tests'
       })
-      expectedArtifacts.push({
-        name: 'Student-Written Test Coverage Report',
-        path: this.builder.getCoverageReportDir(),
-        data: {
-          format: 'zip',
-          display: 'html_site'
-        }
-      })
+      const artifactDir = this.builder.getCoverageReportDir()
+      if (
+        await access(artifactDir)
+          .then(() => true)
+          .catch(() => false)
+      ) {
+        expectedArtifacts.push({
+          name: 'Student-Written Test Coverage Report',
+          path: artifactDir,
+          data: {
+            format: 'zip',
+            display: 'html_site'
+          }
+        })
+      }
     }
 
     //Check that each expected artifact is present in the grading directory
