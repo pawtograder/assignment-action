@@ -138575,8 +138575,17 @@ class GradleBuilder extends Builder {
     async getCoverageReport() {
         this.logger.log('hidden', 'Getting coverage report with Gradle');
         const coverageReport = `${this.gradingDir}/build/reports/jacoco/test/jacocoTestReport.csv`;
-        const coverageReportContents = await parseJacocoCsv(coverageReport);
-        return getCoverageSummary(coverageReportContents);
+        try {
+            const coverageReportContents = await parseJacocoCsv(coverageReport);
+            return getCoverageSummary(coverageReportContents);
+        }
+        catch (e) {
+            this.logger.log('visible', 'Coverage report not found');
+            this.logger.log('hidden', `${this.gradingDir} contents`);
+            this.logger.log('hidden', (await readdir$2(this.gradingDir)).join(','));
+            this.logger.log('visible', e.message);
+            return 'Coverage report not found';
+        }
     }
     getCoverageReportDir() {
         return 'build/reports/jacoco/test/html';
@@ -138942,7 +138951,7 @@ class Grader {
         let studentTestResults;
         if (this.config.submissionFiles.testFiles.length > 0 &&
             this.config.build.student_tests?.grading !== 'none') {
-            console.log('Grading student tests');
+            console.log('Resetting to have student tests with the instructor solution');
             await this.resetSolutionFiles();
             await this.copyStudentFiles('testFiles');
             console.log('Building solution and running student tests');

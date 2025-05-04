@@ -8,6 +8,7 @@ import {
 import { parsePitestXml } from './pitest.js'
 import { parseSurefireXml } from './surefire.js'
 import { parseJacocoCsv, getCoverageSummary } from './jacoco.js'
+import { readdir } from 'fs/promises'
 
 export default class GradleBuilder extends Builder {
   async lint(): Promise<LintResult> {
@@ -50,9 +51,16 @@ export default class GradleBuilder extends Builder {
   async getCoverageReport(): Promise<string> {
     this.logger.log('hidden', 'Getting coverage report with Gradle')
     const coverageReport = `${this.gradingDir}/build/reports/jacoco/test/jacocoTestReport.csv`
-
-    const coverageReportContents = await parseJacocoCsv(coverageReport)
-    return getCoverageSummary(coverageReportContents)
+    try {
+      const coverageReportContents = await parseJacocoCsv(coverageReport)
+      return getCoverageSummary(coverageReportContents)
+    } catch (e) {
+      this.logger.log('visible', 'Coverage report not found')
+      this.logger.log('hidden', `${this.gradingDir} contents`)
+      this.logger.log('hidden', (await readdir(this.gradingDir)).join(','))
+      this.logger.log('visible', (e as Error).message)
+      return 'Coverage report not found'
+    }
   }
   getCoverageReportDir(): string {
     return 'build/reports/jacoco/test/html'

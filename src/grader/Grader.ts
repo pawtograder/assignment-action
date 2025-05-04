@@ -326,7 +326,9 @@ class Grader {
       this.config.submissionFiles.testFiles.length > 0 &&
       this.config.build.student_tests?.grading !== 'none'
     ) {
-      console.log('Grading student tests')
+      console.log(
+        'Resetting to have student tests with the instructor solution'
+      )
       await this.resetSolutionFiles()
       await this.copyStudentFiles('testFiles')
       console.log('Building solution and running student tests')
