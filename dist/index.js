@@ -139014,7 +139014,7 @@ class Grader {
                 part: 'Student-Written Tests'
             });
             const artifactDir = this.builder.getCoverageReportDir();
-            this.logger.log('hidden', `Coverage report dir: ${artifactDir}`);
+            this.logger.log('visible', `Coverage report dir: ${artifactDir}`);
             if (artifactDir &&
                 (await access(artifactDir)
                     .then(() => true)
