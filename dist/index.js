@@ -139018,12 +139018,16 @@ class Grader {
                 output_format: 'markdown',
                 score: 0,
                 max_score: 0,
-                part: 'Student-Written Tests'
+                part: 'Student-Written Tests',
+                extra_data: {
+                    icon: 'FaInfo',
+                    hide_score: 'true'
+                }
             });
             const artifactDir = this.builder.getCoverageReportDir();
             if (artifactDir) {
                 expectedArtifacts.push({
-                    name: 'Student-Written Test Coverage Report',
+                    name: 'Coverage Report: Student-Written Tests',
                     path: artifactDir,
                     data: {
                         format: 'zip',
