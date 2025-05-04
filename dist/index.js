@@ -136593,169 +136593,6 @@ function parseCheckstyleXml(filePath) {
     return report;
 }
 
-/* eslint-disable */
-function parsePitestXml(filePath) {
-    const xmlContent = readFileSync(filePath, 'utf-8');
-    const parser = new fxpExports.XMLParser({
-        ignoreAttributes: false,
-        attributeNamePrefix: '',
-        textNodeName: '_text'
-    });
-    const parsed = parser.parse(xmlContent);
-    // Initialize the report structure
-    const report = {
-        statistics: {
-            totalMutations: 0,
-            killed: 0,
-            survived: 0,
-            noCoverage: 0,
-            timedOut: 0,
-            memoryError: 0,
-            runError: 0,
-            mutationScore: 0
-        },
-        mutations: []
-    };
-    // Handle case where there are no mutations
-    if (!parsed.mutations?.mutation) {
-        return report;
-    }
-    // Convert to array if single mutation
-    const mutations = Array.isArray(parsed.mutations.mutation)
-        ? parsed.mutations.mutation
-        : [parsed.mutations.mutation];
-    // Process each mutation
-    report.mutations = mutations.map((mut) => {
-        const mutation = {
-            detected: mut.status === 'KILLED',
-            status: mut.status,
-            numberOfTestsRun: parseInt(mut.numberOfTestsRun || '0', 10),
-            sourceFile: mut.sourceFile,
-            mutatedClass: mut.mutatedClass,
-            mutatedMethod: mut.mutatedMethod,
-            methodDescription: mut.methodDescription,
-            lineNumber: parseInt(mut.lineNumber, 10),
-            mutator: mut.mutator,
-            index: parseInt(mut.index, 10),
-            block: parseInt(mut.block, 10),
-            description: mut.description
-        };
-        if (mut.killingTest) {
-            mutation.killingTest = mut.killingTest;
-        }
-        // Update statistics
-        report.statistics.totalMutations++;
-        switch (mutation.status) {
-            case 'KILLED':
-                report.statistics.killed++;
-                break;
-            case 'SURVIVED':
-                report.statistics.survived++;
-                break;
-            case 'NO_COVERAGE':
-                report.statistics.noCoverage++;
-                break;
-            case 'TIMED_OUT':
-                report.statistics.timedOut++;
-                break;
-            case 'MEMORY_ERROR':
-                report.statistics.memoryError++;
-                break;
-            case 'RUN_ERROR':
-                report.statistics.runError++;
-                break;
-        }
-        return mutation;
-    });
-    // Calculate mutation score
-    if (report.statistics.totalMutations > 0) {
-        report.statistics.mutationScore =
-            (report.statistics.killed / report.statistics.totalMutations) * 100;
-    }
-    return report;
-}
-
-/* eslint-disable */
-function parseSurefireXml(filePath) {
-    const xmlContent = readFileSync(filePath, 'utf-8');
-    const parser = new fxpExports.XMLParser({
-        ignoreAttributes: false,
-        attributeNamePrefix: '',
-        textNodeName: '_text'
-    });
-    const parsed = parser.parse(xmlContent);
-    // Initialize the report structure
-    const report = {
-        testSuites: [],
-        summary: {
-            totalTests: 0,
-            totalErrors: 0,
-            totalFailures: 0,
-            totalSkipped: 0,
-            totalTime: 0
-        }
-    };
-    // Handle both single suite and multiple suite reports
-    const suites = parsed.testsuite
-        ? [parsed.testsuite]
-        : parsed.testsuites?.testsuite || [];
-    // Process each test suite
-    report.testSuites = suites.map((suite) => {
-        const testCases = [];
-        // Convert test cases to array if needed
-        const cases = suite.testcase
-            ? Array.isArray(suite.testcase)
-                ? suite.testcase
-                : [suite.testcase]
-            : [];
-        // Process each test case
-        cases.forEach((testCase) => {
-            const tc = {
-                name: testCase.name,
-                className: testCase.classname,
-                time: parseFloat(testCase.time || '0'),
-                skipped: !!testCase.skipped
-            };
-            // Handle failures
-            if (testCase.failure) {
-                tc.failure = {
-                    message: testCase.failure.message || '',
-                    type: testCase.failure.type || '',
-                    description: testCase.failure._text || '',
-                    stackTrace: testCase.failure._text || ''
-                };
-            }
-            // Handle errors
-            if (testCase.error) {
-                tc.error = {
-                    message: testCase.error.message || '',
-                    type: testCase.error.type || '',
-                    description: testCase.error._text || '',
-                    stackTrace: testCase.error._text || ''
-                };
-            }
-            testCases.push(tc);
-        });
-        const testSuite = {
-            name: suite.name,
-            time: parseFloat(suite.time || '0'),
-            tests: parseInt(suite.tests || '0', 10),
-            errors: parseInt(suite.errors || '0', 10),
-            skipped: parseInt(suite.skipped || '0', 10),
-            failures: parseInt(suite.failures || '0', 10),
-            testCases
-        };
-        // Update summary
-        report.summary.totalTests += testSuite.tests;
-        report.summary.totalErrors += testSuite.errors;
-        report.summary.totalFailures += testSuite.failures;
-        report.summary.totalSkipped += testSuite.skipped;
-        report.summary.totalTime += testSuite.time;
-        return testSuite;
-    });
-    return report;
-}
-
 class CsvError extends Error {
   constructor(code, message, options, ...contexts) {
     if (Array.isArray(message)) message = message.join(" ").trim();
@@ -138545,6 +138382,169 @@ function getCoverageSummary(records) {
             .join('\n'));
 }
 
+/* eslint-disable */
+function parsePitestXml(filePath) {
+    const xmlContent = readFileSync(filePath, 'utf-8');
+    const parser = new fxpExports.XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '',
+        textNodeName: '_text'
+    });
+    const parsed = parser.parse(xmlContent);
+    // Initialize the report structure
+    const report = {
+        statistics: {
+            totalMutations: 0,
+            killed: 0,
+            survived: 0,
+            noCoverage: 0,
+            timedOut: 0,
+            memoryError: 0,
+            runError: 0,
+            mutationScore: 0
+        },
+        mutations: []
+    };
+    // Handle case where there are no mutations
+    if (!parsed.mutations?.mutation) {
+        return report;
+    }
+    // Convert to array if single mutation
+    const mutations = Array.isArray(parsed.mutations.mutation)
+        ? parsed.mutations.mutation
+        : [parsed.mutations.mutation];
+    // Process each mutation
+    report.mutations = mutations.map((mut) => {
+        const mutation = {
+            detected: mut.status === 'KILLED',
+            status: mut.status,
+            numberOfTestsRun: parseInt(mut.numberOfTestsRun || '0', 10),
+            sourceFile: mut.sourceFile,
+            mutatedClass: mut.mutatedClass,
+            mutatedMethod: mut.mutatedMethod,
+            methodDescription: mut.methodDescription,
+            lineNumber: parseInt(mut.lineNumber, 10),
+            mutator: mut.mutator,
+            index: parseInt(mut.index, 10),
+            block: parseInt(mut.block, 10),
+            description: mut.description
+        };
+        if (mut.killingTest) {
+            mutation.killingTest = mut.killingTest;
+        }
+        // Update statistics
+        report.statistics.totalMutations++;
+        switch (mutation.status) {
+            case 'KILLED':
+                report.statistics.killed++;
+                break;
+            case 'SURVIVED':
+                report.statistics.survived++;
+                break;
+            case 'NO_COVERAGE':
+                report.statistics.noCoverage++;
+                break;
+            case 'TIMED_OUT':
+                report.statistics.timedOut++;
+                break;
+            case 'MEMORY_ERROR':
+                report.statistics.memoryError++;
+                break;
+            case 'RUN_ERROR':
+                report.statistics.runError++;
+                break;
+        }
+        return mutation;
+    });
+    // Calculate mutation score
+    if (report.statistics.totalMutations > 0) {
+        report.statistics.mutationScore =
+            (report.statistics.killed / report.statistics.totalMutations) * 100;
+    }
+    return report;
+}
+
+/* eslint-disable */
+function parseSurefireXml(filePath) {
+    const xmlContent = readFileSync(filePath, 'utf-8');
+    const parser = new fxpExports.XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '',
+        textNodeName: '_text'
+    });
+    const parsed = parser.parse(xmlContent);
+    // Initialize the report structure
+    const report = {
+        testSuites: [],
+        summary: {
+            totalTests: 0,
+            totalErrors: 0,
+            totalFailures: 0,
+            totalSkipped: 0,
+            totalTime: 0
+        }
+    };
+    // Handle both single suite and multiple suite reports
+    const suites = parsed.testsuite
+        ? [parsed.testsuite]
+        : parsed.testsuites?.testsuite || [];
+    // Process each test suite
+    report.testSuites = suites.map((suite) => {
+        const testCases = [];
+        // Convert test cases to array if needed
+        const cases = suite.testcase
+            ? Array.isArray(suite.testcase)
+                ? suite.testcase
+                : [suite.testcase]
+            : [];
+        // Process each test case
+        cases.forEach((testCase) => {
+            const tc = {
+                name: testCase.name,
+                className: testCase.classname,
+                time: parseFloat(testCase.time || '0'),
+                skipped: !!testCase.skipped
+            };
+            // Handle failures
+            if (testCase.failure) {
+                tc.failure = {
+                    message: testCase.failure.message || '',
+                    type: testCase.failure.type || '',
+                    description: testCase.failure._text || '',
+                    stackTrace: testCase.failure._text || ''
+                };
+            }
+            // Handle errors
+            if (testCase.error) {
+                tc.error = {
+                    message: testCase.error.message || '',
+                    type: testCase.error.type || '',
+                    description: testCase.error._text || '',
+                    stackTrace: testCase.error._text || ''
+                };
+            }
+            testCases.push(tc);
+        });
+        const testSuite = {
+            name: suite.name,
+            time: parseFloat(suite.time || '0'),
+            tests: parseInt(suite.tests || '0', 10),
+            errors: parseInt(suite.errors || '0', 10),
+            skipped: parseInt(suite.skipped || '0', 10),
+            failures: parseInt(suite.failures || '0', 10),
+            testCases
+        };
+        // Update summary
+        report.summary.totalTests += testSuite.tests;
+        report.summary.totalErrors += testSuite.errors;
+        report.summary.totalFailures += testSuite.failures;
+        report.summary.totalSkipped += testSuite.skipped;
+        report.summary.totalTime += testSuite.time;
+        return testSuite;
+    });
+    return report;
+}
+
 class GradleBuilder extends Builder {
     async lint() {
         this.logger.log('hidden', 'Linting with Gradle');
@@ -138580,9 +138580,6 @@ class GradleBuilder extends Builder {
             return getCoverageSummary(coverageReportContents);
         }
         catch (e) {
-            this.logger.log('visible', 'Coverage report not found');
-            this.logger.log('hidden', `${this.gradingDir} contents`);
-            this.logger.log('hidden', (await readdir$2(this.gradingDir)).join(','));
             this.logger.log('visible', e.message);
             return 'Coverage report not found';
         }
