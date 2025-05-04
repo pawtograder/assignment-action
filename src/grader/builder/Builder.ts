@@ -74,4 +74,6 @@ export abstract class Builder {
   abstract test(): Promise<TestResult[]>
   abstract mutationTest(): Promise<MutantResult[]>
   abstract buildClean(): Promise<void>
+  abstract getCoverageReport(): Promise<string>
+  abstract getCoverageReportDir(): string
 }

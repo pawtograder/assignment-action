@@ -10,7 +10,7 @@ export interface BuildConfig {
     policy: 'fail' | 'warn' | 'ignore'
   }
   student_tests: {
-    grading: 'none' | 'mutation'
+    grading: 'none' | 'mutation' | 'coverage-report-only'
   }
 }
 

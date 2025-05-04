@@ -7,6 +7,7 @@ import {
 } from './checkstyle.js'
 import { parsePitestXml } from './pitest.js'
 import { parseSurefireXml } from './surefire.js'
+import { parseJacocoCsv, getCoverageSummary } from './jacoco.js'
 
 export default class GradleBuilder extends Builder {
   async lint(): Promise<LintResult> {
@@ -45,6 +46,16 @@ export default class GradleBuilder extends Builder {
       output: `Total errors: ${totalErrors}\n${formattedOutput}`,
       output_format: 'markdown'
     }
+  }
+  async getCoverageReport(): Promise<string> {
+    this.logger.log('hidden', 'Getting coverage report with Gradle')
+    const coverageReport = `${this.gradingDir}/build/reports/jacoco/test/jacocoTestReport.csv`
+
+    const coverageReportContents = await parseJacocoCsv(coverageReport)
+    return getCoverageSummary(coverageReportContents)
+  }
+  getCoverageReportDir(): string {
+    return 'build/reports/jacoco/test/html'
   }
   async test(): Promise<TestResult[]> {
     this.logger.log('hidden', 'Testing with Gradle')

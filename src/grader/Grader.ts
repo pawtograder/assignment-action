@@ -39,6 +39,13 @@ export default async function grade(
 
   return ret
 }
+function icon(result: TestResult) {
+  if (result.status === 'pass') {
+    return '✅'
+  } else {
+    return '❌'
+  }
+}
 class Grader {
   private builder: Builder
   private logger: Logger
@@ -210,13 +217,6 @@ class Grader {
         (result) => result.status === 'pass'
       ).length
 
-      function icon(result: TestResult) {
-        if (result.status === 'pass') {
-          return '✅'
-        } else {
-          return '❌'
-        }
-      }
       let score = 0
       if (unit.allow_partial_credit) {
         score = (passingTests / expectedTests) * unit.points
@@ -321,6 +321,7 @@ class Grader {
     const testResults = await this.builder.test()
     let mutantResults: MutantResult[] | undefined
     let mutantFailureAdvice: string | undefined
+    let studentTestResults: TestResult[] | undefined
     if (
       this.config.submissionFiles.testFiles.length > 0 &&
       this.config.build.student_tests?.grading !== 'none'
@@ -341,27 +342,29 @@ class Grader {
         )
         this.logger.log('visible', msg)
       }
-      const studentTestResults = await this.builder.test()
-      if (studentTestResults.some((result) => result.status === 'fail')) {
-        this.logger.log(
-          'visible',
-          "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "
-        )
-        mutantFailureAdvice =
-          "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n"
-        this.logger.log('visible', 'Here are your failing test results:')
-        for (const result of studentTestResults) {
-          if (result.status === 'fail') {
-            mutantFailureAdvice += `\n❌ ${result.name}\n`
-            mutantFailureAdvice += '```\n' + result.output + '\n```'
-            this.logger.log('visible', `${result.name}: ${result.status}`)
-            this.logger.log('visible', result.output)
+      studentTestResults = await this.builder.test()
+      if (this.config.build.student_tests.grading === 'mutation') {
+        if (studentTestResults.some((result) => result.status === 'fail')) {
+          this.logger.log(
+            'visible',
+            "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "
+          )
+          mutantFailureAdvice =
+            "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n"
+          this.logger.log('visible', 'Here are your failing test results:')
+          for (const result of studentTestResults) {
+            if (result.status === 'fail') {
+              mutantFailureAdvice += `\n❌ ${result.name}\n`
+              mutantFailureAdvice += '```\n' + result.output + '\n```'
+              this.logger.log('visible', `${result.name}: ${result.status}`)
+              this.logger.log('visible', result.output)
+            }
           }
+          mutantFailureAdvice += '\n\nPlease fix the above errors and resubmit.'
+        } else {
+          console.log('Running student tests against buggy solutions')
+          mutantResults = await this.builder.mutationTest()
         }
-        mutantFailureAdvice += '\n\nPlease fix the above errors and resubmit.'
-      } else {
-        console.log('Running student tests against buggy solutions')
-        mutantResults = await this.builder.mutationTest()
       }
     }
     console.log('Wrapping up')
@@ -373,6 +376,39 @@ class Grader {
 
     //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
     const expectedArtifacts = this.config.build.artifacts || []
+
+    if (this.config.build.student_tests.grading === 'coverage-report-only') {
+      const passingTestCount = studentTestResults?.filter(
+        (result) => result.status === 'pass'
+      ).length
+      const totalTestCount = studentTestResults?.length
+      let studentTestOutput =
+        'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational:\n\n'
+      studentTestOutput += `**Student-written tests passed: ${passingTestCount} / ${totalTestCount}**\n`
+      if (studentTestResults) {
+        for (const result of studentTestResults) {
+          studentTestOutput += `\n${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
+        }
+      }
+      studentTestOutput += `\n\n${await this.builder.getCoverageReport()}`
+      testFeedbacks.push({
+        name: 'Student-Written Test Results',
+        output: studentTestOutput,
+        output_format: 'markdown',
+        score: 0,
+        max_score: 0,
+        part: 'Student-Written Tests'
+      })
+      expectedArtifacts.push({
+        name: 'Student-Written Test Coverage Report',
+        path: this.builder.getCoverageReportDir(),
+        data: {
+          format: 'zip',
+          display: 'html_site'
+        }
+      })
+    }
+
     //Check that each expected artifact is present in the grading directory
     const artifactPaths = await Promise.all(
       expectedArtifacts.map(async (artifact) => {
