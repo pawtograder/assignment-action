@@ -138549,6 +138549,19 @@ function parseSurefireXml(filePath) {
 class GradleBuilder extends Builder {
     async lint() {
         this.logger.log('hidden', 'Linting with Gradle');
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', [
+            '--console=plain',
+            'clean',
+            'checkstyleMain',
+            'checkstyleTest',
+            '-x',
+            'compileJava',
+            '-x',
+            'compileTestJava'
+        ], this.logger);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`);
+        }
         const checkstyleFilesContents = await Promise.all((await glob(`${this.gradingDir}/build/reports/checkstyle/*.xml`)).map(async (file) => {
             this.logger.log('hidden', `Linting ${file}`);
             const ret = await parseCheckstyleXml(file);
@@ -138905,15 +138918,7 @@ class Grader {
         }));
         await this.copyStudentFiles('files');
         await this.copyStudentFiles('testFiles');
-        try {
-            console.log('Building project with student submission and running student tests');
-            await this.builder.buildClean();
-        }
-        catch (err) {
-            const msg = err instanceof Error ? err.message : 'Unknown error';
-            this.logger.log('visible', msg);
-        }
-        console.log('Checking lint results');
+        console.log('Linting student submission');
         const lintResult = await this.builder.lint();
         console.log('Resetting to run instructor tests on student submission');
         await this.resetSolutionFiles();

@@ -273,16 +273,7 @@ class Grader {
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
 
-    try {
-      console.log(
-        'Building project with student submission and running student tests'
-      )
-      await this.builder.buildClean()
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error'
-      this.logger.log('visible', msg)
-    }
-    console.log('Checking lint results')
+    console.log('Linting student submission')
     const lintResult = await this.builder.lint()
 
     console.log('Resetting to run instructor tests on student submission')

@@ -12,6 +12,25 @@ import { parseSurefireXml } from './surefire.js'
 export default class GradleBuilder extends Builder {
   async lint(): Promise<LintResult> {
     this.logger.log('hidden', 'Linting with Gradle')
+    const { returnCode, output } = await this.executeCommandAndGetOutput(
+      './gradlew',
+      [
+        '--console=plain',
+        'clean',
+        'checkstyleMain',
+        'checkstyleTest',
+        '-x',
+        'compileJava',
+        '-x',
+        'compileTestJava'
+      ],
+      this.logger
+    )
+    if (returnCode !== 0) {
+      throw new Error(
+        `Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`
+      )
+    }
     const checkstyleFilesContents = await Promise.all(
       (await glob(`${this.gradingDir}/build/reports/checkstyle/*.xml`)).map(
         async (file: string) => {
