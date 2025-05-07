@@ -90,12 +90,15 @@ class Grader {
 
     // Remove any files that are a prefix of another file, so that we only copy the directory contents once
     const filesWithoutDirContents = expandedFiles.filter(
-      (file) => !expandedFiles.some((f) => f.startsWith(file))
+      (file) => !expandedFiles.some((f) => f.startsWith(file) && f !== file)
     )
 
     for (const file of filesWithoutDirContents) {
       const relativePath = path.relative(this.submissionDir, file)
       const dest = path.join(this.gradingDir, relativePath)
+      // Make sure that the directory exists before copying the file
+      const dir = path.dirname(dest)
+      await io.mkdirP(dir)
       await io.cp(file, dest, { recursive: true })
     }
   }
@@ -124,11 +127,15 @@ class Grader {
     const expandedSolutionFiles = await solutionFilesGlobber.glob()
     // Remove any files that are a prefix of another file, so that we only copy the directory contents once
     const filesWithoutDirContents = expandedSolutionFiles.filter(
-      (file) => !expandedSolutionFiles.some((f) => f.startsWith(file))
+      (file) =>
+        !expandedSolutionFiles.some((f) => f.startsWith(file) && f !== file)
     )
     for (const file of filesWithoutDirContents) {
       const relativePath = path.relative(this.solutionDir, file)
       const dest = path.join(this.gradingDir, relativePath)
+      // Make sure that the directory exists before copying the file
+      const dir = path.dirname(dest)
+      await io.mkdirP(dir)
       await io.cp(file, dest, { recursive: true })
     }
   }

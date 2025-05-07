@@ -138768,10 +138768,13 @@ class Grader {
         const globber = await globExports.create(files.map((f) => path$1.join(this.submissionDir, f)).join('\n'));
         const expandedFiles = await globber.glob();
         // Remove any files that are a prefix of another file, so that we only copy the directory contents once
-        const filesWithoutDirContents = expandedFiles.filter((file) => !expandedFiles.some((f) => f.startsWith(file)));
+        const filesWithoutDirContents = expandedFiles.filter((file) => !expandedFiles.some((f) => f.startsWith(file) && f !== file));
         for (const file of filesWithoutDirContents) {
             const relativePath = path$1.relative(this.submissionDir, file);
             const dest = path$1.join(this.gradingDir, relativePath);
+            // Make sure that the directory exists before copying the file
+            const dir = path$1.dirname(dest);
+            await ioExports.mkdirP(dir);
             await ioExports.cp(file, dest, { recursive: true });
         }
     }
@@ -138791,10 +138794,13 @@ class Grader {
         const solutionFilesGlobber = await globExports.create(files.map((f) => path$1.join(this.solutionDir, f)).join('\n'));
         const expandedSolutionFiles = await solutionFilesGlobber.glob();
         // Remove any files that are a prefix of another file, so that we only copy the directory contents once
-        const filesWithoutDirContents = expandedSolutionFiles.filter((file) => !expandedSolutionFiles.some((f) => f.startsWith(file)));
+        const filesWithoutDirContents = expandedSolutionFiles.filter((file) => !expandedSolutionFiles.some((f) => f.startsWith(file) && f !== file));
         for (const file of filesWithoutDirContents) {
             const relativePath = path$1.relative(this.solutionDir, file);
             const dest = path$1.join(this.gradingDir, relativePath);
+            // Make sure that the directory exists before copying the file
+            const dir = path$1.dirname(dest);
+            await ioExports.mkdirP(dir);
             await ioExports.cp(file, dest, { recursive: true });
         }
     }
