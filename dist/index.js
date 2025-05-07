@@ -138894,6 +138894,20 @@ class Grader {
             await ioExports.cp(src, dest, { recursive: true });
         }));
         await this.copyStudentFiles('files');
+        await this.copyStudentFiles('testFiles');
+        try {
+            console.log('Building project with student submission and running student tests');
+            await this.builder.buildClean();
+        }
+        catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error';
+            this.logger.log('visible', msg);
+        }
+        console.log('Checking lint results');
+        const lintResult = await this.builder.lint();
+        console.log('Resetting to run instructor tests on student submission');
+        await this.resetSolutionFiles();
+        await this.copyStudentFiles('files');
         try {
             console.log('Building project with student submission and running instructor tests');
             await this.builder.buildClean();
@@ -138941,8 +138955,6 @@ class Grader {
                 artifacts: []
             };
         }
-        console.log('Checking results');
-        const lintResult = await this.builder.lint();
         const testResults = await this.builder.test();
         let mutantResults;
         let mutantFailureAdvice;
