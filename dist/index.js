@@ -138767,11 +138767,13 @@ class Grader {
         // Expand glob patterns
         const globber = await globExports.create(files.map((f) => path$1.join(this.submissionDir, f)).join('\n'));
         const expandedFiles = await globber.glob();
-        await Promise.all(expandedFiles.map(async (file) => {
+        // Remove any files that are a prefix of another file, so that we only copy the directory contents once
+        const filesWithoutDirContents = expandedFiles.filter((file) => !expandedFiles.some((f) => f.startsWith(file)));
+        for (const file of filesWithoutDirContents) {
             const relativePath = path$1.relative(this.submissionDir, file);
             const dest = path$1.join(this.gradingDir, relativePath);
             await ioExports.cp(file, dest, { recursive: true });
-        }));
+        }
     }
     async resetSolutionFiles() {
         const files = this.config.submissionFiles['files'].concat(this.config.submissionFiles['testFiles']);
@@ -138788,11 +138790,13 @@ class Grader {
         }));
         const solutionFilesGlobber = await globExports.create(files.map((f) => path$1.join(this.solutionDir, f)).join('\n'));
         const expandedSolutionFiles = await solutionFilesGlobber.glob();
-        await Promise.all(expandedSolutionFiles.map(async (file) => {
+        // Remove any files that are a prefix of another file, so that we only copy the directory contents once
+        const filesWithoutDirContents = expandedSolutionFiles.filter((file) => !expandedSolutionFiles.some((f) => f.startsWith(file)));
+        for (const file of filesWithoutDirContents) {
             const relativePath = path$1.relative(this.solutionDir, file);
             const dest = path$1.join(this.gradingDir, relativePath);
             await ioExports.cp(file, dest, { recursive: true });
-        }));
+        }
     }
     gradePart(part, testResults, mutantResults, mutantFailureAdvice) {
         return part.gradedUnits
