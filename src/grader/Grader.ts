@@ -385,7 +385,7 @@ class Grader {
         mutantResults = await this.builder.mutationTest()
       }
     } else if (
-      this.config.build.student_tests.grading ===
+      this.config.build.student_tests?.grading ===
         'student-impl-coverage-report-only' &&
       this.config.submissionFiles.testFiles.length > 0
     ) {
@@ -411,7 +411,7 @@ class Grader {
     const expectedArtifacts = this.config.build.artifacts || []
 
     if (
-      this.config.build.student_tests.grading ===
+      this.config.build.student_tests?.grading ===
       'student-impl-coverage-report-only'
     ) {
       const passingTestCount = studentTestResults?.filter(

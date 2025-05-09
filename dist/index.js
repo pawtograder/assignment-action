@@ -139011,7 +139011,7 @@ class Grader {
                 mutantResults = await this.builder.mutationTest();
             }
         }
-        else if (this.config.build.student_tests.grading ===
+        else if (this.config.build.student_tests?.grading ===
             'student-impl-coverage-report-only' &&
             this.config.submissionFiles.testFiles.length > 0) {
             console.log('Running student tests against student implementation');
@@ -139031,7 +139031,7 @@ class Grader {
         }
         //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
         const expectedArtifacts = this.config.build.artifacts || [];
-        if (this.config.build.student_tests.grading ===
+        if (this.config.build.student_tests?.grading ===
             'student-impl-coverage-report-only') {
             const passingTestCount = studentTestResults?.filter((result) => result.status === 'pass').length;
             const totalTestCount = studentTestResults?.length;

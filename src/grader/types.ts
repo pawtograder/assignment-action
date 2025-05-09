@@ -9,7 +9,7 @@ export interface BuildConfig {
     preset: 'checkstyle'
     policy: 'fail' | 'warn' | 'ignore'
   }
-  student_tests: {
+  student_tests?: {
     grading: 'none' | 'mutation' | 'student-impl-coverage-report-only'
   }
 }
