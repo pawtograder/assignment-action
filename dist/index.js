@@ -139140,7 +139140,9 @@ async function generateSummaryReport(results, gradeResponse, regressionTestJob) 
     // Set job summary with test results
     coreExports.summary.addHeading('Autograder Results');
     coreExports.summary.addRaw(`Score: ${score}/${max_score}`, true);
-    coreExports.summary.addLink('View the complete results with all details and logs in Pawtograder', gradeResponse.details_url);
+    if (!regressionTestJob) {
+        coreExports.summary.addLink('View the complete results with all details and logs in Pawtograder', gradeResponse.details_url);
+    }
     if (results.output.visible?.output) {
         coreExports.summary.addDetails('Grader Output', results.output.visible.output);
     }
@@ -139237,7 +139239,7 @@ async function run() {
                 action_ref
             }, token, queryParams);
             //If there are artifacts, we need to upload them.
-            if (results.artifacts) {
+            if (results.artifacts && !regressionTestJob) {
                 const supabase = createClient(gradeResponse.supabase_url, gradeResponse.supabase_anon_key);
                 await Promise.all(results.artifacts.map(async (artifact) => {
                     const artifactRemote = gradeResponse.artifacts?.find((ra) => ra.name === artifact.name);

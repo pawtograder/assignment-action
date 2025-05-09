@@ -60,7 +60,7 @@ async function prepareForRegressionTest(
 async function generateSummaryReport(
   results: Awaited<ReturnType<typeof grade>>,
   gradeResponse: Awaited<ReturnType<typeof submitFeedback>>,
-  regressionTestJob?: number
+  regressionTestJob?: string
 ) {
   const score =
     results.score ||
@@ -76,10 +76,12 @@ async function generateSummaryReport(
   // Set job summary with test results
   core.summary.addHeading('Autograder Results')
   core.summary.addRaw(`Score: ${score}/${max_score}`, true)
-  core.summary.addLink(
-    'View the complete results with all details and logs in Pawtograder',
-    gradeResponse.details_url
-  )
+  if (!regressionTestJob) {
+    core.summary.addLink(
+      'View the complete results with all details and logs in Pawtograder',
+      gradeResponse.details_url
+    )
+  }
   if (results.output.visible?.output) {
     core.summary.addDetails('Grader Output', results.output.visible.output)
   }
@@ -196,7 +198,7 @@ export async function run(): Promise<void> {
         queryParams
       )
       //If there are artifacts, we need to upload them.
-      if (results.artifacts) {
+      if (results.artifacts && !regressionTestJob) {
         const supabase = createClient(
           gradeResponse.supabase_url,
           gradeResponse.supabase_anon_key
