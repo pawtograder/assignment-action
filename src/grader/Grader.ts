@@ -482,7 +482,9 @@ class Grader {
       lint: lintResult,
       tests: testFeedbacks,
       output: this.logger.getEachOutput(),
-      artifacts: artifactPaths.filter((path) => path !== undefined)
+      artifacts: this.regressionTestJob
+        ? []
+        : artifactPaths.filter((path) => path !== undefined)
     }
   }
 }
