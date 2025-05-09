@@ -59,17 +59,18 @@ async function prepareForRegressionTest(
 }
 async function generateSummaryReport(
   results: Awaited<ReturnType<typeof grade>>,
-  gradeResponse: Awaited<ReturnType<typeof submitFeedback>>
+  gradeResponse: Awaited<ReturnType<typeof submitFeedback>>,
+  regressionTestJob?: number
 ) {
   const score =
     results.score ||
     results.tests
-      .filter((t) => !t.hide_until_released)
+      .filter((t) => !t.hide_until_released || regressionTestJob)
       .reduce((acc, test) => acc + (test.score || 0), 0)
   const max_score =
     results.score ||
     results.tests
-      .filter((t) => !t.hide_until_released)
+      .filter((t) => !t.hide_until_released || regressionTestJob)
       .reduce((acc, test) => acc + (test.max_score || 0), 0)
 
   // Set job summary with test results
@@ -94,7 +95,9 @@ async function generateSummaryReport(
       { data: 'Score', header: true }
     ])
     let lastPart = undefined
-    for (const test of results.tests.filter((t) => !t.hide_until_released)) {
+    for (const test of results.tests.filter(
+      (t) => !t.hide_until_released || regressionTestJob
+    )) {
       const icon = test.score === test.max_score ? '✅' : '❌'
       if (test.part !== lastPart && test.part) {
         lastPart = test.part
@@ -235,7 +238,7 @@ export async function run(): Promise<void> {
           })
         )
       }
-      await generateSummaryReport(results, gradeResponse)
+      await generateSummaryReport(results, gradeResponse, regressionTestJob)
       if (results.score === 0) {
         core.setFailed(
           'Score for this submission is 0. Please check to be sure that it conforms with the assignment instructions.'

@@ -402,6 +402,10 @@ class Grader {
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
       )
       .flat()
+    if (this.regressionTestJob) {
+      console.log('DEBUG: Test results')
+      console.log(JSON.stringify(testFeedbacks, null, 2))
+    }
 
     //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
     const expectedArtifacts = this.config.build.artifacts || []

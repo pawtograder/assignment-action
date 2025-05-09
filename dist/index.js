@@ -139025,6 +139025,10 @@ class Grader {
         const testFeedbacks = this.config.gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
+        if (this.regressionTestJob) {
+            console.log('DEBUG: Test results');
+            console.log(JSON.stringify(testFeedbacks, null, 2));
+        }
         //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
         const expectedArtifacts = this.config.build.artifacts || [];
         if (this.config.build.student_tests.grading ===
@@ -139124,14 +139128,14 @@ async function prepareForRegressionTest(graderConfig) {
     const graderDir = `${workDir}/grader`;
     return { assignmentDir, graderDir };
 }
-async function generateSummaryReport(results, gradeResponse) {
+async function generateSummaryReport(results, gradeResponse, regressionTestJob) {
     const score = results.score ||
         results.tests
-            .filter((t) => !t.hide_until_released)
+            .filter((t) => !t.hide_until_released || regressionTestJob)
             .reduce((acc, test) => acc + (test.score || 0), 0);
     const max_score = results.score ||
         results.tests
-            .filter((t) => !t.hide_until_released)
+            .filter((t) => !t.hide_until_released || regressionTestJob)
             .reduce((acc, test) => acc + (test.max_score || 0), 0);
     // Set job summary with test results
     coreExports.summary.addHeading('Autograder Results');
@@ -139152,7 +139156,7 @@ async function generateSummaryReport(results, gradeResponse) {
             { data: 'Score', header: true }
         ]);
         let lastPart = undefined;
-        for (const test of results.tests.filter((t) => !t.hide_until_released)) {
+        for (const test of results.tests.filter((t) => !t.hide_until_released || regressionTestJob)) {
             const icon = test.score === test.max_score ? '✅' : '❌';
             if (test.part !== lastPart && test.part) {
                 lastPart = test.part;
@@ -139262,7 +139266,7 @@ async function run() {
                     }
                 }));
             }
-            await generateSummaryReport(results, gradeResponse);
+            await generateSummaryReport(results, gradeResponse, regressionTestJob);
             if (results.score === 0) {
                 coreExports.setFailed('Score for this submission is 0. Please check to be sure that it conforms with the assignment instructions.');
             }
