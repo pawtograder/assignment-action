@@ -138466,6 +138466,16 @@ function parsePitestXml(filePath) {
 }
 
 /* eslint-disable */
+function trimJunit5StackTrace(stackTrace) {
+    if (!stackTrace) {
+        return '';
+    }
+    const lines = stackTrace.split('\n');
+    const idxOfJunitLine = lines.findIndex((line) => line.includes('org.junit.jupiter.engine.execution.MethodInvocation.proceed'));
+    return idxOfJunitLine === -1
+        ? stackTrace
+        : lines.slice(0, idxOfJunitLine).join('\n');
+}
 function parseSurefireXml(filePath) {
     const xmlContent = readFileSync(filePath, 'utf-8');
     const parser = new fxpExports.XMLParser({
@@ -138512,7 +138522,7 @@ function parseSurefireXml(filePath) {
                     message: testCase.failure.message || '',
                     type: testCase.failure.type || '',
                     description: testCase.failure._text || '',
-                    stackTrace: testCase.failure._text || ''
+                    stackTrace: trimJunit5StackTrace(testCase.failure._text || '')
                 };
             }
             // Handle errors
@@ -138521,7 +138531,7 @@ function parseSurefireXml(filePath) {
                     message: testCase.error.message || '',
                     type: testCase.error.type || '',
                     description: testCase.error._text || '',
-                    stackTrace: testCase.error._text || ''
+                    stackTrace: trimJunit5StackTrace(testCase.error._text || '')
                 };
             }
             testCases.push(tc);

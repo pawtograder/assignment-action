@@ -40,6 +40,19 @@ export interface SurefireReport {
   }
 }
 
+function trimJunit5StackTrace(stackTrace: string): string {
+  if (!stackTrace) {
+    return ''
+  }
+  const lines = stackTrace.split('\n')
+  const idxOfJunitLine = lines.findIndex((line) =>
+    line.includes('org.junit.jupiter.engine.execution.MethodInvocation.proceed')
+  )
+  return idxOfJunitLine === -1
+    ? stackTrace
+    : lines.slice(0, idxOfJunitLine).join('\n')
+}
+
 export function parseSurefireXml(filePath: string): SurefireReport {
   const xmlContent = readFileSync(filePath, 'utf-8')
   const parser = new XMLParser({
@@ -93,7 +106,7 @@ export function parseSurefireXml(filePath: string): SurefireReport {
           message: testCase.failure.message || '',
           type: testCase.failure.type || '',
           description: testCase.failure._text || '',
-          stackTrace: testCase.failure._text || ''
+          stackTrace: trimJunit5StackTrace(testCase.failure._text || '')
         }
       }
 
@@ -103,7 +116,7 @@ export function parseSurefireXml(filePath: string): SurefireReport {
           message: testCase.error.message || '',
           type: testCase.error.type || '',
           description: testCase.error._text || '',
-          stackTrace: testCase.error._text || ''
+          stackTrace: trimJunit5StackTrace(testCase.error._text || '')
         }
       }
 
