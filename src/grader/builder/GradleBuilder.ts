@@ -106,20 +106,10 @@ export default class GradleBuilder extends Builder {
     const ret = testResultsContents.flatMap((result) => {
       return result.testSuites.flatMap((suite) => {
         return suite.testCases.map((test) => {
-          const trimStackTrace = (stackTrace: string | undefined) => {
-            if (!stackTrace) {
-              return ''
-            }
-            const lines = stackTrace.split('\n')
-            const idxOfFirstMethodAccessorImpl = lines.findIndex((line) =>
-              line.includes('MethodAccessorImpl')
-            )
-            return lines.slice(0, idxOfFirstMethodAccessorImpl).join('\n')
-          }
           const tr: TestResult = {
             name: `${suite.name}.${test.name}`,
             status: test.failure || test.error ? 'fail' : 'pass',
-            output: test.failure ? trimStackTrace(test.failure.stackTrace) : '',
+            output: test.failure?.stackTrace || test.error?.stackTrace || '',
             output_format: 'text'
           }
           return tr

@@ -138466,15 +138466,28 @@ function parsePitestXml(filePath) {
 }
 
 /* eslint-disable */
-function trimJunit5StackTrace(stackTrace) {
+function trimJunitStackTrace(stackTrace) {
     if (!stackTrace) {
         return '';
     }
     const lines = stackTrace.split('\n');
-    const idxOfJunitLine = lines.findIndex((line) => line.includes('org.junit.jupiter.engine.execution.MethodInvocation.proceed'));
-    return idxOfJunitLine === -1
-        ? stackTrace
-        : lines.slice(0, idxOfJunitLine).join('\n');
+    const idxOfJunitLine = lines.findIndex((line) => line.includes('org.junit.jupiter.engine.execution.MethodInvocation.proceed') || line.includes('org.junit.runners.BlockJUnit4ClassRunner'));
+    if (idxOfJunitLine === -1) {
+        return stackTrace;
+    }
+    let idxOfLastReflectionLineFromBottom = -1;
+    for (let i = idxOfJunitLine - 1; i >= 0; i--) {
+        if (!lines[i].includes('jdk.internal.reflect') &&
+            !lines[i].includes('java.lang.reflect') &&
+            !lines[i].includes('org.junit.platform.commons.util.ReflectionUtils')) {
+            idxOfLastReflectionLineFromBottom = i + 1;
+            break;
+        }
+    }
+    if (idxOfLastReflectionLineFromBottom === -1) {
+        return lines.slice(0, idxOfJunitLine).join('\n');
+    }
+    return lines.slice(0, idxOfLastReflectionLineFromBottom).join('\n');
 }
 function parseSurefireXml(filePath) {
     const xmlContent = readFileSync(filePath, 'utf-8');
@@ -138522,7 +138535,7 @@ function parseSurefireXml(filePath) {
                     message: testCase.failure.message || '',
                     type: testCase.failure.type || '',
                     description: testCase.failure._text || '',
-                    stackTrace: trimJunit5StackTrace(testCase.failure._text || '')
+                    stackTrace: trimJunitStackTrace(testCase.failure._text || '')
                 };
             }
             // Handle errors
@@ -138531,7 +138544,7 @@ function parseSurefireXml(filePath) {
                     message: testCase.error.message || '',
                     type: testCase.error.type || '',
                     description: testCase.error._text || '',
-                    stackTrace: trimJunit5StackTrace(testCase.error._text || '')
+                    stackTrace: trimJunitStackTrace(testCase.error._text || '')
                 };
             }
             testCases.push(tc);
@@ -138625,18 +138638,10 @@ class GradleBuilder extends Builder {
         const ret = testResultsContents.flatMap((result) => {
             return result.testSuites.flatMap((suite) => {
                 return suite.testCases.map((test) => {
-                    const trimStackTrace = (stackTrace) => {
-                        if (!stackTrace) {
-                            return '';
-                        }
-                        const lines = stackTrace.split('\n');
-                        const idxOfFirstMethodAccessorImpl = lines.findIndex((line) => line.includes('MethodAccessorImpl'));
-                        return lines.slice(0, idxOfFirstMethodAccessorImpl).join('\n');
-                    };
                     const tr = {
                         name: `${suite.name}.${test.name}`,
                         status: test.failure || test.error ? 'fail' : 'pass',
-                        output: test.failure ? trimStackTrace(test.failure.stackTrace) : '',
+                        output: test.failure?.stackTrace || test.error?.stackTrace || '',
                         output_format: 'text'
                     };
                     return tr;

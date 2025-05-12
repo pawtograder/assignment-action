@@ -40,17 +40,36 @@ export interface SurefireReport {
   }
 }
 
-function trimJunit5StackTrace(stackTrace: string): string {
+function trimJunitStackTrace(stackTrace: string): string {
   if (!stackTrace) {
     return ''
   }
   const lines = stackTrace.split('\n')
-  const idxOfJunitLine = lines.findIndex((line) =>
-    line.includes('org.junit.jupiter.engine.execution.MethodInvocation.proceed')
+  const idxOfJunitLine = lines.findIndex(
+    (line) =>
+      line.includes(
+        'org.junit.jupiter.engine.execution.MethodInvocation.proceed'
+      ) || line.includes('org.junit.runners.BlockJUnit4ClassRunner')
   )
-  return idxOfJunitLine === -1
-    ? stackTrace
-    : lines.slice(0, idxOfJunitLine).join('\n')
+  if (idxOfJunitLine === -1) {
+    return stackTrace
+  }
+
+  let idxOfLastReflectionLineFromBottom = -1
+  for (let i = idxOfJunitLine - 1; i >= 0; i--) {
+    if (
+      !lines[i].includes('jdk.internal.reflect') &&
+      !lines[i].includes('java.lang.reflect') &&
+      !lines[i].includes('org.junit.platform.commons.util.ReflectionUtils')
+    ) {
+      idxOfLastReflectionLineFromBottom = i + 1
+      break
+    }
+  }
+  if (idxOfLastReflectionLineFromBottom === -1) {
+    return lines.slice(0, idxOfJunitLine).join('\n')
+  }
+  return lines.slice(0, idxOfLastReflectionLineFromBottom).join('\n')
 }
 
 export function parseSurefireXml(filePath: string): SurefireReport {
@@ -106,7 +125,7 @@ export function parseSurefireXml(filePath: string): SurefireReport {
           message: testCase.failure.message || '',
           type: testCase.failure.type || '',
           description: testCase.failure._text || '',
-          stackTrace: trimJunit5StackTrace(testCase.failure._text || '')
+          stackTrace: trimJunitStackTrace(testCase.failure._text || '')
         }
       }
 
@@ -116,7 +135,7 @@ export function parseSurefireXml(filePath: string): SurefireReport {
           message: testCase.error.message || '',
           type: testCase.error.type || '',
           description: testCase.error._text || '',
-          stackTrace: trimJunit5StackTrace(testCase.error._text || '')
+          stackTrace: trimJunitStackTrace(testCase.error._text || '')
         }
       }
 
