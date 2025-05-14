@@ -134,6 +134,9 @@ export default class GradleBuilder extends Builder {
         name: eachMutation.mutator,
         location: eachMutation.mutatedClass + ':' + eachMutation.lineNumber,
         status: eachMutation.status === 'KILLED' ? 'pass' : 'fail',
+        tests: eachMutation.killingTests
+          ? eachMutation.killingTests.split('|')
+          : [],
         output: eachMutation.killingTest
           ? 'Found by ' + eachMutation.killingTest
           : '',

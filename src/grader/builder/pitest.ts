@@ -33,6 +33,7 @@ export interface Mutation {
   index: number
   block: number
   killingTest?: string
+  killingTests?: string
   description: string
 }
 
@@ -104,6 +105,9 @@ export function parsePitestXml(filePath: string): MutationTestSummary {
 
     if (mut.killingTest) {
       mutation.killingTest = mut.killingTest
+    }
+    if (mut.killingTests) {
+      mutation.killingTests = mut.killingTests
     }
 
     // Update statistics

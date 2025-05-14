@@ -21,6 +21,7 @@ export interface Mutation {
     index: number;
     block: number;
     killingTest?: string;
+    killingTests?: string;
     description: string;
 }
 export interface MutationTestSummary {

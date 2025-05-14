@@ -15,6 +15,7 @@ export type MutantResult = {
     name: string;
     location: string;
     status: 'pass' | 'fail';
+    tests: string[];
     output: string;
     output_format?: OutputFormat;
 };

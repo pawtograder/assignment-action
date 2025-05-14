@@ -342,7 +342,7 @@ class Grader {
     let studentTestResults: TestResult[] | undefined
     if (
       this.config.submissionFiles.testFiles.length > 0 &&
-      this.config.build.student_tests?.grading === 'mutation'
+      this.config.build.student_tests?.instructor_impl?.run_tests
     ) {
       console.log(
         'Resetting to have student tests with the instructor solution'
@@ -379,14 +379,16 @@ class Grader {
             this.logger.log('visible', result.output)
           }
         }
-        mutantFailureAdvice += '\n\nPlease fix the above errors and resubmit.'
+        mutantFailureAdvice +=
+          '\n\nPlease fix the above errors and resubmit for grading.'
       } else {
         console.log('Running student tests against buggy solutions')
         mutantResults = await this.builder.mutationTest()
       }
-    } else if (
-      this.config.build.student_tests?.grading ===
-        'student-impl-coverage-report-only' &&
+    }
+    if (
+      (this.config.build.student_tests?.student_impl?.report_branch_coverage ||
+        this.config.build.student_tests?.student_impl?.run_tests) &&
       this.config.submissionFiles.testFiles.length > 0
     ) {
       console.log('Running student tests against student implementation')
@@ -411,9 +413,65 @@ class Grader {
     const expectedArtifacts = this.config.build.artifacts || []
 
     if (
-      this.config.build.student_tests?.grading ===
-      'student-impl-coverage-report-only'
+      this.config.build.student_tests?.instructor_impl?.report_mutation_coverage
     ) {
+      let studentMutationOutput =
+        'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational: '
+      if (mutantResults) {
+        const getMutantPrompt = (mutantName: string) => {
+          if (this.config.mutantAdvice) {
+            const [sourceClass, targetClass] = mutantName.split(' ')
+            const mutantAdvice = this.config.mutantAdvice.find(
+              (ma) =>
+                ma.sourceClass === sourceClass && ma.targetClass === targetClass
+            )
+            if (mutantAdvice) {
+              return mutantAdvice.prompt
+            }
+          }
+          return mutantName
+        }
+        const getMutantShortName = (mutantName: string) => {
+          if (this.config.mutantAdvice) {
+            const [sourceClass, targetClass] = mutantName.split(' ')
+            const mutantAdvice = this.config.mutantAdvice.find(
+              (ma) =>
+                ma.sourceClass === sourceClass && ma.targetClass === targetClass
+            )
+            if (mutantAdvice) {
+              return mutantAdvice.name
+            }
+          }
+          return undefined
+        }
+
+        const mutantsDetected = mutantResults
+          .filter((mr) => mr.status === 'pass')
+          .map((mr) => {
+            const prompt = getMutantPrompt(mr.name)
+            const shortName = getMutantShortName(mr.name)
+            return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
+          })
+        const mutantsNotDetected = mutantResults
+          .filter((mr) => mr.status === 'fail')
+          .map((mr) => {
+            const prompt = getMutantPrompt(mr.name)
+            return `* **${mr.name}** (${prompt})`
+          })
+        studentMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
+        studentMutationOutput += `${mutantsDetected.join('\n')}\n\n`
+        studentMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
+        studentMutationOutput += `${mutantsNotDetected.join('\n')}`
+      }
+      testFeedbacks.push({
+        name: 'Fault Coverage Report',
+        output: studentMutationOutput,
+        output_format: 'markdown',
+        score: 0,
+        max_score: 0
+      })
+    }
+    if (this.config.build.student_tests?.student_impl?.report_branch_coverage) {
       const passingTestCount = studentTestResults?.filter(
         (result) => result.status === 'pass'
       ).length

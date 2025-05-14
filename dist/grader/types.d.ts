@@ -8,7 +8,15 @@ export interface BuildConfig {
         policy: 'fail' | 'warn' | 'ignore';
     };
     student_tests?: {
-        grading: 'none' | 'mutation' | 'student-impl-coverage-report-only';
+        student_impl?: {
+            run_tests?: boolean;
+            report_branch_coverage?: boolean;
+        };
+        instructor_impl?: {
+            run_tests?: boolean;
+            run_mutation?: boolean;
+            report_mutation_coverage?: boolean;
+        };
     };
 }
 export interface GraderArtifact {
@@ -45,6 +53,12 @@ export interface PawtograderConfig {
         files: string[];
         testFiles: string[];
     };
+    mutantAdvice?: {
+        sourceClass: string;
+        targetClass: string;
+        name: string;
+        prompt: string;
+    }[];
 }
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
 export declare function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit;

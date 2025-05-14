@@ -10,7 +10,15 @@ export interface BuildConfig {
     policy: 'fail' | 'warn' | 'ignore'
   }
   student_tests?: {
-    grading: 'none' | 'mutation' | 'student-impl-coverage-report-only'
+    student_impl?: {
+      run_tests?: boolean
+      report_branch_coverage?: boolean
+    }
+    instructor_impl?: {
+      run_tests?: boolean
+      run_mutation?: boolean
+      report_mutation_coverage?: boolean
+    }
   }
 }
 
@@ -28,7 +36,7 @@ export interface BreakPoint {
 
 export interface MutationTestUnit {
   name: string
-  locations: string[] // format: "file:line-line"
+  locations: string[] // format: "file:line-line" (for normal pit mutators) OR format oldFile-newFile (for prebake mutators)
   breakPoints: BreakPoint[]
 }
 
@@ -59,6 +67,12 @@ export interface PawtograderConfig {
     files: string[]
     testFiles: string[]
   }
+  mutantAdvice?: {
+    sourceClass: string
+    targetClass: string
+    name: string
+    prompt: string
+  }[]
 }
 
 // Type guard to check if a unit is a mutation test unit
