@@ -417,6 +417,9 @@ class Grader {
     ) {
       let studentMutationOutput =
         'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational: '
+      if (mutantFailureAdvice) {
+        studentMutationOutput = mutantFailureAdvice
+      }
       if (mutantResults) {
         const getMutantPrompt = (mutantName: string) => {
           if (this.config.mutantAdvice) {
@@ -463,6 +466,7 @@ class Grader {
         studentMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
         studentMutationOutput += `${mutantsNotDetected.join('\n')}`
       }
+      this.logger.log('hidden', studentMutationOutput)
       testFeedbacks.push({
         name: 'Fault Coverage Report',
         output: studentMutationOutput,
