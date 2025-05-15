@@ -16,6 +16,7 @@ import {
   PawtograderConfig
 } from './types.js'
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
+
 export default async function grade(
   solutionDir: string,
   submissionDir: string,
@@ -39,6 +40,7 @@ export default async function grade(
 
   return ret
 }
+
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
@@ -46,9 +48,11 @@ function icon(result: TestResult) {
     return '❌'
   }
 }
+
 class Grader {
   private builder: Builder
   private logger: Logger
+
   constructor(
     private solutionDir: string,
     private submissionDir: string,
@@ -68,6 +72,7 @@ class Grader {
       )
     }
   }
+
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]
 
@@ -102,6 +107,7 @@ class Grader {
       await io.cp(file, dest, { recursive: true })
     }
   }
+
   async resetSolutionFiles() {
     const files = this.config.submissionFiles['files'].concat(
       this.config.submissionFiles['testFiles']
@@ -162,6 +168,7 @@ class Grader {
       })
       .flat()
   }
+
   private gradeGradedUnit(
     unit: GradedUnit,
     part: GradedPart,
@@ -256,6 +263,7 @@ class Grader {
       `Unknown unit type in grading config: ${JSON.stringify(unit)}`
     )
   }
+
   async grade(): Promise<AutograderFeedback> {
     // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
     console.log('Beginning grading')

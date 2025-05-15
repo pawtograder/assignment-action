@@ -44,6 +44,7 @@ async function prepareForGrading(
   const graderDir = `${workDir}/grader`
   return { assignmentDir, graderDir }
 }
+
 async function prepareForRegressionTest(
   graderConfig: Awaited<ReturnType<typeof createRegressionTestRun>>
 ) {
@@ -57,6 +58,7 @@ async function prepareForRegressionTest(
   const graderDir = `${workDir}/grader`
   return { assignmentDir, graderDir }
 }
+
 async function generateSummaryReport(
   results: Awaited<ReturnType<typeof grade>>,
   gradeResponse: Awaited<ReturnType<typeof submitFeedback>>,
@@ -118,6 +120,7 @@ async function generateSummaryReport(
     core.notice(`🚀 Score: ${score}/${max_score} `)
   }
 }
+
 /**
  * The main function for the action.
  *

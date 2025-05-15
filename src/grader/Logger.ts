@@ -18,9 +18,11 @@ export default class Logger {
       visibility: visibility
     })
   }
+
   hasOutput(visibility: OutputVisibility) {
     return this.output.some((o) => o.visibility === visibility)
   }
+
   getEachOutput() {
     const ret: {
       [key in OutputVisibility]?: {
