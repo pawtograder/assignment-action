@@ -139208,7 +139208,7 @@ async function generateSummaryReport(results, gradeResponse, regressionTestJob) 
         coreExports.summary.addTable(rows);
     }
     await coreExports.summary.write();
-    if (score == 0) {
+    if (score == 0 && max_score) {
         coreExports.error('Score: 0');
     }
     else if (score != max_score) {
@@ -139308,7 +139308,7 @@ async function run() {
                 }));
             }
             await generateSummaryReport(results, gradeResponse, regressionTestJob);
-            if (results.score === 0) {
+            if (results.score === 0 && results.max_score) {
                 coreExports.setFailed('Score for this submission is 0. Please check to be sure that it conforms with the assignment instructions.');
             }
         }
