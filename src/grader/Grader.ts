@@ -47,7 +47,7 @@ function icon(result: TestResult) {
   }
 }
 class Grader {
-  private builder: Builder
+  private builder: Builder | undefined
   private logger: Logger
   constructor(
     private solutionDir: string,
@@ -57,11 +57,17 @@ class Grader {
     private regressionTestJob?: number
   ) {
     this.logger = new Logger(regressionTestJob)
-    this.builder = new GradleBuilder(
-      this.logger,
-      this.gradingDir,
-      this.regressionTestJob
-    )
+    if (this.config.build.preset == 'java-gradle') {
+      this.builder = new GradleBuilder(
+        this.logger,
+        this.gradingDir,
+        this.regressionTestJob
+      )
+    } else if (this.config.build.preset == 'none') {
+      this.builder = undefined
+    } else {
+      throw new Error(`Unsupported build preset: ${this.config.build.preset}`)
+    }
     if (regressionTestJob) {
       console.log(
         `Autograder configuration: ${JSON.stringify(this.config, null, 2)}`
@@ -257,6 +263,18 @@ class Grader {
     )
   }
   async grade(): Promise<AutograderFeedback> {
+    if (!this.builder) {
+      return {
+        lint: {
+          status: 'pass',
+          output: 'Linter is not enabled for this assignment'
+        },
+        output: this.logger.getEachOutput(),
+        tests: [],
+        score: 0,
+        artifacts: []
+      }
+    }
     // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
     console.log('Beginning grading')
     const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
@@ -292,7 +310,8 @@ class Grader {
         `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`
       )
       this.logger.log('visible', msg)
-      const allTests: AutograderTestFeedback[] = this.config.gradedParts
+      const gradedParts = this.config.gradedParts || []
+      const allTests: AutograderTestFeedback[] = gradedParts
         .filter((part) => !part.hide_until_released)
         .map((part) =>
           part.gradedUnits.map((gradedUnit) => {
@@ -397,7 +416,8 @@ class Grader {
       studentTestResults = await this.builder.test()
     }
     console.log('Wrapping up')
-    const testFeedbacks = this.config.gradedParts
+    const gradedParts = this.config.gradedParts || []
+    const testFeedbacks = gradedParts
       .map((part) =>
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
       )
