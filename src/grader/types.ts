@@ -2,10 +2,10 @@ import { AutograderFeedback } from '../api/adminServiceSchemas.js'
 
 // Build configuration types
 export interface BuildConfig {
-  preset: 'java-gradle'
-  cmd: string
+  preset: 'java-gradle' | 'none'
+  cmd?: string
   artifacts?: GraderArtifact[]
-  linter: {
+  linter?: {
     preset: 'checkstyle'
     policy: 'fail' | 'warn' | 'ignore'
   }
@@ -62,7 +62,7 @@ export interface GradedPart {
 // Main configuration type
 export interface PawtograderConfig {
   build: BuildConfig
-  gradedParts: GradedPart[]
+  gradedParts?: GradedPart[]
   submissionFiles: {
     files: string[]
     testFiles: string[]

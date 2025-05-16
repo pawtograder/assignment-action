@@ -138785,7 +138785,15 @@ class Grader {
         this.gradingDir = gradingDir;
         this.regressionTestJob = regressionTestJob;
         this.logger = new Logger(regressionTestJob);
-        this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
+        if (this.config.build.preset == 'java-gradle') {
+            this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
+        }
+        else if (this.config.build.preset == 'none') {
+            this.builder = undefined;
+        }
+        else {
+            throw new Error(`Unsupported build preset: ${this.config.build.preset}`);
+        }
         if (regressionTestJob) {
             console.log(`Autograder configuration: ${JSON.stringify(this.config, null, 2)}`);
         }
@@ -138927,6 +138935,18 @@ class Grader {
         throw new Error(`Unknown unit type in grading config: ${JSON.stringify(unit)}`);
     }
     async grade() {
+        if (!this.builder) {
+            return {
+                lint: {
+                    status: 'pass',
+                    output: 'Linter is not enabled for this assignment'
+                },
+                output: this.logger.getEachOutput(),
+                tests: [],
+                score: 0,
+                artifacts: []
+            };
+        }
         // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
         console.log('Beginning grading');
         const tmpDir = path$1.join(process.cwd(), 'pawtograder-grading');
@@ -138952,7 +138972,8 @@ class Grader {
             const msg = err instanceof Error ? err.message : 'Unknown error';
             this.logger.log('visible', `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`);
             this.logger.log('visible', msg);
-            const allTests = this.config.gradedParts
+            const gradedParts = this.config.gradedParts || [];
+            const allTests = gradedParts
                 .filter((part) => !part.hide_until_released)
                 .map((part) => part.gradedUnits.map((gradedUnit) => {
                 if (isRegularTestUnit(gradedUnit)) {
@@ -139044,7 +139065,8 @@ class Grader {
             studentTestResults = await this.builder.test();
         }
         console.log('Wrapping up');
-        const testFeedbacks = this.config.gradedParts
+        const gradedParts = this.config.gradedParts || [];
+        const testFeedbacks = gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
         if (this.regressionTestJob) {
@@ -139245,7 +139267,7 @@ async function generateSummaryReport(results, gradeResponse, regressionTestJob) 
         coreExports.summary.addTable(rows);
     }
     await coreExports.summary.write();
-    if (score == 0) {
+    if (score == 0 && max_score) {
         coreExports.error('Score: 0');
     }
     else if (score != max_score) {
@@ -139345,7 +139367,7 @@ async function run() {
                 }));
             }
             await generateSummaryReport(results, gradeResponse, regressionTestJob);
-            if (results.score === 0) {
+            if (results.score === 0 && results.max_score) {
                 coreExports.setFailed('Score for this submission is 0. Please check to be sure that it conforms with the assignment instructions.');
             }
         }
