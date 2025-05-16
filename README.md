@@ -33,7 +33,22 @@ Upon completion of the grading process, the `autograder-submit-feedback`
 function is called with grading results, again relying on the GitHub OIDC token
 to authenticate.
 
-## Transpile before pushing
+## Development tips
+
+### Run the grader locally
+
+To test changes to the grader, you can run it locally without invoking GitHub
+Actions or interfacing with Pawtograder at all:
+
+```bash
+npx tsimp src/grader/main.ts -s /full/path/to/solution/repo -u /full/path/to/submission/repo
+```
+
+A significant amount of output will be printed to the console, including a
+pretty-printed JSON object with the results of the grading that would be passed
+along to Pawtograder.
+
+### Transpile before pushing
 
 GitHub Actions will only run JS, so we need to transpile before pushing:
 
