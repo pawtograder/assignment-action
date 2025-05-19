@@ -1,7 +1,19 @@
 import { AutograderFeedback } from '../api/adminServiceSchemas.js';
+export declare const DEFAULT_TIMEOUTS: {
+    build: number;
+    student_tests: number;
+    instructor_tests: number;
+    mutants: number;
+};
 export interface BuildConfig {
     preset: 'java-gradle' | 'none';
     cmd?: string;
+    timeouts_seconds?: {
+        build?: number;
+        student_tests?: number;
+        instructor_tests?: number;
+        mutants?: number;
+    };
     artifacts?: GraderArtifact[];
     linter?: {
         preset: 'checkstyle';

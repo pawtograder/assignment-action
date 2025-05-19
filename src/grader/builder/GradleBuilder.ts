@@ -1,5 +1,11 @@
 import { glob } from 'glob'
-import { Builder, LintResult, MutantResult, TestResult } from './Builder.js'
+import {
+  Builder,
+  BuildStepOptions,
+  LintResult,
+  MutantResult,
+  TestResult
+} from './Builder.js'
 import {
   CheckstyleFile,
   CheckstyleReport,
@@ -80,12 +86,13 @@ export default class GradleBuilder extends Builder {
   getCoverageReportDir(): string {
     return 'build/reports/jacoco/test/html'
   }
-  async test(): Promise<TestResult[]> {
+  async test({ timeoutSeconds }: BuildStepOptions): Promise<TestResult[]> {
     this.logger.log('hidden', 'Testing with Gradle')
     const { returnCode } = await this.executeCommandAndGetOutput(
       './gradlew',
       ['--console=plain', 'test'],
       this.logger,
+      timeoutSeconds,
       true
     )
     if (returnCode !== 0) {
@@ -118,12 +125,16 @@ export default class GradleBuilder extends Builder {
     })
     return ret
   }
-  async mutationTest(): Promise<MutantResult[]> {
+  async mutationTest({
+    timeoutSeconds
+  }: BuildStepOptions): Promise<MutantResult[]> {
     this.logger.log('hidden', 'Running Pitest')
     await this.executeCommandAndGetOutput(
       './gradlew',
       ['--console=plain', 'pitest'],
-      this.logger
+      this.logger,
+      timeoutSeconds,
+      false
     )
     this.logger.log('hidden', 'Reading mutation test results')
     const mutationTestResults = `${this.gradingDir}/build/reports/pitest/mutations.xml`
@@ -144,12 +155,13 @@ export default class GradleBuilder extends Builder {
       }
     })
   }
-  async buildClean(): Promise<void> {
+  async buildClean({ timeoutSeconds }: BuildStepOptions): Promise<void> {
     this.logger.log('hidden', 'Building clean with Gradle')
     const { returnCode, output } = await this.executeCommandAndGetOutput(
       './gradlew',
       ['--console=plain', 'clean', '-x', 'test', 'build'],
       this.logger,
+      timeoutSeconds,
       true
     )
     if (returnCode !== 0) {

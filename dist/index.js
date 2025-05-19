@@ -25,7 +25,7 @@ import require$$1$5 from 'url';
 import require$$3 from 'zlib';
 import require$$6 from 'string_decoder';
 import require$$0$a from 'diagnostics_channel';
-import require$$2$2 from 'child_process';
+import require$$2$2, { spawn } from 'child_process';
 import require$$6$1 from 'timers';
 import require$$0$b from 'punycode';
 import { readFile, readdir as readdir$2, access, stat, rename, mkdir } from 'fs/promises';
@@ -134353,40 +134353,66 @@ class Builder {
         this.gradingDir = gradingDir;
         this.regressionTestJob = regressionTestJob;
     }
-    async executeCommandAndGetOutput(command, args, logger, ignoreFailures = false) {
+    async executeCommandAndGetOutput(command, args, logger, timeoutSeconds, ignoreFailures = false) {
         let myOutput = '';
         let myError = '';
-        try {
+        const result = new Promise((resolve, reject) => {
             logger.log('hidden', `Running ${command} ${args.join(' ')}`);
-            const returnCode = await execExports.exec(command, args, {
+            const child = spawn(command, args, {
                 cwd: this.gradingDir,
-                silent: true,
-                listeners: {
-                    stdout: (data) => {
-                        myOutput += data.toString();
-                        if (this.regressionTestJob) {
-                            console.log(`CIDebug: ${data.toString()}`);
-                        }
-                    },
-                    stderr: (data) => {
-                        myError += data.toString();
-                        if (this.regressionTestJob) {
-                            console.log(`CIDebug: ${data.toString()}`);
-                        }
-                    }
-                },
-                ignoreReturnCode: ignoreFailures
+                shell: true,
+                detached: true
             });
-            myOutput += myError;
-            logger.log('hidden', `${myOutput}`);
-            logger.log('hidden', `Return code: ${returnCode}`);
-            return { returnCode, output: myOutput };
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        }
-        catch (err) {
-            logger.log('visible', `Command ${command} failed unexpectedly with output:\n${myOutput + myError}`);
-            throw new Error(`Command failed with output:\n${myOutput}`);
-        }
+            let timeoutId;
+            if (timeoutSeconds) {
+                timeoutId = setTimeout(() => {
+                    this.logger.log('visible', `ERROR: Command timed out after ${timeoutSeconds} seconds`);
+                    child.kill();
+                }, timeoutSeconds * 1000);
+            }
+            child.stdout.on('data', (data) => {
+                const output = data.toString();
+                myOutput += output;
+                if (this.regressionTestJob) {
+                    console.log(`CIDebug: ${output}`);
+                }
+            });
+            child.stderr.on('data', (data) => {
+                const error = data.toString();
+                myError += error;
+                if (this.regressionTestJob) {
+                    console.log(`CIDebug: ${error}`);
+                }
+            });
+            child.on('close', (code) => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+                const returnCode = code ?? 1;
+                myOutput += myError;
+                logger.log('hidden', `${myOutput}`);
+                logger.log('hidden', `Return code: ${returnCode}`);
+                if (returnCode === 143) {
+                    reject(new Error(`${myOutput}\n\nCommand timed out after ${timeoutSeconds} seconds`));
+                }
+                else if (returnCode !== 0 && !ignoreFailures) {
+                    logger.log('visible', `Command ${command} failed unexpectedly with output:\n${myOutput}`);
+                    reject(new Error(`Command failed with output:\n${myOutput}`));
+                }
+                else {
+                    resolve({ returnCode, output: myOutput });
+                }
+            });
+            child.on('error', (err) => {
+                if (err.code === 'ETIMEDOUT') {
+                    reject(new Error(`Command timed out after ${timeoutSeconds} seconds`));
+                }
+                else {
+                    reject(err);
+                }
+            });
+        });
+        return await result;
     }
 }
 
@@ -138627,9 +138653,9 @@ class GradleBuilder extends Builder {
     getCoverageReportDir() {
         return 'build/reports/jacoco/test/html';
     }
-    async test() {
+    async test({ timeoutSeconds }) {
         this.logger.log('hidden', 'Testing with Gradle');
-        const { returnCode } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'test'], this.logger, true);
+        const { returnCode } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'test'], this.logger, timeoutSeconds, true);
         if (returnCode !== 0) {
             this.logger.log('hidden', `Gradle test failed, return code: ${returnCode}`);
         }
@@ -138653,9 +138679,9 @@ class GradleBuilder extends Builder {
         });
         return ret;
     }
-    async mutationTest() {
+    async mutationTest({ timeoutSeconds }) {
         this.logger.log('hidden', 'Running Pitest');
-        await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'pitest'], this.logger);
+        await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'pitest'], this.logger, timeoutSeconds, false);
         this.logger.log('hidden', 'Reading mutation test results');
         const mutationTestResults = `${this.gradingDir}/build/reports/pitest/mutations.xml`;
         const mutationTestResultsContents = await parsePitestXml(mutationTestResults);
@@ -138674,9 +138700,9 @@ class GradleBuilder extends Builder {
             };
         });
     }
-    async buildClean() {
+    async buildClean({ timeoutSeconds }) {
         this.logger.log('hidden', 'Building clean with Gradle');
-        const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'clean', '-x', 'test', 'build'], this.logger, true);
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', ['--console=plain', 'clean', '-x', 'test', 'build'], this.logger, timeoutSeconds, true);
         if (returnCode !== 0) {
             throw new Error(`Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`);
         }
@@ -138744,6 +138770,12 @@ class Logger {
     }
 }
 
+const DEFAULT_TIMEOUTS = {
+    build: 600,
+    student_tests: 300,
+    instructor_tests: 300,
+    mutants: 1800
+};
 // Type guard to check if a unit is a mutation test unit
 function isMutationTestUnit(unit) {
     return 'locations' in unit && 'breakPoints' in unit;
@@ -138964,11 +138996,16 @@ class Grader {
         console.log('Resetting to run instructor tests on student submission');
         await this.resetSolutionFiles();
         await this.copyStudentFiles('files');
+        const gradedParts = this.config.gradedParts || [];
         try {
             console.log('Building project with student submission and running instructor tests');
-            await this.builder.buildClean();
+            console.log('Really seems to be in a try/catch');
+            await this.builder.buildClean({
+                timeoutSeconds: this.config.build.timeouts_seconds?.build || DEFAULT_TIMEOUTS.build
+            });
         }
         catch (err) {
+            console.log('CIDebug: Build failed');
             const msg = err instanceof Error ? err.message : 'Unknown error';
             this.logger.log('visible', `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`);
             this.logger.log('visible', msg);
@@ -139012,7 +139049,51 @@ class Grader {
                 artifacts: []
             };
         }
-        const testResults = await this.builder.test();
+        let testResults = [];
+        try {
+            testResults = await this.builder.test({
+                timeoutSeconds: this.config.build.timeouts_seconds?.instructor_tests ||
+                    DEFAULT_TIMEOUTS.instructor_tests
+            });
+        }
+        catch (err) {
+            this.logger.log('visible', `An error occurred while running instructor tests. Please fix the above errors and resubmit for grading. Here is the error message: ${err}`);
+            const allTests = gradedParts
+                .filter((part) => !part.hide_until_released)
+                .map((part) => part.gradedUnits.map((gradedUnit) => {
+                if (isRegularTestUnit(gradedUnit)) {
+                    return {
+                        name: gradedUnit.name,
+                        output: 'Build failed, test not run. Please see overall output for more details.',
+                        output_format: 'text',
+                        score: 0,
+                        part: part.name,
+                        max_score: gradedUnit.points
+                    };
+                }
+                else if (isMutationTestUnit(gradedUnit)) {
+                    return {
+                        name: gradedUnit.name,
+                        output: 'Build failed, test not run. Please see overall output for more details.',
+                        output_format: 'text',
+                        score: 0,
+                        part: part.name,
+                        max_score: gradedUnit.breakPoints[0].pointsToAward
+                    };
+                }
+                else {
+                    throw new Error(`Unknown unit type in grading config: ${JSON.stringify(gradedUnit)}`);
+                }
+            }))
+                .flat();
+            return {
+                lint: lintResult,
+                output: this.logger.getEachOutput(),
+                tests: allTests,
+                score: 0,
+                artifacts: []
+            };
+        }
         let mutantResults;
         let mutantFailureAdvice;
         let studentTestResults;
@@ -139023,7 +139104,9 @@ class Grader {
             await this.copyStudentFiles('testFiles');
             console.log('Building solution and running student tests');
             try {
-                await this.builder.buildClean();
+                await this.builder.buildClean({
+                    timeoutSeconds: this.config.build.timeouts_seconds?.build || DEFAULT_TIMEOUTS.build
+                });
             }
             catch (err) {
                 const msg = err instanceof Error ? err.message : 'Unknown error';
@@ -139032,18 +139115,31 @@ class Grader {
                 this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
                 this.logger.log('visible', msg);
             }
-            studentTestResults = await this.builder.test();
-            if (studentTestResults.some((result) => result.status === 'fail')) {
+            try {
+                studentTestResults = await this.builder.test({
+                    timeoutSeconds: this.config.build.timeouts_seconds?.student_tests ||
+                        DEFAULT_TIMEOUTS.student_tests
+                });
+            }
+            catch (err) {
+                const msg = err instanceof Error ? err.message : 'Unknown error';
+                this.logger.log('visible', 'Error running student tests on instructor solution:');
+                this.logger.log('visible', msg);
+            }
+            if (!studentTestResults ||
+                studentTestResults.some((result) => result.status === 'fail')) {
                 this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
                 mutantFailureAdvice =
                     "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n";
                 this.logger.log('visible', 'Here are your failing test results:');
-                for (const result of studentTestResults) {
-                    if (result.status === 'fail') {
-                        mutantFailureAdvice += `\n❌ ${result.name}\n`;
-                        mutantFailureAdvice += '```\n' + result.output + '\n```';
-                        this.logger.log('visible', `${result.name}: ${result.status}`);
-                        this.logger.log('visible', result.output);
+                if (studentTestResults) {
+                    for (const result of studentTestResults) {
+                        if (result.status === 'fail') {
+                            mutantFailureAdvice += `\n❌ ${result.name}\n`;
+                            mutantFailureAdvice += '```\n' + result.output + '\n```';
+                            this.logger.log('visible', `${result.name}: ${result.status}`);
+                            this.logger.log('visible', result.output);
+                        }
                     }
                 }
                 mutantFailureAdvice +=
@@ -139051,21 +139147,42 @@ class Grader {
             }
             else {
                 console.log('Running student tests against buggy solutions');
-                mutantResults = await this.builder.mutationTest();
+                try {
+                    mutantResults = await this.builder.mutationTest({
+                        timeoutSeconds: this.config.build.timeouts_seconds?.mutants ||
+                            DEFAULT_TIMEOUTS.mutants
+                    });
+                }
+                catch (err) {
+                    const msg = err instanceof Error ? err.message : 'Unknown error';
+                    this.logger.log('visible', 'Error running mutation tests: ' + msg);
+                }
             }
         }
+        let studentTestAdvice;
         if ((this.config.build.student_tests?.student_impl?.report_branch_coverage ||
             this.config.build.student_tests?.student_impl?.run_tests) &&
             this.config.submissionFiles.testFiles.length > 0) {
             console.log('Running student tests against student implementation');
-            await this.resetSolutionFiles();
-            await this.copyStudentFiles('testFiles');
-            await this.copyStudentFiles('files');
-            await this.builder.buildClean();
-            studentTestResults = await this.builder.test();
+            try {
+                await this.resetSolutionFiles();
+                await this.copyStudentFiles('testFiles');
+                await this.copyStudentFiles('files');
+                await this.builder.buildClean({
+                    timeoutSeconds: this.config.build.timeouts_seconds?.build || DEFAULT_TIMEOUTS.build
+                });
+                studentTestResults = await this.builder.test({
+                    timeoutSeconds: this.config.build.timeouts_seconds?.student_tests ||
+                        DEFAULT_TIMEOUTS.student_tests
+                });
+            }
+            catch (err) {
+                const msg = err instanceof Error ? err.message : 'Unknown error';
+                studentTestAdvice = 'Your tests failed to compile. ' + msg;
+                this.logger.log('visible', msg);
+            }
         }
         console.log('Wrapping up');
-        const gradedParts = this.config.gradedParts || [];
         const testFeedbacks = gradedParts
             .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
             .flat();
@@ -139132,6 +139249,9 @@ class Grader {
             const passingTestCount = studentTestResults?.filter((result) => result.status === 'pass').length;
             const totalTestCount = studentTestResults?.length;
             let studentTestOutput = 'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational:\n\n';
+            if (studentTestAdvice) {
+                studentTestOutput += studentTestAdvice;
+            }
             studentTestOutput += `**Student-written tests passed: ${passingTestCount} / ${totalTestCount}**\n`;
             if (studentTestResults && studentTestResults.length > 0) {
                 for (const result of studentTestResults) {

@@ -24,14 +24,17 @@ export declare abstract class Builder {
     protected gradingDir: string;
     protected regressionTestJob?: number | undefined;
     constructor(logger: Logger, gradingDir: string, regressionTestJob?: number | undefined);
-    executeCommandAndGetOutput(command: string, args: string[], logger: Logger, ignoreFailures?: boolean): Promise<{
+    executeCommandAndGetOutput(command: string, args: string[], logger: Logger, timeoutSeconds?: number, ignoreFailures?: boolean): Promise<{
         returnCode: number;
         output: string;
     }>;
     abstract lint(): Promise<LintResult>;
-    abstract test(): Promise<TestResult[]>;
-    abstract mutationTest(): Promise<MutantResult[]>;
-    abstract buildClean(): Promise<void>;
+    abstract test(options: BuildStepOptions): Promise<TestResult[]>;
+    abstract mutationTest(options: BuildStepOptions): Promise<MutantResult[]>;
+    abstract buildClean(options: BuildStepOptions): Promise<void>;
     abstract getCoverageReport(): Promise<string>;
     abstract getCoverageReportDir(): string | null;
 }
+export type BuildStepOptions = {
+    timeoutSeconds?: number;
+};
