@@ -47,6 +47,8 @@ export type AutograderFeedback = {
         part?: string;
         output_format?: OutputFormat;
         output: string;
+        hidden_output?: string;
+        hidden_output_format?: OutputFormat;
         name_format?: OutputFormat;
         name: string;
         /**
@@ -95,6 +97,26 @@ export type AutograderFeedback = {
         path: string;
         data?: object;
     }[];
+    annotations?: (FeedbackComment | FeedbackLineComment | FeedbackArtifactComment)[];
+};
+export type FeedbackComment = {
+    author: {
+        name: string;
+        avatar_url: string;
+        flair?: string;
+        flair_color?: string;
+    };
+    message: string;
+    points?: number;
+    rubric_check_id?: number;
+    released: boolean;
+};
+export type FeedbackLineComment = FeedbackComment & {
+    line: number;
+    file_name: string;
+};
+export type FeedbackArtifactComment = FeedbackComment & {
+    artifact_name: string;
 };
 export type GradingScriptResult = {
     regression_test_repo?: string;
