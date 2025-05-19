@@ -16,7 +16,12 @@ import {
   OutputFormat,
   PawtograderConfig
 } from './types.js'
-import { AutograderFeedback } from '../api/adminServiceSchemas.js'
+import {
+  AutograderFeedback,
+  FeedbackArtifactComment,
+  FeedbackComment,
+  FeedbackLineComment
+} from '../api/adminServiceSchemas.js'
 export default async function grade(
   solutionDir: string,
   submissionDir: string,
@@ -37,9 +42,45 @@ export default async function grade(
     regressionTestJob
   )
   const ret = await grader.grade()
+  ret.annotations = createRandomComments()
 
   return ret
 }
+
+function createRandomComments(): (
+  | FeedbackComment
+  | FeedbackLineComment
+  | FeedbackArtifactComment
+)[] {
+  const author = {
+    name: 'Ripley Bot',
+    avatar_url: 'https://ripley.cloud/logo512.jpg',
+    flair: 'Maybe this is helpful?',
+    flair_color: 'red'
+  }
+
+  return [
+    {
+      author,
+      message: `This is a test comment submitted by the autograder`,
+      released: true
+    },
+    {
+      author,
+      message: `This is a test line comment submitted by the autograder`,
+      released: true,
+      line: 10,
+      file_name: 'src/main/java/com/pawtograder/example/java/Entrypoint.java' // MUST be exact match to the file name in the submission, if it doesn't exist, the grader
+    },
+    {
+      author,
+      message: `This is a test artifact comment submitted by the autograder`,
+      released: true,
+      artifact_name: 'Coverage Report: Student-Written Tests' // MUST be exact match to the artifact name in the submission, if it doesn't exist, the grader fails
+    }
+  ]
+}
+
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
@@ -245,6 +286,10 @@ class Grader {
       return [
         {
           name: unit.name,
+          //BEGIN: Demo of hidden output on test results
+          hidden_output: `Here is some top-secret information regarding test ${unit.name} that you should not see: ${Math.random()}`,
+          hidden_output_format: 'markdown',
+          //END: Demo of hidden output on test results
           output: `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
             .sort((a, b) => a.name.localeCompare(b.name))
             .map(
