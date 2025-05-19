@@ -138999,13 +138999,11 @@ class Grader {
         const gradedParts = this.config.gradedParts || [];
         try {
             console.log('Building project with student submission and running instructor tests');
-            console.log('Really seems to be in a try/catch');
             await this.builder.buildClean({
                 timeoutSeconds: this.config.build.timeouts_seconds?.build || DEFAULT_TIMEOUTS.build
             });
         }
         catch (err) {
-            console.log('CIDebug: Build failed');
             const msg = err instanceof Error ? err.message : 'Unknown error';
             this.logger.log('visible', `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`);
             this.logger.log('visible', msg);

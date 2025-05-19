@@ -304,13 +304,11 @@ class Grader {
       console.log(
         'Building project with student submission and running instructor tests'
       )
-      console.log('Really seems to be in a try/catch')
       await this.builder.buildClean({
         timeoutSeconds:
           this.config.build.timeouts_seconds?.build || DEFAULT_TIMEOUTS.build
       })
     } catch (err) {
-      console.log('CIDebug: Build failed')
       const msg = err instanceof Error ? err.message : 'Unknown error'
       this.logger.log(
         'visible',
