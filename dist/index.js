@@ -138810,6 +138810,22 @@ function createRandomComments() {
         },
         {
             author,
+            message: `This is a test comment submitted by the autograder that is set up as a point addition`,
+            released: true,
+            points: 5,
+            rubric_check_id: 97
+        },
+        {
+            author,
+            message: `This is a line test comment submitted by the autograder that also is set up as a point deduction`,
+            released: true,
+            line: 1,
+            file_name: 'src/main/java/com/pawtograder/example/java/Entrypoint.java',
+            points: 5,
+            rubric_check_id: 100
+        },
+        {
+            author,
             message: `This is a test line comment submitted by the autograder`,
             released: true,
             line: 10,
