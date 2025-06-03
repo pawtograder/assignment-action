@@ -63,7 +63,7 @@ runs:
       run:
         npx pyret --builtin-js-dir
         node_modules/pyret-autograder/pyret/src/js/trove/ -p pyret/grader.arr -o
-        pyret/grader.cjs -c
+        pyret/grader.cjs -ck
       shell: bash
       working-directory: action
 
