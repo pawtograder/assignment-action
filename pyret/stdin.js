@@ -1,4 +1,3 @@
-// prettier-ignore (will insert ; at beginning)
 ({
   requires: [],
   provides: {
