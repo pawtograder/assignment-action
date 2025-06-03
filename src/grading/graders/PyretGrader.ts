@@ -31,11 +31,13 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
       ])
       let output = ''
       let error = ''
+      console.log('pyret child spawned')
 
       grader.stdout.on('data', (data) => (output += data.toString()))
       grader.stderr.on('data', (data) => (error += data.toString()))
 
       grader.on('close', (code) => {
+        console.log('pyret child closed')
         if (code !== 0) {
           return reject(new Error(`Grader failed: ${error}`))
         }

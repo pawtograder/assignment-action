@@ -1,5 +1,5 @@
 import * as io from '@actions/io'
-import { readFile } from 'fs/promises'
+import { readdir, readFile } from 'fs/promises'
 import path from 'path'
 import yaml from 'yaml'
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
