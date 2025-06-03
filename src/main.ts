@@ -14,6 +14,7 @@ import {
   submitFeedback
 } from './SupabaseAPI.js'
 import grade from './grading/grade.js'
+import { getEnv } from './utils.js'
 
 async function downloadTarballAndExtractTo(url: string, dir: string) {
   const file = await fetch(url)
@@ -36,8 +37,11 @@ async function downloadTarballAndExtractTo(url: string, dir: string) {
 async function prepareForGrading(
   graderConfig: Awaited<ReturnType<typeof createSubmission>>
 ) {
-  await downloadTarballAndExtractTo(graderConfig.grader_url, `grader`)
   const workDir = process.env.GITHUB_WORKSPACE
+  await downloadTarballAndExtractTo(
+    graderConfig.grader_url,
+    `${workDir}/grader`
+  )
 
   //Run the autograder
   const assignmentDir = `${workDir}/submission`
@@ -47,12 +51,12 @@ async function prepareForGrading(
 async function prepareForRegressionTest(
   graderConfig: Awaited<ReturnType<typeof createRegressionTestRun>>
 ) {
-  await rename(`submission`, `grader`)
+  const workDir = process.env.GITHUB_WORKSPACE
+  await rename(`${workDir}/submission`, `${workDir}/grader`)
   await downloadTarballAndExtractTo(
     graderConfig.regression_test_url,
-    `submission`
+    `${workDir}submission`
   )
-  const workDir = process.env.GITHUB_WORKSPACE
   const assignmentDir = `${workDir}/submission`
   const graderDir = `${workDir}/grader`
   return { assignmentDir, graderDir }
@@ -133,8 +137,8 @@ export async function run(): Promise<void> {
       )
     }
     //Double check: is this the handout? If so, ignore the rest of the action and just log a warning
-    const handout = await core.getInput('handout_repo')
-    const regressionTestJob = await core.getInput('regression_test_job')
+    const handout = getEnv('HANDOUT_REPO')
+    const regressionTestJob = getEnv('REGRESSION_TEST_JOB')
     if (regressionTestJob) {
       core.info(
         `Running regression test for ${regressionTestJob} on ${process.env.GITHUB_REPOSITORY}`
@@ -148,11 +152,8 @@ export async function run(): Promise<void> {
       return
     }
 
-    const action_ref = core.getInput('action_ref')
-    const action_repository = core.getInput('action_repository')
-    if (!action_ref || !action_repository) {
-      throw new Error('action_ref and action_repository must be set')
-    }
+    const action_ref = getEnv('ACTION_REF', true)
+    const action_repository = getEnv('ACTION_REPOSITORY', true)
 
     let graderSha, graderDir, assignmentDir: string
     if (regressionTestJob) {

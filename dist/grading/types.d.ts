@@ -89,7 +89,10 @@ export interface OverlayPawtograderConfig {
         prompt: string;
     }[];
 }
-export type PawtograderConfig = OverlayPawtograderConfig;
+export interface PyretPawtograderConfig {
+    grader: 'pyret';
+}
+export type PawtograderConfig = OverlayPawtograderConfig | PyretPawtograderConfig;
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
 export declare function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit;
 export type OutputFormat = 'text' | 'ansi' | 'markdown';

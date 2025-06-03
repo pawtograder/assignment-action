@@ -11,11 +11,10 @@ import {
   DEFAULT_TIMEOUTS,
   GradedPart,
   GradedUnit,
-  OverlayPawtograderConfig,
   isMutationTestUnit,
   isRegularTestUnit,
   OutputFormat,
-  PawtograderConfig
+  OverlayPawtograderConfig
 } from '../types.js'
 import { Grader } from './Grader.js'
 
@@ -33,7 +32,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   constructor(
     solutionDir: string,
     submissionDir: string,
-    config: PawtograderConfig,
+    config: OverlayPawtograderConfig,
     private gradingDir: string,
     regressionTestJob?: number
   ) {
