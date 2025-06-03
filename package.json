@@ -35,7 +35,8 @@
     "package": "npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "package:watch": "npm run package -- --watch",
     "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 npx jest",
-    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
+    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package",
+    "postinstall": "cd node_modules/pyret-autograder; npm install --install-strategy=nested || true; ln -s ./node_modules/pyret-lang ./pyret; ln -s ./node_modules/pyret-npm ./pyret-npm; ln -s ../node_modules/pyret-lang ./poc/pyret; ln -s ../node_modules/pyret-npm ./poc/pyret-npm"
   },
   "license": "MIT",
   "dependencies": {
@@ -49,6 +50,7 @@
     "csv-parse": "^5.6.0",
     "glob": "^11.0.1",
     "node-fetch": "^3.3.2",
+    "pyret-autograder": "github:neu-cs2000/pyret-autograder#main",
     "tinyspawn": "^1.5.0",
     "ts-interface-checker": "^1.0.2"
   },
