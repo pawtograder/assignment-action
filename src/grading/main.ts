@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import grade from './Grader.js'
+import grade from './grade.js'
 
 const program = new Command()
 
