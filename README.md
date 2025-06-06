@@ -53,7 +53,7 @@ along to Pawtograder.
 GitHub Actions will only run JS, so we need to transpile before pushing:
 
 ```bash
-npm run build
+npm run bundle
 ```
 
 The CI workflow will fail if the `dist/` directory does not match what is

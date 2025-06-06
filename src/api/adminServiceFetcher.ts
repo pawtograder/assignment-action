@@ -1,5 +1,5 @@
-import * as core from '@actions/core'
 import fetch, { HeadersInit } from 'node-fetch'
+import { getEnv } from '../utils.js'
 export type AdminServiceFetcherExtraProps = {
   /**
    * You can add some extra props to your generated fetchers.
@@ -9,7 +9,7 @@ export type AdminServiceFetcherExtraProps = {
    **/
 }
 
-const baseUrl = core.getInput('grading_server')
+const baseUrl = getEnv('GRADING_SERVER', true)
 export type ErrorWrapper<TError> =
   | TError
   | { status: 'unknown'; payload: string }

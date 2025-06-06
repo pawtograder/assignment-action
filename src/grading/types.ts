@@ -72,7 +72,8 @@ export interface GradedPart {
 }
 
 // Main configuration type
-export interface PawtograderConfig {
+export interface OverlayPawtograderConfig {
+  grader: 'overlay'
   build: BuildConfig
   gradedParts?: GradedPart[]
   submissionFiles: {
@@ -86,6 +87,14 @@ export interface PawtograderConfig {
     prompt: string
   }[]
 }
+
+export interface PyretPawtograderConfig {
+  grader: 'pyret'
+}
+
+export type PawtograderConfig =
+  | OverlayPawtograderConfig
+  | PyretPawtograderConfig
 
 // Type guard to check if a unit is a mutation test unit
 export function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {

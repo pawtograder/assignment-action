@@ -5,7 +5,7 @@ export declare const DEFAULT_TIMEOUTS: {
     instructor_tests: number;
     mutants: number;
 };
-export interface BuildConfig {
+export interface JavaGradleBuildConfig {
     preset: 'java-gradle' | 'none';
     cmd?: string;
     timeouts_seconds?: {
@@ -58,8 +58,10 @@ export interface GradedPart {
     gradedUnits: GradedUnit[];
     hide_until_released?: boolean;
 }
-export interface PawtograderConfig {
-    build: BuildConfig;
+export type PawtograderConfig = JavaPawtograderConfig | PyretPawtograderConfig;
+export interface JavaPawtograderConfig {
+    grader: 'java';
+    build: JavaGradleBuildConfig;
     gradedParts?: GradedPart[];
     submissionFiles: {
         files: string[];
@@ -71,6 +73,12 @@ export interface PawtograderConfig {
         name: string;
         prompt: string;
     }[];
+}
+export interface PyretPawtograderConfig {
+    grader: 'pyret';
+    submissionFiles: {
+        files: string[];
+    };
 }
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
 export declare function isRegularTestUnit(unit: GradedUnit): unit is RegularTestUnit;
