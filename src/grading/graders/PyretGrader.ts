@@ -18,7 +18,6 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
     const inputJson = JSON.stringify(this.config)
 
     return new Promise((resolve, reject) => {
-      // FIXME: pyret path, double check pwd, args, etc
       const grader = spawn('npx', [
         'pyret',
         '--builtin-js-dir',
