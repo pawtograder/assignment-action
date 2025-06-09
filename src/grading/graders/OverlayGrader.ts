@@ -1,45 +1,23 @@
-import * as io from '@actions/io'
 import * as glob from '@actions/glob'
-import { readdir, readFile, access } from 'fs/promises'
+import * as io from '@actions/io'
+import { access, readdir } from 'fs/promises'
 import path from 'path'
-import yaml from 'yaml'
-import { Builder, MutantResult, TestResult } from './builder/Builder.js'
-import GradleBuilder from './builder/GradleBuilder.js'
-import Logger from './Logger.js'
+import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
+import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
+import GradleBuilder from '../builders/GradleBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
   GradedPart,
   GradedUnit,
+  OverlayPawtograderConfig,
   isMutationTestUnit,
   isRegularTestUnit,
   OutputFormat,
   PawtograderConfig
-} from './types.js'
-import { AutograderFeedback } from '../api/adminServiceSchemas.js'
-export default async function grade(
-  solutionDir: string,
-  submissionDir: string,
-  regressionTestJob?: number
-): Promise<AutograderFeedback> {
-  const _config = await readFile(
-    path.join(solutionDir, 'pawtograder.yml'),
-    'utf8'
-  )
-  const config = yaml.parse(_config) as PawtograderConfig
-  const gradingDir = path.join(process.cwd(), 'pawtograder-grading')
-  await io.mkdirP(gradingDir)
-  const grader = new Grader(
-    solutionDir,
-    submissionDir,
-    config,
-    gradingDir,
-    regressionTestJob
-  )
-  const ret = await grader.grade()
+} from '../types.js'
+import { Grader } from './Grader.js'
 
-  return ret
-}
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
@@ -47,17 +25,18 @@ function icon(result: TestResult) {
     return '❌'
   }
 }
-class Grader {
+
+export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
-  private logger: Logger
+
   constructor(
-    private solutionDir: string,
-    private submissionDir: string,
-    private config: PawtograderConfig,
+    solutionDir: string,
+    submissionDir: string,
+    config: PawtograderConfig,
     private gradingDir: string,
-    private regressionTestJob?: number
+    regressionTestJob?: number
   ) {
-    this.logger = new Logger(regressionTestJob)
+    super(solutionDir, submissionDir, config, regressionTestJob)
     if (this.config.build.preset == 'java-gradle') {
       this.builder = new GradleBuilder(
         this.logger,
@@ -69,12 +48,8 @@ class Grader {
     } else {
       throw new Error(`Unsupported build preset: ${this.config.build.preset}`)
     }
-    if (regressionTestJob) {
-      console.log(
-        `Autograder configuration: ${JSON.stringify(this.config, null, 2)}`
-      )
-    }
   }
+
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
     const files = this.config.submissionFiles[whichFiles]
 
@@ -109,6 +84,7 @@ class Grader {
       await io.cp(file, dest, { recursive: true })
     }
   }
+
   async resetSolutionFiles() {
     const files = this.config.submissionFiles['files'].concat(
       this.config.submissionFiles['testFiles']
@@ -169,6 +145,7 @@ class Grader {
       })
       .flat()
   }
+
   private gradeGradedUnit(
     unit: GradedUnit,
     part: GradedPart,

@@ -13,7 +13,7 @@ import {
   createSubmission,
   submitFeedback
 } from './SupabaseAPI.js'
-import grade from './grader/Grader.js'
+import grade from './grading/grade.js'
 
 async function downloadTarballAndExtractTo(url: string, dir: string) {
   const file = await fetch(url)
