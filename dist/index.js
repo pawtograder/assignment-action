@@ -1,6 +1,7 @@
 import require$$0 from 'os';
 import require$$0$1 from 'crypto';
-import require$$1$1, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync, readFileSync, createWriteStream } from 'fs';
+import * as require$$1$1 from 'fs';
+import require$$1__default, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync, readFileSync, createWriteStream } from 'fs';
 import path$1 from 'path';
 import require$$2 from 'http';
 import require$$1$2 from 'https';
@@ -249,7 +250,7 @@ function requireFileCommand () {
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const crypto = __importStar(require$$0$1);
-	const fs = __importStar(require$$1$1);
+	const fs = __importStar(require$$1__default);
 	const os = __importStar(require$$0);
 	const utils_1 = requireUtils$2();
 	function issueFileCommand(command, message) {
@@ -25219,7 +25220,7 @@ function requireSummary () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = undefined;
 		const os_1 = require$$0;
-		const fs_1 = require$$1$1;
+		const fs_1 = require$$1__default;
 		const { access, appendFile, writeFile } = fs_1.promises;
 		exports.SUMMARY_ENV_VAR = 'GITHUB_STEP_SUMMARY';
 		exports.SUMMARY_DOCS_URL = 'https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary';
@@ -25611,7 +25612,7 @@ function requireIoUtil () {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = undefined;
-		const fs = __importStar(require$$1$1);
+		const fs = __importStar(require$$1__default);
 		const path = __importStar(path$1);
 		_a = fs.promises
 		// export const {open} = 'fs'
@@ -126162,7 +126163,7 @@ function requireInternalGlobber () {
 	Object.defineProperty(internalGlobber, "__esModule", { value: true });
 	internalGlobber.DefaultGlobber = undefined;
 	const core = __importStar(requireCore());
-	const fs = __importStar(require$$1$1);
+	const fs = __importStar(require$$1__default);
 	const globOptionsHelper = __importStar(requireInternalGlobOptionsHelper());
 	const path = __importStar(path$1);
 	const patternHelper = __importStar(requireInternalPatternHelper());
@@ -126405,7 +126406,7 @@ function requireInternalHashFiles () {
 	internalHashFiles.hashFiles = undefined;
 	const crypto = __importStar(require$$0$1);
 	const core = __importStar(requireCore());
-	const fs = __importStar(require$$1$1);
+	const fs = __importStar(require$$1__default);
 	const stream = __importStar(require$$0$5);
 	const util = __importStar(require$$0$3);
 	const path = __importStar(path$1);
@@ -138715,6 +138716,77 @@ class GradleBuilder extends Builder {
     }
 }
 
+async function parseMutationResultsFromJson(path_glob, logger) {
+    const mutantResults = await Promise.all((await glob(path_glob)).map(async (file) => {
+        const data = require$$1$1.readFileSync(file, 'utf-8');
+        logger.log('hidden', `Reading mutation test results from ${file}`);
+        const ret = (await JSON.parse(data));
+        return ret;
+    }));
+    return mutantResults;
+}
+class ScriptBuilder extends Builder {
+    async installDependencies() {
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./install_dependencies.sh', [], this.logger);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to invoke dependency installation script. Here is the output that was produced on the grading server 
+        when trying to install dependencies: ${output}`);
+        }
+    }
+    async lint() {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Generating linting reports with provided script');
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./generate_linting_reports.sh', [], this.logger);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to invoke linting script. Here is the output that was produced on the grading server 
+        when trying to generate linting reports: ${output}`);
+        }
+        return parseLintingReports(`${this.gradingDir}/linting_reports/*.xml`, this.logger);
+    }
+    async getCoverageReport() {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Generating coverage report with provided script');
+        // Script to generate html coverage report
+        await this.executeCommandAndGetOutput('./generate_coverage_reports.sh', [], this.logger);
+        // Textual coverage report
+        const { returnCode, output } = await this.executeCommandAndGetOutput('coverage', ['report', '-m'], this.logger);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to generate coverage report. Here is the output that was produced on the grading server 
+        when trying to generate coverage reports: ${output}`);
+        }
+        return output;
+    }
+    getCoverageReportDir() {
+        return 'coverage_reports/';
+    }
+    async test({ timeoutSeconds }) {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Running tests with provided script');
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./test_runner.sh', [], this.logger, timeoutSeconds, true);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to invoke test runner script. Here is the output that was produced on the grading server 
+        when trying to run tests: ${output}`);
+        }
+        //Note: This method assumes that test_runner.sh generates xml files containing checkstyle compatible test results
+        return await processXMLResults(`${this.gradingDir}/test_results/*.xml`, this.logger);
+    }
+    async mutationTest({ timeoutSeconds }) {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Running mutation tests with provided script');
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./mutation_test_runner.sh', [], this.logger, timeoutSeconds, true);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to invoke mutation testing script. Here is the output that was produced on the grading server 
+        when trying to run mutation tests: ${output}`);
+        }
+        //Note: This method assumes that mutation_test_runner.sh generates JSON files containing MutantResults
+        // in the mutation_test_results directory.
+        return await parseMutationResultsFromJson(`${this.gradingDir}/mutation_test_results/*.json`, this.logger);
+    }
+    async buildClean({ timeoutSeconds }) {
+        await this.executeCommandAndGetOutput('rm', ['-rf', 'test_results', 'coverage_reports', 'mutation_test_results'], this.logger, timeoutSeconds, true);
+    }
+}
+
 const DEFAULT_TIMEOUTS = {
     build: 600,
     student_tests: 300,
@@ -138806,68 +138878,6 @@ class Grader {
         if (regressionTestJob) {
             console.log(`Autograder configuration: ${JSON.stringify(this.config, null, 2)}`);
         }
-    }
-}
-
-async function readMutationResultsJson(path_glob, logger) {
-    const JsonContents = await Promise.all((await glob(path_glob)).map(async (file) => {
-        logger.log('hidden', `Reading mutation test result file from ${file}`);
-        const ret = await JSON.parse(file);
-        return ret;
-    }));
-    return JsonContents;
-}
-class ScriptBuilder extends Builder {
-    async installDependencies() {
-        await this.executeCommandAndGetOutput('pip', ['install', '-r', 'requirements.txt'], this.logger);
-    }
-    async lint() {
-        await this.installDependencies();
-        this.logger.log('hidden', 'Linting with Pylint');
-        const { returnCode, output } = await this.executeCommandAndGetOutput('./generate_linting_reports.sh', [], this.logger);
-        if (returnCode !== 0) {
-            throw new Error(`Unable to invoke pylint linting task. Here is the output that was produced on the grading server 
-        when trying to generate linting reports: ${output}`);
-        }
-        return parseLintingReports(`${this.gradingDir}/pylint_reports/*.xml`, this.logger);
-    }
-    async getCoverageReport() {
-        await this.installDependencies();
-        this.logger.log('hidden', 'Generating python coverage report');
-        // Script to generate html coverage report
-        await this.executeCommandAndGetOutput('./generate_coverage_reports.sh', [], this.logger);
-        // Textual coverage report
-        const { returnCode, output } = await this.executeCommandAndGetOutput('coverage', ['report', '-m'], this.logger);
-        if (returnCode !== 0 || !output) {
-            throw new Error(`Unable to generate coverage report. Here is the output that was produced on the grading server 
-        when trying to generate coverage reports: ${output ? output : '[no output was produced]'}`);
-        }
-        return output;
-    }
-    getCoverageReportDir() {
-        return 'coverage_reports/';
-    }
-    async test({ timeoutSeconds }) {
-        await this.installDependencies();
-        this.logger.log('hidden', 'Running student tests with test_runner.py');
-        const { returnCode } = await this.executeCommandAndGetOutput('python3', ['test_runner.py'], this.logger, timeoutSeconds, true);
-        if (returnCode !== 0) {
-            this.logger.log('hidden', `python test execution failed, return code: ${returnCode}`);
-        }
-        return await processXMLResults(`${this.gradingDir}/test_results/TEST-*.xml`, this.logger);
-    }
-    async mutationTest({ timeoutSeconds }) {
-        await this.installDependencies();
-        this.logger.log('hidden', 'Runing student tests with known buggy implementations with mutation_test_runner.py');
-        const { returnCode } = await this.executeCommandAndGetOutput('python3', ['mutation_test_runner.py'], this.logger, timeoutSeconds, true);
-        if (returnCode !== 0) {
-            this.logger.log('hidden', `python test execution failed, return code: ${returnCode}`);
-        }
-        return readMutationResultsJson(`${this.gradingDir}/mutation_test_results/mutation_*.xml`, this.logger);
-    }
-    async buildClean({ timeoutSeconds }) {
-        await this.executeCommandAndGetOutput('rm', ['-rf', 'test_results', 'coverage_reports', 'mutation_test_results'], this.logger, timeoutSeconds, true);
-        await this.executeCommandAndGetOutput('rm', ['.coverage'], this.logger, timeoutSeconds, true);
     }
 }
 
