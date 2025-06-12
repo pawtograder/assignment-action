@@ -40,7 +40,6 @@ export default class ScriptBuilder extends Builder {
     }
   }
   async lint(): Promise<LintResult> {
-    await this.installDependencies()
     this.logger.log('hidden', 'Generating linting reports with provided script')
     const { returnCode, output } = await this.executeCommandAndGetOutput(
       './generate_linting_reports.sh',
@@ -59,7 +58,6 @@ export default class ScriptBuilder extends Builder {
     )
   }
   async getCoverageReport(): Promise<string> {
-    await this.installDependencies()
     this.logger.log('hidden', 'Generating coverage report with provided script')
 
     // Script to generate html coverage report
@@ -71,8 +69,8 @@ export default class ScriptBuilder extends Builder {
 
     // Textual coverage report
     const { returnCode, output } = await this.executeCommandAndGetOutput(
-      'coverage',
-      ['report', '-m'],
+      './generate_textual_coverage_reports.sh',
+      [],
       this.logger
     )
 
@@ -89,7 +87,6 @@ export default class ScriptBuilder extends Builder {
     return 'coverage_reports/'
   }
   async test({ timeoutSeconds }: BuildStepOptions): Promise<TestResult[]> {
-    await this.installDependencies()
     this.logger.log('hidden', 'Running tests with provided script')
 
     const { returnCode, output } = await this.executeCommandAndGetOutput(
@@ -114,7 +111,6 @@ export default class ScriptBuilder extends Builder {
   async mutationTest({
     timeoutSeconds
   }: BuildStepOptions): Promise<MutantResult[]> {
-    await this.installDependencies()
     this.logger.log('hidden', 'Running mutation tests with provided script')
 
     const { returnCode, output } = await this.executeCommandAndGetOutput(

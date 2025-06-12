@@ -11,6 +11,7 @@ import { parsePitestXml } from './pitest.js'
 import { processXMLResults } from './surefire.js'
 
 export default class GradleBuilder extends Builder {
+  async installDependencies(): Promise<void> {}
   async lint(): Promise<LintResult> {
     this.logger.log('hidden', 'Linting with Gradle')
     const { returnCode, output } = await this.executeCommandAndGetOutput(

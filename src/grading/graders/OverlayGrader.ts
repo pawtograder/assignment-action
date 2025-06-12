@@ -276,6 +276,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
 
+    console.log('Installing builder dependencies')
+    await this.builder.installDependencies()
+
     console.log('Linting student submission')
     const lintResult = await this.builder.lint()
 

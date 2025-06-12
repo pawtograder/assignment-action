@@ -138646,6 +138646,7 @@ async function processXMLResults(path_glob, logger) {
 }
 
 class GradleBuilder extends Builder {
+    async installDependencies() { }
     async lint() {
         this.logger.log('hidden', 'Linting with Gradle');
         const { returnCode, output } = await this.executeCommandAndGetOutput('./gradlew', [
@@ -138734,7 +138735,6 @@ class ScriptBuilder extends Builder {
         }
     }
     async lint() {
-        await this.installDependencies();
         this.logger.log('hidden', 'Generating linting reports with provided script');
         const { returnCode, output } = await this.executeCommandAndGetOutput('./generate_linting_reports.sh', [], this.logger);
         if (returnCode !== 0) {
@@ -138744,12 +138744,11 @@ class ScriptBuilder extends Builder {
         return parseLintingReports(`${this.gradingDir}/linting_reports/*.xml`, this.logger);
     }
     async getCoverageReport() {
-        await this.installDependencies();
         this.logger.log('hidden', 'Generating coverage report with provided script');
         // Script to generate html coverage report
         await this.executeCommandAndGetOutput('./generate_coverage_reports.sh', [], this.logger);
         // Textual coverage report
-        const { returnCode, output } = await this.executeCommandAndGetOutput('coverage', ['report', '-m'], this.logger);
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./generate_textual_coverage_reports.sh', [], this.logger);
         if (returnCode !== 0) {
             throw new Error(`Unable to generate coverage report. Here is the output that was produced on the grading server 
         when trying to generate coverage reports: ${output}`);
@@ -138760,7 +138759,6 @@ class ScriptBuilder extends Builder {
         return 'coverage_reports/';
     }
     async test({ timeoutSeconds }) {
-        await this.installDependencies();
         this.logger.log('hidden', 'Running tests with provided script');
         const { returnCode, output } = await this.executeCommandAndGetOutput('./test_runner.sh', [], this.logger, timeoutSeconds, true);
         if (returnCode !== 0) {
@@ -138771,7 +138769,6 @@ class ScriptBuilder extends Builder {
         return await processXMLResults(`${this.gradingDir}/test_results/*.xml`, this.logger);
     }
     async mutationTest({ timeoutSeconds }) {
-        await this.installDependencies();
         this.logger.log('hidden', 'Running mutation tests with provided script');
         const { returnCode, output } = await this.executeCommandAndGetOutput('./mutation_test_runner.sh', [], this.logger, timeoutSeconds, true);
         if (returnCode !== 0) {
@@ -139069,6 +139066,8 @@ class OverlayGrader extends Grader {
         }));
         await this.copyStudentFiles('files');
         await this.copyStudentFiles('testFiles');
+        console.log('Installing builder dependencies');
+        await this.builder.installDependencies();
         console.log('Linting student submission');
         const lintResult = await this.builder.lint();
         console.log('Resetting to run instructor tests on student submission');
