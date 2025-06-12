@@ -1,0 +1,24 @@
+import * as io from '@actions/io';
+import { readFile } from 'fs/promises';
+import path from 'path';
+import yaml from 'yaml';
+import { OverlayGrader } from './graders/OverlayGrader.js';
+export async function makeGrader(config, solutionDir, submissionDir, regressionTestJob) {
+    switch (config.grader) {
+        case 'overlay': {
+            const gradingDir = path.join(process.cwd(), 'pawtograder-grading');
+            await io.mkdirP(gradingDir);
+            return new OverlayGrader(solutionDir, submissionDir, config, gradingDir, regressionTestJob);
+        }
+        default:
+            throw new Error(`Unknown grader ${config.grader}`);
+    }
+}
+export default async function grade(solutionDir, submissionDir, regressionTestJob) {
+    const _config = await readFile(path.join(solutionDir, 'pawtograder.yml'), 'utf8');
+    const config = yaml.parse(_config);
+    const grader = await makeGrader(config, solutionDir, submissionDir, regressionTestJob);
+    const ret = await grader.grade();
+    return ret;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ3JhZGUuanMiLCJzb3VyY2VSb290IjoiL1VzZXJzL3NtYXJhbnQvRG9jdW1lbnRzL1VuaXZlcnNpdHkgc3R1ZmYvU3VtbWVyLTIwMjUvQ291cnNlIERldi9hc3NpZ25tZW50LWFjdGlvbi8iLCJzb3VyY2VzIjpbInNyYy9ncmFkaW5nL2dyYWRlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sS0FBSyxFQUFFLE1BQU0sYUFBYSxDQUFBO0FBQ2pDLE9BQU8sRUFBRSxRQUFRLEVBQUUsTUFBTSxhQUFhLENBQUE7QUFDdEMsT0FBTyxJQUFJLE1BQU0sTUFBTSxDQUFBO0FBQ3ZCLE9BQU8sSUFBSSxNQUFNLE1BQU0sQ0FBQTtBQUd2QixPQUFPLEVBQUUsYUFBYSxFQUFFLE1BQU0sNEJBQTRCLENBQUE7QUFFMUQsTUFBTSxDQUFDLEtBQUssVUFBVSxVQUFVLENBQzlCLE1BQXlCLEVBQ3pCLFdBQW1CLEVBQ25CLGFBQXFCLEVBQ3JCLGlCQUEwQjtJQUUxQixRQUFRLE1BQU0sQ0FBQyxNQUFNLEVBQUUsQ0FBQztRQUN0QixLQUFLLFNBQVMsQ0FBQyxDQUFDLENBQUM7WUFDZixNQUFNLFVBQVUsR0FBRyxJQUFJLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxHQUFHLEVBQUUsRUFBRSxxQkFBcUIsQ0FBQyxDQUFBO1lBQ2xFLE1BQU0sRUFBRSxDQUFDLE1BQU0sQ0FBQyxVQUFVLENBQUMsQ0FBQTtZQUMzQixPQUFPLElBQUksYUFBYSxDQUN0QixXQUFXLEVBQ1gsYUFBYSxFQUNiLE1BQU0sRUFDTixVQUFVLEVBQ1YsaUJBQWlCLENBQ2xCLENBQUE7UUFDSCxDQUFDO1FBQ0Q7WUFDRSxNQUFNLElBQUksS0FBSyxDQUFDLGtCQUFrQixNQUFNLENBQUMsTUFBc0IsRUFBRSxDQUFDLENBQUE7SUFDdEUsQ0FBQztBQUNILENBQUM7QUFFRCxNQUFNLENBQUMsT0FBTyxDQUFDLEtBQUssVUFBVSxLQUFLLENBQ2pDLFdBQW1CLEVBQ25CLGFBQXFCLEVBQ3JCLGlCQUEwQjtJQUUxQixNQUFNLE9BQU8sR0FBRyxNQUFNLFFBQVEsQ0FDNUIsSUFBSSxDQUFDLElBQUksQ0FBQyxXQUFXLEVBQUUsaUJBQWlCLENBQUMsRUFDekMsTUFBTSxDQUNQLENBQUE7SUFDRCxNQUFNLE1BQU0sR0FBRyxJQUFJLENBQUMsS0FBSyxDQUFDLE9BQU8sQ0FBc0IsQ0FBQTtJQUV2RCxNQUFNLE1BQU0sR0FBRyxNQUFNLFVBQVUsQ0FDN0IsTUFBTSxFQUNOLFdBQVcsRUFDWCxhQUFhLEVBQ2IsaUJBQWlCLENBQ2xCLENBQUE7SUFDRCxNQUFNLEdBQUcsR0FBRyxNQUFNLE1BQU0sQ0FBQyxLQUFLLEVBQUUsQ0FBQTtJQUVoQyxPQUFPLEdBQUcsQ0FBQTtBQUNaLENBQUMifQ==

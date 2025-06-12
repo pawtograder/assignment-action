@@ -126522,6 +126522,78 @@ function requireGlob () {
 
 var globExports = requireGlob();
 
+class Builder {
+    logger;
+    gradingDir;
+    regressionTestJob;
+    constructor(logger, gradingDir, regressionTestJob) {
+        this.logger = logger;
+        this.gradingDir = gradingDir;
+        this.regressionTestJob = regressionTestJob;
+    }
+    async executeCommandAndGetOutput(command, args, logger, timeoutSeconds, ignoreFailures = false) {
+        let myOutput = '';
+        let myError = '';
+        const result = new Promise((resolve, reject) => {
+            logger.log('hidden', `Running ${command} ${args.join(' ')}`);
+            const child = spawn(command, args, {
+                cwd: this.gradingDir,
+                shell: true,
+                detached: true
+            });
+            let timeoutId;
+            if (timeoutSeconds) {
+                timeoutId = setTimeout(() => {
+                    this.logger.log('visible', `ERROR: Command timed out after ${timeoutSeconds} seconds`);
+                    child.kill();
+                }, timeoutSeconds * 1000);
+            }
+            child.stdout.on('data', (data) => {
+                const output = data.toString();
+                myOutput += output;
+                if (this.regressionTestJob) {
+                    console.log(`CIDebug: ${output}`);
+                }
+            });
+            child.stderr.on('data', (data) => {
+                const error = data.toString();
+                myError += error;
+                if (this.regressionTestJob) {
+                    console.log(`CIDebug: ${error}`);
+                }
+            });
+            child.on('close', (code) => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+                const returnCode = code ?? 1;
+                myOutput += myError;
+                logger.log('hidden', `${myOutput}`);
+                logger.log('hidden', `Return code: ${returnCode}`);
+                if (returnCode === 143) {
+                    reject(new Error(`${myOutput}\n\nCommand timed out after ${timeoutSeconds} seconds`));
+                }
+                else if (returnCode !== 0 && !ignoreFailures) {
+                    logger.log('visible', `Command ${command} failed unexpectedly with output:\n${myOutput}`);
+                    reject(new Error(`Command failed with output:\n${myOutput}`));
+                }
+                else {
+                    resolve({ returnCode, output: myOutput });
+                }
+            });
+            child.on('error', (err) => {
+                if (err.code === 'ETIMEDOUT') {
+                    reject(new Error(`Command timed out after ${timeoutSeconds} seconds`));
+                }
+                else {
+                    reject(err);
+                }
+            });
+        });
+        return await result;
+    }
+}
+
 var braceExpansion;
 var hasRequiredBraceExpansion;
 
@@ -134344,78 +134416,6 @@ const glob = Object.assign(glob_, {
 });
 glob.glob = glob;
 
-class Builder {
-    logger;
-    gradingDir;
-    regressionTestJob;
-    constructor(logger, gradingDir, regressionTestJob) {
-        this.logger = logger;
-        this.gradingDir = gradingDir;
-        this.regressionTestJob = regressionTestJob;
-    }
-    async executeCommandAndGetOutput(command, args, logger, timeoutSeconds, ignoreFailures = false) {
-        let myOutput = '';
-        let myError = '';
-        const result = new Promise((resolve, reject) => {
-            logger.log('hidden', `Running ${command} ${args.join(' ')}`);
-            const child = spawn(command, args, {
-                cwd: this.gradingDir,
-                shell: true,
-                detached: true
-            });
-            let timeoutId;
-            if (timeoutSeconds) {
-                timeoutId = setTimeout(() => {
-                    this.logger.log('visible', `ERROR: Command timed out after ${timeoutSeconds} seconds`);
-                    child.kill();
-                }, timeoutSeconds * 1000);
-            }
-            child.stdout.on('data', (data) => {
-                const output = data.toString();
-                myOutput += output;
-                if (this.regressionTestJob) {
-                    console.log(`CIDebug: ${output}`);
-                }
-            });
-            child.stderr.on('data', (data) => {
-                const error = data.toString();
-                myError += error;
-                if (this.regressionTestJob) {
-                    console.log(`CIDebug: ${error}`);
-                }
-            });
-            child.on('close', (code) => {
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                }
-                const returnCode = code ?? 1;
-                myOutput += myError;
-                logger.log('hidden', `${myOutput}`);
-                logger.log('hidden', `Return code: ${returnCode}`);
-                if (returnCode === 143) {
-                    reject(new Error(`${myOutput}\n\nCommand timed out after ${timeoutSeconds} seconds`));
-                }
-                else if (returnCode !== 0 && !ignoreFailures) {
-                    logger.log('visible', `Command ${command} failed unexpectedly with output:\n${myOutput}`);
-                    reject(new Error(`Command failed with output:\n${myOutput}`));
-                }
-                else {
-                    resolve({ returnCode, output: myOutput });
-                }
-            });
-            child.on('error', (err) => {
-                if (err.code === 'ETIMEDOUT') {
-                    reject(new Error(`Command timed out after ${timeoutSeconds} seconds`));
-                }
-                else {
-                    reject(err);
-                }
-            });
-        });
-        return await result;
-    }
-}
-
 var validator = {};
 
 var util = {};
@@ -136618,6 +136618,31 @@ function parseCheckstyleXml(filePath) {
     });
     return report;
 }
+async function parseLintingReports(file, logger) {
+    const checkstyleFilesContents = await Promise.all((await glob(file)).map(async (file) => {
+        logger.log('hidden', `Linting ${file}`);
+        const ret = await parseCheckstyleXml(file);
+        return ret;
+    }));
+    const totalErrors = checkstyleFilesContents.reduce((acc, curr) => acc + curr.totalErrors, 0);
+    const formattedOutput = checkstyleFilesContents
+        .filter((file) => file.totalErrors > 0)
+        .map((file) => {
+        return file.files
+            .map((f) => {
+            return ` * ${f.name}: ${f.errors.length} errors:
+                    ${f.errors.map((e) => `\t${e.line}: ` + '`' + e.message + '`').join('\n')}`;
+        })
+            .join('\n');
+    })
+        .join('\n');
+    logger.log('hidden', `Total errors: ${totalErrors}\n${formattedOutput}`);
+    return {
+        status: totalErrors > 0 ? 'fail' : 'pass',
+        output: `Total errors: ${totalErrors}\n${formattedOutput}`,
+        output_format: 'markdown'
+    };
+}
 
 class CsvError extends Error {
   constructor(code, message, options, ...contexts) {
@@ -138597,6 +138622,27 @@ function parseSurefireXml(filePath) {
     });
     return report;
 }
+async function processXMLResults(path_glob, logger) {
+    const testResultsContents = await Promise.all((await glob(path_glob)).map(async (file) => {
+        logger.log('hidden', `Reading test results from ${file}`);
+        const ret = await parseSurefireXml(file);
+        return ret;
+    }));
+    const ret = testResultsContents.flatMap((result) => {
+        return result.testSuites.flatMap((suite) => {
+            return suite.testCases.map((test) => {
+                const tr = {
+                    name: `${suite.name}.${test.name}`,
+                    status: test.failure || test.error ? 'fail' : 'pass',
+                    output: test.failure?.stackTrace || test.error?.stackTrace || '',
+                    output_format: 'text'
+                };
+                return tr;
+            });
+        });
+    });
+    return ret;
+}
 
 class GradleBuilder extends Builder {
     async lint() {
@@ -138614,29 +138660,7 @@ class GradleBuilder extends Builder {
         if (returnCode !== 0) {
             throw new Error(`Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`);
         }
-        const checkstyleFilesContents = await Promise.all((await glob(`${this.gradingDir}/build/reports/checkstyle/*.xml`)).map(async (file) => {
-            this.logger.log('hidden', `Linting ${file}`);
-            const ret = await parseCheckstyleXml(file);
-            return ret;
-        }));
-        const totalErrors = checkstyleFilesContents.reduce((acc, curr) => acc + curr.totalErrors, 0);
-        const formattedOutput = checkstyleFilesContents
-            .filter((file) => file.totalErrors > 0)
-            .map((file) => {
-            return file.files
-                .map((f) => {
-                return ` * ${f.name}: ${f.errors.length} errors:
-                    ${f.errors.map((e) => `\t${e.line}: ` + '`' + e.message + '`').join('\n')}`;
-            })
-                .join('\n');
-        })
-            .join('\n');
-        this.logger.log('hidden', `Total errors: ${totalErrors}\n${formattedOutput}`);
-        return {
-            status: totalErrors > 0 ? 'fail' : 'pass',
-            output: `Total errors: ${totalErrors}\n${formattedOutput}`,
-            output_format: 'markdown'
-        };
+        return parseLintingReports(`${this.gradingDir}/build/reports/checkstyle/*.xml`, this.logger);
     }
     async getCoverageReport() {
         this.logger.log('hidden', 'Getting coverage report with Gradle');
@@ -138659,25 +138683,7 @@ class GradleBuilder extends Builder {
         if (returnCode !== 0) {
             this.logger.log('hidden', `Gradle test failed, return code: ${returnCode}`);
         }
-        const testResultsContents = await Promise.all((await glob(`${this.gradingDir}/build/test-results/test/TEST-*.xml`)).map(async (file) => {
-            this.logger.log('hidden', `Reading test results from ${file}`);
-            const ret = await parseSurefireXml(file);
-            return ret;
-        }));
-        const ret = testResultsContents.flatMap((result) => {
-            return result.testSuites.flatMap((suite) => {
-                return suite.testCases.map((test) => {
-                    const tr = {
-                        name: `${suite.name}.${test.name}`,
-                        status: test.failure || test.error ? 'fail' : 'pass',
-                        output: test.failure?.stackTrace || test.error?.stackTrace || '',
-                        output_format: 'text'
-                    };
-                    return tr;
-                });
-            });
-        });
-        return ret;
+        return await processXMLResults(`${this.gradingDir}/build/test-results/test/TEST-*.xml`, this.logger);
     }
     async mutationTest({ timeoutSeconds }) {
         this.logger.log('hidden', 'Running Pitest');
@@ -138803,6 +138809,68 @@ class Grader {
     }
 }
 
+async function readMutationResultsJson(path_glob, logger) {
+    const JsonContents = await Promise.all((await glob(path_glob)).map(async (file) => {
+        logger.log('hidden', `Reading mutation test result file from ${file}`);
+        const ret = await JSON.parse(file);
+        return ret;
+    }));
+    return JsonContents;
+}
+class ScriptBuilder extends Builder {
+    async installDependencies() {
+        await this.executeCommandAndGetOutput('pip', ['install', '-r', 'requirements.txt'], this.logger);
+    }
+    async lint() {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Linting with Pylint');
+        const { returnCode, output } = await this.executeCommandAndGetOutput('./generate_linting_reports.sh', [], this.logger);
+        if (returnCode !== 0) {
+            throw new Error(`Unable to invoke pylint linting task. Here is the output that was produced on the grading server 
+        when trying to generate linting reports: ${output}`);
+        }
+        return parseLintingReports(`${this.gradingDir}/pylint_reports/*.xml`, this.logger);
+    }
+    async getCoverageReport() {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Generating python coverage report');
+        // Script to generate html coverage report
+        await this.executeCommandAndGetOutput('./generate_coverage_reports.sh', [], this.logger);
+        // Textual coverage report
+        const { returnCode, output } = await this.executeCommandAndGetOutput('coverage', ['report', '-m'], this.logger);
+        if (returnCode !== 0 || !output) {
+            throw new Error(`Unable to generate coverage report. Here is the output that was produced on the grading server 
+        when trying to generate coverage reports: ${output ? output : '[no output was produced]'}`);
+        }
+        return output;
+    }
+    getCoverageReportDir() {
+        return 'coverage_reports/';
+    }
+    async test({ timeoutSeconds }) {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Running student tests with test_runner.py');
+        const { returnCode } = await this.executeCommandAndGetOutput('python3', ['test_runner.py'], this.logger, timeoutSeconds, true);
+        if (returnCode !== 0) {
+            this.logger.log('hidden', `python test execution failed, return code: ${returnCode}`);
+        }
+        return await processXMLResults(`${this.gradingDir}/test_results/TEST-*.xml`, this.logger);
+    }
+    async mutationTest({ timeoutSeconds }) {
+        await this.installDependencies();
+        this.logger.log('hidden', 'Runing student tests with known buggy implementations with mutation_test_runner.py');
+        const { returnCode } = await this.executeCommandAndGetOutput('python3', ['mutation_test_runner.py'], this.logger, timeoutSeconds, true);
+        if (returnCode !== 0) {
+            this.logger.log('hidden', `python test execution failed, return code: ${returnCode}`);
+        }
+        return readMutationResultsJson(`${this.gradingDir}/mutation_test_results/mutation_*.xml`, this.logger);
+    }
+    async buildClean({ timeoutSeconds }) {
+        await this.executeCommandAndGetOutput('rm', ['-rf', 'test_results', 'coverage_reports', 'mutation_test_results'], this.logger, timeoutSeconds, true);
+        await this.executeCommandAndGetOutput('rm', ['.coverage'], this.logger, timeoutSeconds, true);
+    }
+}
+
 function icon(result) {
     if (result.status === 'pass') {
         return '✅';
@@ -138819,6 +138887,9 @@ class OverlayGrader extends Grader {
         this.gradingDir = gradingDir;
         if (this.config.build.preset == 'java-gradle') {
             this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
+        }
+        else if (this.config.build.preset == 'script') {
+            this.builder = new ScriptBuilder(this.logger, this.gradingDir, this.regressionTestJob);
         }
         else if (this.config.build.preset == 'none') {
             this.builder = undefined;

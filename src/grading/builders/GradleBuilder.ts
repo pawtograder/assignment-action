@@ -1,4 +1,3 @@
-import { glob } from 'glob'
 import {
   Builder,
   BuildStepOptions,
@@ -6,14 +5,10 @@ import {
   MutantResult,
   TestResult
 } from './Builder.js'
-import {
-  CheckstyleFile,
-  CheckstyleReport,
-  parseCheckstyleXml
-} from './checkstyle.js'
+import { parseLintingReports } from './checkstyle.js'
 import { getCoverageSummary, parseJacocoCsv } from './jacoco.js'
 import { parsePitestXml } from './pitest.js'
-import { parseSurefireXml } from './surefire.js'
+import { processXMLResults } from './surefire.js'
 
 export default class GradleBuilder extends Builder {
   async lint(): Promise<LintResult> {
@@ -37,40 +32,10 @@ export default class GradleBuilder extends Builder {
         `Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`
       )
     }
-    const checkstyleFilesContents = await Promise.all(
-      (await glob(`${this.gradingDir}/build/reports/checkstyle/*.xml`)).map(
-        async (file: string) => {
-          this.logger.log('hidden', `Linting ${file}`)
-          const ret = await parseCheckstyleXml(file)
-          return ret
-        }
-      )
+    return parseLintingReports(
+      `${this.gradingDir}/build/reports/checkstyle/*.xml`,
+      this.logger
     )
-    const totalErrors = checkstyleFilesContents.reduce(
-      (acc: number, curr: CheckstyleReport) => acc + curr.totalErrors,
-      0
-    )
-    const formattedOutput = checkstyleFilesContents
-      .filter((file: CheckstyleReport) => file.totalErrors > 0)
-      .map((file: CheckstyleReport) => {
-        return file.files
-          .map((f: CheckstyleFile) => {
-            return ` * ${f.name}: ${f.errors.length} errors:
-                    ${f.errors.map((e) => `\t${e.line}: ` + '`' + e.message + '`').join('\n')}`
-          })
-          .join('\n')
-      })
-      .join('\n')
-    this.logger.log(
-      'hidden',
-      `Total errors: ${totalErrors}\n${formattedOutput}`
-    )
-
-    return {
-      status: totalErrors > 0 ? 'fail' : 'pass',
-      output: `Total errors: ${totalErrors}\n${formattedOutput}`,
-      output_format: 'markdown'
-    }
   }
   async getCoverageReport(): Promise<string> {
     this.logger.log('hidden', 'Getting coverage report with Gradle')
@@ -101,29 +66,10 @@ export default class GradleBuilder extends Builder {
         `Gradle test failed, return code: ${returnCode}`
       )
     }
-    const testResultsContents = await Promise.all(
-      (await glob(`${this.gradingDir}/build/test-results/test/TEST-*.xml`)).map(
-        async (file) => {
-          this.logger.log('hidden', `Reading test results from ${file}`)
-          const ret = await parseSurefireXml(file)
-          return ret
-        }
-      )
+    return await processXMLResults(
+      `${this.gradingDir}/build/test-results/test/TEST-*.xml`,
+      this.logger
     )
-    const ret = testResultsContents.flatMap((result) => {
-      return result.testSuites.flatMap((suite) => {
-        return suite.testCases.map((test) => {
-          const tr: TestResult = {
-            name: `${suite.name}.${test.name}`,
-            status: test.failure || test.error ? 'fail' : 'pass',
-            output: test.failure?.stackTrace || test.error?.stackTrace || '',
-            output_format: 'text'
-          }
-          return tr
-        })
-      })
-    })
-    return ret
   }
   async mutationTest({
     timeoutSeconds
