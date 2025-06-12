@@ -8,7 +8,7 @@ export const DEFAULT_TIMEOUTS = {
 }
 // Build configuration types
 export interface BuildConfig {
-  preset: 'java-gradle' | 'none'
+  preset: 'java-gradle' | 'script' | 'none'
   cmd?: string
   timeouts_seconds?: {
     build?: number

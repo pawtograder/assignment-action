@@ -5,6 +5,7 @@ import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
+import ScriptBuilder from '../builders/ScriptBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -39,6 +40,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     super(solutionDir, submissionDir, config, regressionTestJob)
     if (this.config.build.preset == 'java-gradle') {
       this.builder = new GradleBuilder(
+        this.logger,
+        this.gradingDir,
+        this.regressionTestJob
+      )
+    } else if (this.config.build.preset == 'script') {
+      this.builder = new ScriptBuilder(
         this.logger,
         this.gradingDir,
         this.regressionTestJob
@@ -268,6 +275,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
 
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
+
+    console.log('Installing builder dependencies')
+    await this.builder.installDependencies()
 
     console.log('Linting student submission')
     const lintResult = await this.builder.lint()

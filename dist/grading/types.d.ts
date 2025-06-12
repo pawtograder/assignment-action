@@ -6,7 +6,7 @@ export declare const DEFAULT_TIMEOUTS: {
     mutants: number;
 };
 export interface BuildConfig {
-    preset: 'java-gradle' | 'none';
+    preset: 'java-gradle' | 'script' | 'none';
     cmd?: string;
     timeouts_seconds?: {
         build?: number;
