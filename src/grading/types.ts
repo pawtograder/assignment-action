@@ -7,6 +7,11 @@ export const DEFAULT_TIMEOUTS = {
   mutants: 1800
 }
 // Build configuration types
+
+export interface VenvInfo {
+  cache_key: string
+  dir_name: string
+}
 export interface BuildConfig {
   preset: 'java-gradle' | 'script' | 'none'
   cmd?: string
@@ -32,6 +37,7 @@ export interface BuildConfig {
       report_mutation_coverage?: boolean
     }
   }
+  venv?: VenvInfo
 }
 
 export interface GraderArtifact {

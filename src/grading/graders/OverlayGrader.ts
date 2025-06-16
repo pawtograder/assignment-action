@@ -267,17 +267,24 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     const solutionFiles = await readdir(this.solutionDir)
     await Promise.all(
       solutionFiles.map(async (file) => {
-        const src = path.join(this.solutionDir, file)
-        const dest = path.join(tmpDir, file)
-        await io.cp(src, dest, { recursive: true })
+        if (!file.startsWith('.git')) {
+          const src = path.join(this.solutionDir, file)
+          const dest = path.join(tmpDir, file)
+          await io.cp(src, dest, { recursive: true })
+        }
       })
     )
-
+    console.log('Copying student files')
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
 
-    console.log('Installing builder dependencies')
-    await this.builder.installDependencies()
+    console.log('Setting up virtual environment')
+
+    if (this.config.build.venv?.cache_key && this.config.build.venv?.dir_name) {
+      const venv_dir = this.config.build.venv.dir_name
+      const cache_key = this.config.build.venv.cache_key
+      await this.builder.setupVenv(venv_dir, cache_key)
+    }
 
     console.log('Linting student submission')
     const lintResult = await this.builder.lint()

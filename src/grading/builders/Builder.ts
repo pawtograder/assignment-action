@@ -115,13 +115,27 @@ export abstract class Builder {
     return await result
   }
 
+  async activateVenvAndExecuteCommand(
+    command: string,
+    timeoutSeconds?: number,
+    ignoreFailures = false
+  ): Promise<{ returnCode: number; output: string }> {
+    return await this.executeCommandAndGetOutput(
+      'bash',
+      ['-c', `source ./activate_venv.sh && ${command}`],
+      this.logger,
+      timeoutSeconds,
+      ignoreFailures
+    )
+  }
+
   abstract lint(): Promise<LintResult>
   abstract test(options: BuildStepOptions): Promise<TestResult[]>
   abstract mutationTest(options: BuildStepOptions): Promise<MutantResult[]>
   abstract buildClean(options: BuildStepOptions): Promise<void>
   abstract getCoverageReport(): Promise<string>
   abstract getCoverageReportDir(): string | null
-  abstract installDependencies(): Promise<void>
+  abstract setupVenv(dir: string, key: string): Promise<void>
 }
 
 export type BuildStepOptions = {
