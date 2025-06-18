@@ -10,7 +10,7 @@ import { parseLintingReports } from './checkstyle.js'
 import Logger from '../Logger.js'
 import { glob } from 'glob'
 import * as fs from 'fs'
-//import * as cache from '@actions/cache'
+import * as cache from '@actions/cache'
 import { ScriptInfo } from '../types.js'
 
 async function parseMutationResultsFromJson(
@@ -52,17 +52,21 @@ export default class ScriptBuilder extends Builder {
   }
 
   async setupVenv(dir: string, key: string): Promise<void> {
-    console.log(dir, key)
-    //console.log('Looking for existing cached virtual environment')
-    //const venv_dir = `${this.gradingDir}/${dir}`
-    //const paths = [venv_dir]
-    //const cacheKey = await cache.restoreCache(paths, key)
-    const found_cache = false //cacheKey !== undefined
+    const isGitHubAction = process.env.GITHUB_ACTIONS === 'true'
+    let found_cache = false
+    if (isGitHubAction) {
+      console.log('Looking for existing cached virtual environment')
+      const venv_dir = `${this.gradingDir}/${dir}`
+      const paths = [venv_dir]
+      const cacheKey = await cache.restoreCache(paths, key)
+      found_cache = cacheKey !== undefined
+    }
     if (found_cache) {
-      console.log('Found existing cached venv, restoring and activating')
-      //TODO: restore cached venv here
+      console.log(
+        'Found and restored existing cached venv. Activating this venv.'
+      )
       const { returnCode, output } = await this.executeCommandAndGetOutput(
-        `${this.script_info.install_deps}`,
+        `${this.script_info.activate_venv} && ${this.script_info.install_deps}`,
         [],
         this.logger
       )
@@ -74,7 +78,7 @@ export default class ScriptBuilder extends Builder {
       }
     } else {
       console.log(
-        'No suitable venv cache found, setting up new virtual environment'
+        'No suitable venv cache found (or not running as a github action), setting up new virtual environment'
       )
 
       const { returnCode, output } = await this.executeCommandAndGetOutput(
@@ -88,11 +92,12 @@ export default class ScriptBuilder extends Builder {
         when trying to setup venv: ${output}`
         )
       }
-
-      //console.log('Caching installed dependencies')
-      //const paths = [venv_dir]
-      //const cacheId = await cache.saveCache(paths, key)
-      //console.log('Cache ID:', cacheId)
+      if (isGitHubAction) {
+        console.log('Caching installed dependencies')
+        const paths = [dir]
+        const cacheId = await cache.saveCache(paths, key)
+        console.log('Cache ID:', cacheId)
+      }
     }
   }
   async lint(): Promise<LintResult> {
