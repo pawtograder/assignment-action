@@ -42,8 +42,6 @@ export default class ScriptBuilder extends Builder {
     timeoutSeconds?: number,
     ignoreFailures = false
   ): Promise<{ returnCode: number; output: string }> {
-    console.log('Executing command')
-    console.log(`${this.script_info.activate_venv} && ${command}`)
     return await this.executeCommandAndGetOutput(
       `${this.script_info.activate_venv} && ${command}`,
       [],
@@ -61,14 +59,26 @@ export default class ScriptBuilder extends Builder {
     //const cacheKey = await cache.restoreCache(paths, key)
     const found_cache = false //cacheKey !== undefined
     if (found_cache) {
-      //console.log('Found existing cache:', cacheKey)
+      console.log('Found existing cached venv, restoring and activating')
+      //TODO: restore cached venv here
+      const { returnCode, output } = await this.executeCommandAndGetOutput(
+        `${this.script_info.install_deps}`,
+        [],
+        this.logger
+      )
+      if (returnCode !== 0) {
+        throw new Error(
+          `Unable to activate cached venv. Here is the output that was produced on the grading server 
+        when trying to setup venv: ${output}`
+        )
+      }
     } else {
       console.log(
-        'No existing cache key found, setting up new virtual environment'
+        'No suitable venv cache found, setting up new virtual environment'
       )
 
       const { returnCode, output } = await this.executeCommandAndGetOutput(
-        `${this.script_info.setup_venv} && ${this.script_info.install_deps}`,
+        `${this.script_info.setup_venv} && ${this.script_info.activate_venv} && ${this.script_info.install_deps}`,
         [],
         this.logger
       )
