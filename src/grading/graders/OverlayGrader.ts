@@ -45,9 +45,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         this.regressionTestJob
       )
     } else if (this.config.build.preset == 'script') {
+      const info = this.config.build.script_info
+      if (!info) {
+        throw Error(
+          'Expected SciptInfo to be provided in yml config, but nothing was provided',
+          info
+        )
+      }
       this.builder = new ScriptBuilder(
         this.logger,
         this.gradingDir,
+        info,
         this.regressionTestJob
       )
     } else if (this.config.build.preset == 'none') {

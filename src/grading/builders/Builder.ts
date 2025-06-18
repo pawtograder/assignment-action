@@ -115,20 +115,6 @@ export abstract class Builder {
     return await result
   }
 
-  async activateVenvAndExecuteCommand(
-    command: string,
-    timeoutSeconds?: number,
-    ignoreFailures = false
-  ): Promise<{ returnCode: number; output: string }> {
-    return await this.executeCommandAndGetOutput(
-      'bash',
-      ['-c', `source ./activate_venv.sh && ${command}`],
-      this.logger,
-      timeoutSeconds,
-      ignoreFailures
-    )
-  }
-
   abstract lint(): Promise<LintResult>
   abstract test(options: BuildStepOptions): Promise<TestResult[]>
   abstract mutationTest(options: BuildStepOptions): Promise<MutantResult[]>

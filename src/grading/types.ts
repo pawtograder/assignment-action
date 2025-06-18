@@ -12,6 +12,17 @@ export interface VenvInfo {
   cache_key: string
   dir_name: string
 }
+export interface ScriptInfo {
+  setup_venv: string
+  activate_venv: string
+  linting_report: string
+  html_coverage_reports: string
+  textual_coverage_reports: string
+  test_runner: string
+  mutation_test_runner: string
+  install_deps: string
+}
+
 export interface BuildConfig {
   preset: 'java-gradle' | 'script' | 'none'
   cmd?: string
@@ -38,6 +49,7 @@ export interface BuildConfig {
     }
   }
   venv?: VenvInfo
+  script_info?: ScriptInfo
 }
 
 export interface GraderArtifact {

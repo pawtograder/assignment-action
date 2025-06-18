@@ -10,7 +10,8 @@ import { parseLintingReports } from './checkstyle.js'
 import Logger from '../Logger.js'
 import { glob } from 'glob'
 import * as fs from 'fs'
-import * as cache from '@actions/cache'
+//import * as cache from '@actions/cache'
+import { ScriptInfo } from '../types.js'
 
 async function parseMutationResultsFromJson(
   path_glob: string,
@@ -27,21 +28,47 @@ async function parseMutationResultsFromJson(
   return mutantResults
 }
 export default class ScriptBuilder extends Builder {
+  constructor(
+    protected logger: Logger,
+    protected gradingDir: string,
+    protected script_info: ScriptInfo,
+    protected regressionTestJob?: number
+  ) {
+    super(logger, gradingDir, regressionTestJob)
+  }
+
+  async activateVenvAndExecuteCommand(
+    command: string,
+    timeoutSeconds?: number,
+    ignoreFailures = false
+  ): Promise<{ returnCode: number; output: string }> {
+    console.log('Executing command')
+    console.log(`${this.script_info.activate_venv} && ${command}`)
+    return await this.executeCommandAndGetOutput(
+      `${this.script_info.activate_venv} && ${command}`,
+      [],
+      this.logger,
+      timeoutSeconds,
+      ignoreFailures
+    )
+  }
+
   async setupVenv(dir: string, key: string): Promise<void> {
-    console.log('Looking for existing cached virtual environment')
-    const venv_dir = `${this.gradingDir}/${dir}`
-    const paths = [venv_dir]
-    const cacheKey = await cache.restoreCache(paths, key)
-    const found_cache = cacheKey !== undefined
+    console.log(dir, key)
+    //console.log('Looking for existing cached virtual environment')
+    //const venv_dir = `${this.gradingDir}/${dir}`
+    //const paths = [venv_dir]
+    //const cacheKey = await cache.restoreCache(paths, key)
+    const found_cache = false //cacheKey !== undefined
     if (found_cache) {
-      console.log('Found existing cache:', cacheKey)
+      //console.log('Found existing cache:', cacheKey)
     } else {
       console.log(
         'No existing cache key found, setting up new virtual environment'
       )
 
       const { returnCode, output } = await this.executeCommandAndGetOutput(
-        './setup_venv.sh',
+        `${this.script_info.setup_venv} && ${this.script_info.install_deps}`,
         [],
         this.logger
       )
@@ -52,16 +79,16 @@ export default class ScriptBuilder extends Builder {
         )
       }
 
-      console.log('Caching installed dependencies')
-      const paths = [venv_dir]
-      const cacheId = await cache.saveCache(paths, key)
-      console.log('Cache ID:', cacheId)
+      //console.log('Caching installed dependencies')
+      //const paths = [venv_dir]
+      //const cacheId = await cache.saveCache(paths, key)
+      //console.log('Cache ID:', cacheId)
     }
   }
   async lint(): Promise<LintResult> {
     this.logger.log('hidden', 'Generating linting reports with provided script')
     const { returnCode, output } = await this.activateVenvAndExecuteCommand(
-      './generate_linting_reports.sh'
+      this.script_info.linting_report
     )
     if (returnCode !== 0) {
       throw new Error(
@@ -78,11 +105,13 @@ export default class ScriptBuilder extends Builder {
     this.logger.log('hidden', 'Generating coverage report with provided script')
 
     // Script to generate html coverage report
-    await this.activateVenvAndExecuteCommand('./generate_coverage_reports.sh')
+    await this.activateVenvAndExecuteCommand(
+      this.script_info.html_coverage_reports
+    )
 
     // Textual coverage report
     const { returnCode, output } = await this.executeCommandAndGetOutput(
-      './generate_textual_coverage_reports.sh',
+      this.script_info.textual_coverage_reports,
       [],
       this.logger
     )
@@ -103,7 +132,7 @@ export default class ScriptBuilder extends Builder {
     this.logger.log('hidden', 'Running tests with provided script')
 
     const { returnCode, output } = await this.activateVenvAndExecuteCommand(
-      './test_runner.sh',
+      this.script_info.test_runner,
       timeoutSeconds,
       true
     )
@@ -125,7 +154,7 @@ export default class ScriptBuilder extends Builder {
     this.logger.log('hidden', 'Running mutation tests with provided script')
 
     const { returnCode, output } = await this.activateVenvAndExecuteCommand(
-      './mutation_test_runner.sh',
+      this.script_info.mutation_test_runner,
       timeoutSeconds,
       true
     )
