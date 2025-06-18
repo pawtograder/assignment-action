@@ -34,7 +34,7 @@ export declare abstract class Builder {
     abstract buildClean(options: BuildStepOptions): Promise<void>;
     abstract getCoverageReport(): Promise<string>;
     abstract getCoverageReportDir(): string | null;
-    abstract installDependencies(): Promise<void>;
+    abstract setupVenv(dir: string, key: string): Promise<void>;
 }
 export type BuildStepOptions = {
     timeoutSeconds?: number;
