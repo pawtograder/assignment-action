@@ -54,8 +54,8 @@ export default class ScriptBuilder extends Builder {
   async setupVenv(dir: string, key: string): Promise<void> {
     const isGitHubAction = process.env.GITHUB_ACTIONS === 'true'
     let found_cache = false
-    const venv_dir = `${this.gradingDir}/${dir}`
-
+    const venv_dir = `pawtograder-grading/${dir}`
+    console.log(venv_dir)
     if (isGitHubAction) {
       console.log('Looking for existing cached virtual environment')
       const paths = [venv_dir]
