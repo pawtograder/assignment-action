@@ -54,9 +54,10 @@ export default class ScriptBuilder extends Builder {
   async setupVenv(dir: string, key: string): Promise<void> {
     const isGitHubAction = process.env.GITHUB_ACTIONS === 'true'
     let found_cache = false
+    const venv_dir = `${this.gradingDir}/${dir}`
+
     if (isGitHubAction) {
       console.log('Looking for existing cached virtual environment')
-      const venv_dir = `${this.gradingDir}/${dir}`
       const paths = [venv_dir]
       const cacheKey = await cache.restoreCache(paths, key)
       found_cache = cacheKey !== undefined
@@ -66,7 +67,7 @@ export default class ScriptBuilder extends Builder {
         'Found and restored existing cached venv. Activating this venv.'
       )
       const { returnCode, output } = await this.executeCommandAndGetOutput(
-        `${this.script_info.activate_venv} && ${this.script_info.install_deps}`,
+        `${this.script_info.activate_venv}`,
         [],
         this.logger
       )
@@ -94,7 +95,7 @@ export default class ScriptBuilder extends Builder {
       }
       if (isGitHubAction) {
         console.log('Caching installed dependencies')
-        const paths = [dir]
+        const paths = [venv_dir]
         const cacheId = await cache.saveCache(paths, key)
         console.log('Cache ID:', cacheId)
       }
