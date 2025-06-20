@@ -118,28 +118,36 @@ export default class ScriptBuilder extends Builder {
     )
   }
   async getCoverageReport(): Promise<string> {
-    this.logger.log('hidden', 'Generating coverage report with provided script')
-
-    // Script to generate html coverage report
-    await this.activateVenvAndExecuteCommand(
-      this.script_info.html_coverage_reports
+    this.logger.log(
+      'hidden',
+      'Generating html + textual coverage report with provided script'
     )
 
-    // Textual coverage report
-    const { returnCode, output } = await this.executeCommandAndGetOutput(
-      this.script_info.textual_coverage_reports,
-      [],
-      this.logger
-    )
+    const { returnCode: htmlReturnCode, output: htmlOutput } =
+      await this.activateVenvAndExecuteCommand(
+        this.script_info.html_coverage_reports
+      )
 
-    if (returnCode !== 0) {
+    if (htmlReturnCode !== 0) {
       throw new Error(
-        `Unable to generate coverage report. Here is the output that was produced on the grading server 
-        when trying to generate coverage reports: ${output}`
+        `Unable to generate HTML coverage report. Here is the output that was produced on the grading server 
+        when trying to generate HTML coverage reports: ${htmlOutput}`
       )
     }
 
-    return output
+    const { returnCode: textualReturnCode, output: textualOutput } =
+      await this.activateVenvAndExecuteCommand(
+        this.script_info.textual_coverage_reports
+      )
+
+    if (textualReturnCode !== 0) {
+      throw new Error(
+        `Unable to generate textual coverage report. Here is the output that was produced on the grading server 
+        when trying to generate textual coverage reports: ${textualOutput}`
+      )
+    }
+
+    return textualOutput
   }
   getCoverageReportDir(): string {
     return 'coverage_reports/'
@@ -190,7 +198,7 @@ export default class ScriptBuilder extends Builder {
   async buildClean({ timeoutSeconds }: BuildStepOptions): Promise<void> {
     await this.executeCommandAndGetOutput(
       'rm',
-      ['-rf', 'test_results', 'coverage_reports', 'mutation_test_results'],
+      ['-rf', 'test_results', 'mutation_test_results'],
       this.logger,
       timeoutSeconds,
       true
