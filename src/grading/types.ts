@@ -24,7 +24,7 @@ export interface ScriptInfo {
 }
 
 export interface BuildConfig {
-  preset: 'java-gradle' | 'script' | 'none'
+  preset: 'java-gradle' | 'python-script' | 'none'
   cmd?: string
   timeouts_seconds?: {
     build?: number

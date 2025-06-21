@@ -27,7 +27,7 @@ async function parseMutationResultsFromJson(
   )
   return mutantResults
 }
-export default class ScriptBuilder extends Builder {
+export default class PythonScriptBuilder extends Builder {
   constructor(
     protected logger: Logger,
     protected gradingDir: string,

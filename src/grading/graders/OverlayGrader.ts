@@ -5,7 +5,7 @@ import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
-import ScriptBuilder from '../builders/ScriptBuilder.js'
+import PythonScriptBuilder from '../builders/ScriptBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -44,7 +44,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         this.gradingDir,
         this.regressionTestJob
       )
-    } else if (this.config.build.preset == 'script') {
+    } else if (this.config.build.preset == 'python-script') {
       const info = this.config.build.script_info
       if (!info) {
         throw Error(
@@ -52,7 +52,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           info
         )
       }
-      this.builder = new ScriptBuilder(
+      this.builder = new PythonScriptBuilder(
         this.logger,
         this.gradingDir,
         info,
