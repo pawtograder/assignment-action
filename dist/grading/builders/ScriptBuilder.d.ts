@@ -1,7 +1,7 @@
 import { Builder, BuildStepOptions, LintResult, MutantResult, TestResult } from './Builder.js';
 import Logger from '../Logger.js';
 import { ScriptInfo } from '../types.js';
-export default class ScriptBuilder extends Builder {
+export default class PythonScriptBuilder extends Builder {
     protected logger: Logger;
     protected gradingDir: string;
     protected script_info: ScriptInfo;
