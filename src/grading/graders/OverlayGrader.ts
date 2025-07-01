@@ -5,6 +5,7 @@ import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
+import PythonScriptBuilder from '../builders/ScriptBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -41,6 +42,20 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       this.builder = new GradleBuilder(
         this.logger,
         this.gradingDir,
+        this.regressionTestJob
+      )
+    } else if (this.config.build.preset == 'python-script') {
+      const info = this.config.build.script_info
+      if (!info) {
+        throw Error(
+          'Expected SciptInfo to be provided in yml config, but nothing was provided',
+          info
+        )
+      }
+      this.builder = new PythonScriptBuilder(
+        this.logger,
+        this.gradingDir,
+        info,
         this.regressionTestJob
       )
     } else if (this.config.build.preset == 'none') {
@@ -260,14 +275,24 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     const solutionFiles = await readdir(this.solutionDir)
     await Promise.all(
       solutionFiles.map(async (file) => {
-        const src = path.join(this.solutionDir, file)
-        const dest = path.join(tmpDir, file)
-        await io.cp(src, dest, { recursive: true })
+        if (!file.startsWith('.git')) {
+          const src = path.join(this.solutionDir, file)
+          const dest = path.join(tmpDir, file)
+          await io.cp(src, dest, { recursive: true })
+        }
       })
     )
-
+    console.log('Copying student files')
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
+
+    console.log('Setting up virtual environment')
+
+    if (this.config.build.venv?.cache_key && this.config.build.venv?.dir_name) {
+      const venv_dir = this.config.build.venv.dir_name
+      const cache_key = this.config.build.venv.cache_key
+      await this.builder.setupVenv(venv_dir, cache_key)
+    }
 
     console.log('Linting student submission')
     const lintResult = await this.builder.lint()

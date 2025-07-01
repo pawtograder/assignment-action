@@ -1,16 +1,19 @@
 /* eslint-disable */
 import { XMLParser } from 'fast-xml-parser'
 import { readFileSync } from 'fs'
+import { glob } from 'glob'
+import Logger from '../Logger.js'
+import { TestResult } from './Builder.js'
 
 // Types for Surefire report structure
-export interface TestFailure {
+interface TestFailure {
   message: string
   type: string
   description: string
   stackTrace?: string
 }
 
-export interface TestCase {
+interface TestCase {
   name: string
   className: string
   time: number
@@ -19,7 +22,7 @@ export interface TestCase {
   error?: TestFailure
 }
 
-export interface TestSuite {
+interface TestSuite {
   name: string
   time: number
   tests: number
@@ -29,7 +32,7 @@ export interface TestSuite {
   testCases: TestCase[]
 }
 
-export interface SurefireReport {
+interface SurefireReport {
   testSuites: TestSuite[]
   summary: {
     totalTests: number
@@ -72,7 +75,7 @@ function trimJunitStackTrace(stackTrace: string): string {
   return lines.slice(0, idxOfLastReflectionLineFromBottom).join('\n')
 }
 
-export function parseSurefireXml(filePath: string): SurefireReport {
+function parseSurefireXml(filePath: string): SurefireReport {
   const xmlContent = readFileSync(filePath, 'utf-8')
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -163,4 +166,31 @@ export function parseSurefireXml(filePath: string): SurefireReport {
   })
 
   return report
+}
+
+export async function processXMLResults(
+  path_glob: string,
+  logger: Logger
+): Promise<TestResult[]> {
+  const testResultsContents = await Promise.all(
+    (await glob(path_glob)).map(async (file) => {
+      logger.log('hidden', `Reading test results from ${file}`)
+      const ret = await parseSurefireXml(file)
+      return ret
+    })
+  )
+  const ret = testResultsContents.flatMap((result) => {
+    return result.testSuites.flatMap((suite) => {
+      return suite.testCases.map((test) => {
+        const tr: TestResult = {
+          name: `${suite.name}.${test.name}`,
+          status: test.failure || test.error ? 'fail' : 'pass',
+          output: test.failure?.stackTrace || test.error?.stackTrace || '',
+          output_format: 'text'
+        }
+        return tr
+      })
+    })
+  })
+  return ret
 }

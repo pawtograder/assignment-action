@@ -1,8 +1,12 @@
 /* eslint-disable */
+
+import { glob } from 'glob'
+import Logger from '../Logger.js'
+import { LintResult } from './Builder.js'
 import { readFileSync } from 'fs'
 import { XMLParser } from 'fast-xml-parser'
 // Types for Checkstyle output structure
-export interface CheckstyleError {
+interface CheckstyleError {
   line: number
   column: number
   severity: 'error' | 'warning' | 'info'
@@ -10,18 +14,18 @@ export interface CheckstyleError {
   source: string
 }
 
-export interface CheckstyleFile {
+interface CheckstyleFile {
   name: string
   errors: CheckstyleError[]
 }
 
-export interface CheckstyleReport {
+interface CheckstyleReport {
   version: string
   files: CheckstyleFile[]
   totalErrors: number
 }
 
-export function parseCheckstyleXml(filePath: string): CheckstyleReport {
+function parseCheckstyleXml(filePath: string): CheckstyleReport {
   const xmlContent = readFileSync(filePath, 'utf-8')
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -71,4 +75,39 @@ export function parseCheckstyleXml(filePath: string): CheckstyleReport {
   })
 
   return report
+}
+
+export async function parseLintingReports(
+  file: string,
+  logger: Logger
+): Promise<LintResult> {
+  const checkstyleFilesContents = await Promise.all(
+    (await glob(file)).map(async (file: string) => {
+      logger.log('hidden', `Linting ${file}`)
+      const ret = await parseCheckstyleXml(file)
+      return ret
+    })
+  )
+  const totalErrors = checkstyleFilesContents.reduce(
+    (acc: number, curr: CheckstyleReport) => acc + curr.totalErrors,
+    0
+  )
+  const formattedOutput = checkstyleFilesContents
+    .filter((file: CheckstyleReport) => file.totalErrors > 0)
+    .map((file: CheckstyleReport) => {
+      return file.files
+        .map((f: CheckstyleFile) => {
+          return ` * ${f.name}: ${f.errors.length} errors:
+                    ${f.errors.map((e) => `\t${e.line}: ` + '`' + e.message + '`').join('\n')}`
+        })
+        .join('\n')
+    })
+    .join('\n')
+  logger.log('hidden', `Total errors: ${totalErrors}\n${formattedOutput}`)
+
+  return {
+    status: totalErrors > 0 ? 'fail' : 'pass',
+    output: `Total errors: ${totalErrors}\n${formattedOutput}`,
+    output_format: 'markdown'
+  }
 }

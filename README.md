@@ -41,19 +41,27 @@ To test changes to the grader, you can run it locally without invoking GitHub
 Actions or interfacing with Pawtograder at all:
 
 ```bash
-npx tsimp src/grader/main.ts -s /full/path/to/solution/repo -u /full/path/to/submission/repo
+npx tsimp src/grading/main.ts -s /full/path/to/solution/repo -u /full/path/to/submission/repo
 ```
+
+Note: Be sure to use full paths from the root of your computer for the solution
+and submission repos (avoid relative pathing)
 
 A significant amount of output will be printed to the console, including a
 pretty-printed JSON object with the results of the grading that would be passed
 along to Pawtograder.
+
+Every time you run the action, solution/student files get copied into a
+temporary `pawtograder-grading/` directory. This directory persists after runs
+for debugging purposes. Be sure to delete this directory after each run or else
+you may face a EACCES copyfile error or get weird results with nested folders.
 
 ### Transpile before pushing
 
 GitHub Actions will only run JS, so we need to transpile before pushing:
 
 ```bash
-npm run build
+npm run bundle
 ```
 
 The CI workflow will fail if the `dist/` directory does not match what is
