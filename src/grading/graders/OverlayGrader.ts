@@ -6,7 +6,7 @@ import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
-import PythonScriptBuilder from '../builders/ScriptBuilder.js'
+import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -228,8 +228,6 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           'MUTANT RESULTS: ',
           mutantResults.map((mr) => mr.location + ': ' + mr.status)
         )
-        console.log("Unit's locations: ", unit.locations)
-
         const relevantMutantResults = mutantResults.filter((mr) => {
           const locations = unit.locations
           const mutantLocation = mr.location
@@ -253,7 +251,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         })
         console.log(
           `RELEVANT MUTANT RESULTS (${unit.name}): `,
-          relevantMutantResults
+          relevantMutantResults.map((mr) => mr.location + ': ' + mr.status)
         )
         const mutantsDetected = relevantMutantResults.filter(
           (mr) => mr.status === 'pass'
@@ -738,7 +736,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               return mutantAdvice.prompt
             }
           }
-          return mutantName
+          return undefined
         }
         const getMutantShortName = (mutantName: string) => {
           if (this.config.mutantAdvice) {
@@ -751,15 +749,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               return mutantAdvice.name
             }
           }
-          return undefined
+          return mutantName
         }
 
         const mutantsDetected = mutantResults
           .filter((mr) => mr.status === 'pass')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            const shortName = getMutantShortName(mr.name)
-            return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
+            const prompt = mr.prompt ?? getMutantPrompt(mr.name)
+            const shortName = mr.shortName ?? getMutantShortName(mr.name)
+            return `* ${shortName} (${prompt ? prompt : 'No prompt provided for this bug :('})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = mutantResults
           .filter((mr) => mr.status === 'fail')
