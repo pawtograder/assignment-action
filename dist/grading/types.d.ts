@@ -59,7 +59,9 @@ export interface BreakPoint {
 export interface MutationTestUnit {
     name: string;
     locations: string[];
-    breakPoints: BreakPoint[];
+    breakPoints?: BreakPoint[];
+    total_faults?: number;
+    points?: number;
 }
 export interface RegularTestUnit {
     name: string;
