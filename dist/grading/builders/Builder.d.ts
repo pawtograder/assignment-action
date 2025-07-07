@@ -17,6 +17,8 @@ export type MutantResult = {
     status: 'pass' | 'fail';
     tests: string[];
     output: string;
+    prompt?: string;
+    shortName?: string;
     output_format?: OutputFormat;
 };
 export declare abstract class Builder {
