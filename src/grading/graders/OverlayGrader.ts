@@ -757,17 +757,18 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           .map((mr) => {
             const prompt = mr.prompt ?? getMutantPrompt(mr.name)
             const shortName = mr.shortName ?? getMutantShortName(mr.name)
-            return `* ${shortName} (${prompt ? prompt : 'No prompt provided for this bug :('})\n\t * Detected by: ${mr.tests.join(', ')}`
+            return `* ${shortName} (${prompt ? prompt : 'No prompt provided for this bug :( '})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = mutantResults
           .filter((mr) => mr.status === 'fail')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            return `* **${mr.name}** (${prompt})`
+            const prompt = mr.prompt ?? getMutantPrompt(mr.name)
+            const shortName = mr.shortName ?? getMutantShortName(mr.name)
+            return `* **${shortName}** (${prompt ? prompt : 'No prompt provided for this bug :( '})`
           })
-        studentMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
+        studentMutationOutput += `Faults detected(${mutantsDetected.length}):\n`
         studentMutationOutput += `${mutantsDetected.join('\n')}\n\n`
-        studentMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
+        studentMutationOutput += `Faults not detected(${mutantsNotDetected.length}):\n`
         studentMutationOutput += `${mutantsNotDetected.join('\n')}`
       }
       this.logger.log('hidden', studentMutationOutput)
