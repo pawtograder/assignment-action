@@ -69,7 +69,11 @@ export interface BreakPoint {
 export interface MutationTestUnit {
   name: string
   locations: string[] // format: "file:line-line" (for normal pit mutators) OR format oldFile-newFile (for prebake mutators)
-  breakPoints: BreakPoint[]
+
+  //Either exact breakpoints are provided, or points are awarded linearly as (mutants detected/total_faults) * points
+  breakPoints?: BreakPoint[]
+  total_faults?: number
+  points?: number
 }
 
 // Regular test unit types
@@ -112,7 +116,10 @@ export type PawtograderConfig = OverlayPawtograderConfig
 
 // Type guard to check if a unit is a mutation test unit
 export function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {
-  return 'locations' in unit && 'breakPoints' in unit
+  return (
+    'locations' in unit &&
+    ('breakPoints' in unit || ('points' in unit && 'total_faults' in unit))
+  )
 }
 
 // Type guard to check if a unit is a regular test unit

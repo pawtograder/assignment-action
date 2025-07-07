@@ -210,39 +210,71 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               'No results from grading tests. Please check overall output for more details.',
             output_format: 'markdown',
             score: 0,
-            max_score: unit.breakPoints[0].pointsToAward
+            max_score: unit.breakPoints?.[0].pointsToAward ?? unit.points
           }
         ]
       } else {
+        const maxScore = unit.breakPoints?.[0].pointsToAward ?? unit.points
+        const maxMutantsToDetect =
+          unit.breakPoints?.[0].minimumMutantsDetected ?? unit.total_faults
+
+        if (!maxScore || !maxMutantsToDetect) {
+          throw new Error(
+            `Incorrect mutation test specification (should either provide valid breakpoints or total points and faults): ${JSON.stringify(unit)}`
+          )
+        }
+
+        console.log(
+          'MUTANT RESULTS: ',
+          mutantResults.map((mr) => mr.location + ': ' + mr.status)
+        )
+        console.log("Unit's locations: ", unit.locations)
+
         const relevantMutantResults = mutantResults.filter((mr) => {
           const locations = unit.locations
           const mutantLocation = mr.location
-          const mutantLocationParts = mutantLocation.split(':')
-          const mutantLine = parseInt(mutantLocationParts[1])
-          const mutantEndLine = parseInt(mutantLocationParts[2])
-          return locations.some((location) => {
-            const locationParts = location.split('-')
-            const locationLine = parseInt(locationParts[1])
-            const locationEndLine = parseInt(locationParts[2])
-            return (
-              mutantLine >= locationLine && mutantEndLine <= locationEndLine
-            )
-          })
+          if (!mutantLocation.includes(':')) {
+            return locations.some((location) => {
+              return mutantLocation.startsWith(location)
+            })
+          } else {
+            const mutantLocationParts = mutantLocation.split(':')
+            const mutantLine = parseInt(mutantLocationParts[1])
+            const mutantEndLine = parseInt(mutantLocationParts[2])
+            return locations.some((location) => {
+              const locationParts = location.split('-')
+              const locationLine = parseInt(locationParts[1])
+              const locationEndLine = parseInt(locationParts[2])
+              return (
+                mutantLine >= locationLine && mutantEndLine <= locationEndLine
+              )
+            })
+          }
         })
+        console.log(
+          `RELEVANT MUTANT RESULTS (${unit.name}): `,
+          relevantMutantResults
+        )
         const mutantsDetected = relevantMutantResults.filter(
           (mr) => mr.status === 'pass'
         ).length
-        const maxMutantsToDetect = unit.breakPoints[0].minimumMutantsDetected
-        const breakPoint = unit.breakPoints.find(
-          (bp) => bp.minimumMutantsDetected <= mutantsDetected
-        )
+
+        let score: number | undefined = 0
+        if (unit.breakPoints) {
+          score = unit.breakPoints.find(
+            (bp) => bp.minimumMutantsDetected <= mutantsDetected
+          )?.pointsToAward
+        } else {
+          score = (mutantsDetected / maxMutantsToDetect) * maxScore
+        }
+
         return [
           {
             name: unit.name,
             output: `**Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}**`,
             output_format: 'markdown',
-            score: breakPoint ? breakPoint.pointsToAward : 0,
-            max_score: unit.breakPoints[0].pointsToAward
+            score: score ?? 0,
+            max_score: maxScore
           }
         ]
       }
@@ -400,7 +432,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 output_format: 'text' as OutputFormat,
                 score: 0,
                 part: part.name,
-                max_score: gradedUnit.breakPoints[0].pointsToAward
+                max_score:
+                  gradedUnit.breakPoints?.[0].pointsToAward ?? gradedUnit.points
               }
             } else {
               throw new Error(
@@ -455,7 +488,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 output_format: 'text' as OutputFormat,
                 score: 0,
                 part: part.name,
-                max_score: gradedUnit.breakPoints[0].pointsToAward
+                max_score:
+                  gradedUnit.breakPoints?.[0].pointsToAward ?? gradedUnit.points
               }
             } else {
               throw new Error(
