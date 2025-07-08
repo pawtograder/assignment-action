@@ -260,8 +260,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}. 
-            \n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}**`,
+            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**. 
+            \n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}`,
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore
