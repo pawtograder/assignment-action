@@ -59,7 +59,11 @@ export interface BreakPoint {
 export interface MutationTestUnit {
     name: string;
     locations: string[];
-    breakPoints: BreakPoint[];
+    breakPoints?: BreakPoint[];
+    linearScoring?: {
+        total_faults: number;
+        points: number;
+    };
 }
 export interface RegularTestUnit {
     name: string;
@@ -82,12 +86,6 @@ export interface OverlayPawtograderConfig {
         files: string[];
         testFiles: string[];
     };
-    mutantAdvice?: {
-        sourceClass: string;
-        targetClass: string;
-        name: string;
-        prompt: string;
-    }[];
 }
 export type PawtograderConfig = OverlayPawtograderConfig;
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
