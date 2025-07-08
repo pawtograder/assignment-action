@@ -191,11 +191,6 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             `Incorrect mutation test specification (should either provide valid breakpoints or total points and faults): ${JSON.stringify(unit)}`
           )
         }
-
-        console.log(
-          'MUTANT RESULTS: ',
-          mutantResults.map((mr) => mr.location + ': ' + mr.status)
-        )
         const relevantMutantResults = mutantResults.filter((mr) => {
           const locations = unit.locations
           const mutantLocation = mr.location
@@ -217,10 +212,6 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             })
           }
         })
-        console.log(
-          `RELEVANT MUTANT RESULTS (${unit.name}): `,
-          relevantMutantResults.map((mr) => mr.location + ': ' + mr.status)
-        )
         const mutantsDetected = relevantMutantResults.filter(
           (mr) => mr.status === 'pass'
         ).length
@@ -237,7 +228,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}**`,
+            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}. 
+            \n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}**`,
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore
