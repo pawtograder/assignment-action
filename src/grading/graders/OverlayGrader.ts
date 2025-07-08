@@ -210,13 +210,16 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               'No results from grading tests. Please check overall output for more details.',
             output_format: 'markdown',
             score: 0,
-            max_score: unit.breakPoints?.[0].pointsToAward ?? unit.points
+            max_score:
+              unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
           }
         ]
       } else {
-        const maxScore = unit.breakPoints?.[0].pointsToAward ?? unit.points
+        const maxScore =
+          unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
         const maxMutantsToDetect =
-          unit.breakPoints?.[0].minimumMutantsDetected ?? unit.total_faults
+          unit.breakPoints?.[0].minimumMutantsDetected ??
+          unit.linearScoring?.total_faults
 
         if (!maxScore || !maxMutantsToDetect) {
           throw new Error(
@@ -260,8 +263,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**. 
-            \n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}`,
+            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}`,
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore
@@ -423,7 +425,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 score: 0,
                 part: part.name,
                 max_score:
-                  gradedUnit.breakPoints?.[0].pointsToAward ?? gradedUnit.points
+                  gradedUnit.breakPoints?.[0].pointsToAward ??
+                  gradedUnit.linearScoring?.points
               }
             } else {
               throw new Error(
@@ -479,7 +482,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 score: 0,
                 part: part.name,
                 max_score:
-                  gradedUnit.breakPoints?.[0].pointsToAward ?? gradedUnit.points
+                  gradedUnit.breakPoints?.[0].pointsToAward ??
+                  gradedUnit.linearScoring?.points
               }
             } else {
               throw new Error(
@@ -717,46 +721,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         studentMutationOutput = mutantFailureAdvice
       }
       if (mutantResults) {
-        const getMutantPrompt = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.prompt
-            }
-          }
-          return undefined
-        }
-        const getMutantShortName = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.name
-            }
-          }
-          return mutantName
-        }
-
         const mutantsDetected = mutantResults
           .filter((mr) => mr.status === 'pass')
           .map((mr) => {
-            const prompt = mr.prompt ?? getMutantPrompt(mr.name)
-            const shortName = mr.shortName ?? getMutantShortName(mr.name)
-            return `* ${shortName} (${prompt ? prompt : 'No prompt provided for this bug :( '})\n\t * Detected by: ${mr.tests.join(', ')}`
+            const shortName = mr.shortName ?? mr.name
+            return `* ${shortName} (${mr.prompt ?? 'No prompt provided for this bug :( '})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = mutantResults
           .filter((mr) => mr.status === 'fail')
           .map((mr) => {
-            const prompt = mr.prompt ?? getMutantPrompt(mr.name)
-            const shortName = mr.shortName ?? getMutantShortName(mr.name)
-            return `* **${shortName}** (${prompt ? prompt : 'No prompt provided for this bug :( '})`
+            const shortName = mr.shortName ?? mr.name
+            return `* **${shortName}** (${mr.prompt ?? 'No prompt provided for this bug :( '})`
           })
         studentMutationOutput += `Faults detected(${mutantsDetected.length}):\n`
         studentMutationOutput += `${mutantsDetected.join('\n')}\n\n`
