@@ -587,13 +587,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         studentMutationOutput += `${mutantsNotDetected.join('\n')}`
       }
       this.logger.log('hidden', studentMutationOutput)
-      testFeedbacks.push({
-        name: 'Fault Coverage Report',
-        output: studentMutationOutput,
-        output_format: 'markdown',
-        score: 0,
-        max_score: 0
-      })
+      if (this.config.mutantAdvice) {
+        testFeedbacks.push({
+          name: 'Fault Coverage Report',
+          output: studentMutationOutput,
+          output_format: 'markdown',
+          score: 0,
+          max_score: 0
+        })
+      }
     }
     if (this.config.build.student_tests?.student_impl?.report_branch_coverage) {
       const passingTestCount = studentTestResults?.filter(
