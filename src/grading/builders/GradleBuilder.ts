@@ -34,11 +34,10 @@ export default class GradleBuilder extends Builder {
       360,
       true
     )
-    if (returnCode !== 0 && returnCode !== 130) {
-      throw new Error(
-        `Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`
-      )
-    }
+    this.logger.log(
+      'hidden',
+      `Gradle lint checkstyle return code: ${returnCode}, output: ${output}`
+    )
     return parseLintingReports(
       `${this.gradingDir}/build/reports/checkstyle/*.xml`,
       this.logger
