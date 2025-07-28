@@ -268,8 +268,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         artifacts: []
       }
     }
-    // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
-    console.log('Beginning grading')
+    this.logger.log('visible', 'Beginning grading')
     const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
     await io.mkdirP(tmpDir)
     const solutionFiles = await readdir(this.solutionDir)
@@ -282,11 +281,11 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         }
       })
     )
-    console.log('Copying student files')
+    this.logger.log('visible', 'Copying student files')
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
 
-    console.log('Setting up virtual environment')
+    this.logger.log('visible', 'Setting up virtual environment')
 
     if (this.config.build.venv?.cache_key && this.config.build.venv?.dir_name) {
       const venv_dir = this.config.build.venv.dir_name
@@ -294,7 +293,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       await this.builder.setupVenv(venv_dir, cache_key)
     }
 
-    console.log('Linting student submission')
+    this.logger.log('visible', 'Linting student submission')
     const lintResult = await this.builder.lint()
     if (this.config.build.linter?.policy === 'fail') {
       if (lintResult.status === 'fail') {
@@ -313,13 +312,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       }
     }
 
-    console.log('Resetting to run instructor tests on student submission')
+    this.logger.log(
+      'visible',
+      'Resetting to run instructor tests on student submission'
+    )
     await this.resetSolutionFiles()
     await this.copyStudentFiles('files')
     const gradedParts = this.config.gradedParts || []
 
     try {
-      console.log(
+      this.logger.log(
+        'visible',
         'Building project with student submission and running instructor tests'
       )
       await this.builder.buildClean({
@@ -436,12 +439,13 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       this.config.submissionFiles.testFiles.length > 0 &&
       this.config.build.student_tests?.instructor_impl?.run_tests
     ) {
-      console.log(
+      this.logger.log(
+        'visible',
         'Resetting to have student tests with the instructor solution'
       )
       await this.resetSolutionFiles()
       await this.copyStudentFiles('testFiles')
-      console.log('Building solution and running student tests')
+      this.logger.log('visible', 'Building solution and running student tests')
       try {
         await this.builder.buildClean({
           timeoutSeconds:
@@ -495,7 +499,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         mutantFailureAdvice +=
           '\n\nPlease fix the above errors and resubmit for grading.'
       } else {
-        console.log('Running student tests against buggy solutions')
+        this.logger.log(
+          'visible',
+          'Running student tests against buggy solutions'
+        )
         try {
           mutantResults = await this.builder.mutationTest({
             timeoutSeconds:
@@ -514,7 +521,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         this.config.build.student_tests?.student_impl?.run_tests) &&
       this.config.submissionFiles.testFiles.length > 0
     ) {
-      console.log('Running student tests against student implementation')
+      this.logger.log(
+        'visible',
+        'Running student tests against student implementation'
+      )
       try {
         await this.resetSolutionFiles()
         await this.copyStudentFiles('testFiles')
@@ -534,7 +544,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         this.logger.log('visible', msg)
       }
     }
-    console.log('Wrapping up')
+    this.logger.log('visible', 'Wrapping up')
     const testFeedbacks = gradedParts
       .map((part) =>
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
