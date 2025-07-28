@@ -35,7 +35,8 @@
     "package": "npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "package:watch": "npm run package -- --watch",
     "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 npx jest",
-    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
+    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package",
+    "generate-schema": "ts-json-schema-generator --path 'src/grading/types.ts' --no-type-check --type PawtograderConfig -o pawtograder.schema.json"
   },
   "license": "MIT",
   "dependencies": {
@@ -80,6 +81,7 @@
     "ts-interface-builder": "^0.3.3",
     "ts-jest": "^29.2.5",
     "ts-jest-resolver": "^2.0.1",
+    "ts-json-schema-generator": "^2.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },

@@ -1,0 +1,373 @@
+{
+  "$ref": "#/definitions/PawtograderConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "BreakPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "minimumMutantsDetected": {
+          "type": "number"
+        },
+        "pointsToAward": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "minimumMutantsDetected",
+        "pointsToAward"
+      ],
+      "type": "object"
+    },
+    "BuildConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/definitions/GraderArtifact"
+          },
+          "type": "array"
+        },
+        "cmd": {
+          "type": "string"
+        },
+        "linter": {
+          "additionalProperties": false,
+          "properties": {
+            "policy": {
+              "enum": [
+                "fail",
+                "warn",
+                "ignore"
+              ],
+              "type": "string"
+            },
+            "preset": {
+              "const": "checkstyle",
+              "type": "string"
+            }
+          },
+          "required": [
+            "preset",
+            "policy"
+          ],
+          "type": "object"
+        },
+        "preset": {
+          "enum": [
+            "java-gradle",
+            "python-script",
+            "none"
+          ],
+          "type": "string"
+        },
+        "script_info": {
+          "$ref": "#/definitions/ScriptInfo"
+        },
+        "student_tests": {
+          "additionalProperties": false,
+          "properties": {
+            "instructor_impl": {
+              "additionalProperties": false,
+              "properties": {
+                "report_mutation_coverage": {
+                  "type": "boolean"
+                },
+                "run_mutation": {
+                  "type": "boolean"
+                },
+                "run_tests": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "student_impl": {
+              "additionalProperties": false,
+              "properties": {
+                "report_branch_coverage": {
+                  "type": "boolean"
+                },
+                "run_tests": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "timeouts_seconds": {
+          "additionalProperties": false,
+          "properties": {
+            "build": {
+              "type": "number"
+            },
+            "instructor_tests": {
+              "type": "number"
+            },
+            "mutants": {
+              "type": "number"
+            },
+            "student_tests": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "venv": {
+          "$ref": "#/definitions/VenvInfo"
+        }
+      },
+      "required": [
+        "preset"
+      ],
+      "type": "object"
+    },
+    "GradedPart": {
+      "additionalProperties": false,
+      "properties": {
+        "gradedUnits": {
+          "items": {
+            "$ref": "#/definitions/GradedUnit"
+          },
+          "type": "array"
+        },
+        "hide_until_released": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "gradedUnits"
+      ],
+      "type": "object"
+    },
+    "GradedUnit": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/MutationTestUnit"
+        },
+        {
+          "$ref": "#/definitions/RegularTestUnit"
+        }
+      ]
+    },
+    "GraderArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "path"
+      ],
+      "type": "object"
+    },
+    "MutationTestUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "breakPoints": {
+          "items": {
+            "$ref": "#/definitions/BreakPoint"
+          },
+          "type": "array"
+        },
+        "locations": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "locations",
+        "breakPoints"
+      ],
+      "type": "object"
+    },
+    "OverlayPawtograderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "$ref": "#/definitions/BuildConfig"
+        },
+        "gradedParts": {
+          "items": {
+            "$ref": "#/definitions/GradedPart"
+          },
+          "type": "array"
+        },
+        "grader": {
+          "const": "overlay",
+          "type": "string"
+        },
+        "mutantAdvice": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "sourceClass": {
+                "type": "string"
+              },
+              "targetClass": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sourceClass",
+              "targetClass",
+              "name",
+              "prompt"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "submissionFiles": {
+          "additionalProperties": false,
+          "properties": {
+            "files": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "testFiles": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "files",
+            "testFiles"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "grader",
+        "build",
+        "submissionFiles"
+      ],
+      "type": "object"
+    },
+    "PawtograderConfig": {
+      "$ref": "#/definitions/OverlayPawtograderConfig"
+    },
+    "RegularTestUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_partial_credit": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "points": {
+          "type": "number"
+        },
+        "testCount": {
+          "type": "number"
+        },
+        "tests": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "tests",
+        "points",
+        "testCount"
+      ],
+      "type": "object"
+    },
+    "ScriptInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "activate_venv": {
+          "type": "string"
+        },
+        "html_coverage_reports": {
+          "type": "string"
+        },
+        "install_deps": {
+          "type": "string"
+        },
+        "linting_report": {
+          "type": "string"
+        },
+        "mutation_test_runner": {
+          "type": "string"
+        },
+        "setup_venv": {
+          "type": "string"
+        },
+        "test_runner": {
+          "type": "string"
+        },
+        "textual_coverage_reports": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "setup_venv",
+        "activate_venv",
+        "linting_report",
+        "html_coverage_reports",
+        "textual_coverage_reports",
+        "test_runner",
+        "mutation_test_runner",
+        "install_deps"
+      ],
+      "type": "object"
+    },
+    "VenvInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "cache_key": {
+          "type": "string"
+        },
+        "dir_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "cache_key",
+        "dir_name"
+      ],
+      "type": "object"
+    }
+  }
+}
