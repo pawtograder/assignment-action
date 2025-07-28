@@ -296,6 +296,22 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
 
     console.log('Linting student submission')
     const lintResult = await this.builder.lint()
+    if (this.config.build.linter?.policy === 'fail') {
+      if (lintResult.status === 'fail') {
+        this.logger.log(
+          'visible',
+          `Linting failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`
+        )
+        this.logger.log('visible', lintResult.output)
+        return {
+          lint: lintResult,
+          output: this.logger.getEachOutput(),
+          tests: [],
+          score: 0,
+          artifacts: []
+        }
+      }
+    }
 
     console.log('Resetting to run instructor tests on student submission')
     await this.resetSolutionFiles()

@@ -32,7 +32,7 @@ export default class GradleBuilder extends Builder {
       ],
       this.logger
     )
-    if (returnCode !== 0) {
+    if (returnCode !== 0 && returnCode !== 130) {
       throw new Error(
         `Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`
       )

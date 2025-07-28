@@ -31,7 +31,7 @@ export interface BuildConfig {
     artifacts?: GraderArtifact[];
     linter?: {
         preset: 'checkstyle';
-        policy: 'fail' | 'warn' | 'ignore';
+        policy: 'fail' | 'ignore';
     };
     student_tests?: {
         student_impl?: {
