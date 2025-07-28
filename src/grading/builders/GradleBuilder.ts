@@ -30,7 +30,9 @@ export default class GradleBuilder extends Builder {
         '-x',
         'compileTestJava'
       ],
-      this.logger
+      this.logger,
+      360,
+      true
     )
     if (returnCode !== 0 && returnCode !== 130) {
       throw new Error(
