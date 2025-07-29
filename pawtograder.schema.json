@@ -12,10 +12,7 @@
           "type": "number"
         }
       },
-      "required": [
-        "minimumMutantsDetected",
-        "pointsToAward"
-      ],
+      "required": ["minimumMutantsDetected", "pointsToAward"],
       "type": "object"
     },
     "BuildConfig": {
@@ -34,10 +31,7 @@
           "additionalProperties": false,
           "properties": {
             "policy": {
-              "enum": [
-                "fail",
-                "ignore"
-              ],
+              "enum": ["fail", "ignore"],
               "type": "string"
             },
             "preset": {
@@ -45,18 +39,11 @@
               "type": "string"
             }
           },
-          "required": [
-            "preset",
-            "policy"
-          ],
+          "required": ["preset", "policy"],
           "type": "object"
         },
         "preset": {
-          "enum": [
-            "java-gradle",
-            "python-script",
-            "none"
-          ],
+          "enum": ["java-gradle", "python-script", "none"],
           "type": "string"
         },
         "script_info": {
@@ -123,9 +110,7 @@
           "$ref": "#/definitions/VenvInfo"
         }
       },
-      "required": [
-        "preset"
-      ],
+      "required": ["preset"],
       "type": "object"
     },
     "GradedPart": {
@@ -144,10 +129,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "gradedUnits"
-      ],
+      "required": ["name", "gradedUnits"],
       "type": "object"
     },
     "GradedUnit": {
@@ -173,10 +155,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "path"
-      ],
+      "required": ["name", "path"],
       "type": "object"
     },
     "MutationTestUnit": {
@@ -198,11 +177,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "locations",
-        "breakPoints"
-      ],
+      "required": ["name", "locations", "breakPoints"],
       "type": "object"
     },
     "OverlayPawtograderConfig": {
@@ -238,12 +213,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "sourceClass",
-              "targetClass",
-              "name",
-              "prompt"
-            ],
+            "required": ["sourceClass", "targetClass", "name", "prompt"],
             "type": "object"
           },
           "type": "array"
@@ -264,18 +234,11 @@
               "type": "array"
             }
           },
-          "required": [
-            "files",
-            "testFiles"
-          ],
+          "required": ["files", "testFiles"],
           "type": "object"
         }
       },
-      "required": [
-        "grader",
-        "build",
-        "submissionFiles"
-      ],
+      "required": ["grader", "build", "submissionFiles"],
       "type": "object"
     },
     "PawtograderConfig": {
@@ -310,12 +273,7 @@
           ]
         }
       },
-      "required": [
-        "name",
-        "tests",
-        "points",
-        "testCount"
-      ],
+      "required": ["name", "tests", "points", "testCount"],
       "type": "object"
     },
     "ScriptInfo": {
@@ -368,10 +326,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "cache_key",
-        "dir_name"
-      ],
+      "required": ["cache_key", "dir_name"],
       "type": "object"
     }
   }

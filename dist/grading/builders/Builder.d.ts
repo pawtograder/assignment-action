@@ -34,6 +34,7 @@ export declare abstract class Builder {
     abstract buildClean(options: BuildStepOptions): Promise<void>;
     abstract getCoverageReport(): Promise<string>;
     abstract getCoverageReportDir(): string | null;
+    getMutationCoverageReportDir(): string | undefined;
     abstract setupVenv(dir: string, key: string): Promise<void>;
 }
 export type BuildStepOptions = {

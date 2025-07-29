@@ -128,6 +128,9 @@ export abstract class Builder {
   abstract buildClean(options: BuildStepOptions): Promise<void>
   abstract getCoverageReport(): Promise<string>
   abstract getCoverageReportDir(): string | null
+  getMutationCoverageReportDir(): string | undefined {
+    return undefined
+  }
   abstract setupVenv(dir: string, key: string): Promise<void>
 }
 

@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import grade from './grade.js'
+import { writeFile } from 'fs/promises'
 
 const program = new Command()
 
@@ -17,6 +18,12 @@ const submissionDir: string = options.submissionDir
 console.log(
   `Grading submissions in ${submissionDir} against solution in ${solutionDir}`
 )
-grade(solutionDir, submissionDir).then((feedback) => {
-  console.log(JSON.stringify(feedback, null, 2))
+grade(solutionDir, submissionDir).then(async (feedback) => {
+  // console.log(JSON.stringify(feedback, null, 2))
+  console.log('Artifacts:')
+  console.log(feedback.artifacts)
+  await writeFile(
+    'pawtograder-feedback.json',
+    JSON.stringify(feedback, null, 2)
+  )
 })

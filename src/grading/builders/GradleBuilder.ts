@@ -80,6 +80,10 @@ export default class GradleBuilder extends Builder {
       this.logger
     )
   }
+
+  getMutationCoverageReportDir(): string | undefined {
+    return 'build/reports/pitest'
+  }
   async mutationTest({
     timeoutSeconds
   }: BuildStepOptions): Promise<MutantResult[]> {

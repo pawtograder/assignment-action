@@ -5,6 +5,7 @@ export default class GradleBuilder extends Builder {
     getCoverageReport(): Promise<string>;
     getCoverageReportDir(): string;
     test({ timeoutSeconds }: BuildStepOptions): Promise<TestResult[]>;
+    getMutationCoverageReportDir(): string | undefined;
     mutationTest({ timeoutSeconds }: BuildStepOptions): Promise<MutantResult[]>;
     buildClean({ timeoutSeconds }: BuildStepOptions): Promise<void>;
 }
