@@ -37,6 +37,8 @@ export interface BuildConfig {
         student_impl?: {
             run_tests?: boolean;
             report_branch_coverage?: boolean;
+            run_mutation?: boolean;
+            report_mutation_coverage?: boolean;
         };
         instructor_impl?: {
             run_tests?: boolean;

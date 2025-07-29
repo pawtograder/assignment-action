@@ -48,8 +48,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const info = this.config.build.script_info
       if (!info) {
         throw Error(
-          'Expected SciptInfo to be provided in yml config, but nothing was provided',
-          info
+          'Expected SciptInfo to be provided in yml config, but nothing was provided'
         )
       }
       this.builder = new PythonScriptBuilder(
@@ -516,9 +515,14 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       }
     }
     let studentTestAdvice: string | undefined
+    let studentImplMutantResults: MutantResult[] | undefined
+    let studentImplMutantFailureAdvice: string | undefined
     if (
       (this.config.build.student_tests?.student_impl?.report_branch_coverage ||
-        this.config.build.student_tests?.student_impl?.run_tests) &&
+        this.config.build.student_tests?.student_impl?.run_tests ||
+        this.config.build.student_tests?.student_impl?.run_mutation ||
+        this.config.build.student_tests?.student_impl
+          ?.report_mutation_coverage) &&
       this.config.submissionFiles.testFiles.length > 0
     ) {
       this.logger.log(
@@ -538,6 +542,40 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             this.config.build.timeouts_seconds?.student_tests ||
             DEFAULT_TIMEOUTS.student_tests
         })
+
+        // Run mutation testing on student implementation if enabled
+        if (
+          this.config.build.student_tests?.student_impl?.run_mutation &&
+          studentTestResults &&
+          studentTestResults.every((result) => result.status === 'pass')
+        ) {
+          this.logger.log(
+            'visible',
+            'Running mutation tests on student implementation'
+          )
+          try {
+            studentImplMutantResults = await this.builder.mutationTest({
+              timeoutSeconds:
+                this.config.build.timeouts_seconds?.mutants ||
+                DEFAULT_TIMEOUTS.mutants
+            })
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error'
+            this.logger.log(
+              'visible',
+              'Error running mutation tests on student implementation: ' + msg
+            )
+            studentImplMutantFailureAdvice =
+              'Error running mutation tests on student implementation. Please see overall output for more details.'
+          }
+        } else if (
+          this.config.build.student_tests?.student_impl?.run_mutation &&
+          studentTestResults &&
+          studentTestResults.some((result) => result.status === 'fail')
+        ) {
+          studentImplMutantFailureAdvice =
+            'Mutation testing was not run because some student tests failed against the student implementation.'
+        }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error'
         studentTestAdvice = 'Your tests failed to compile. ' + msg
@@ -620,6 +658,72 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           output_format: 'markdown',
           score: 0,
           max_score: 0
+        })
+      }
+    }
+    if (
+      this.config.build.student_tests?.student_impl?.report_mutation_coverage
+    ) {
+      let studentImplMutationOutput =
+        'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational: '
+      if (studentImplMutantFailureAdvice) {
+        studentImplMutationOutput = studentImplMutantFailureAdvice
+      }
+      if (studentImplMutantResults) {
+        const getMutantPrompt = (mutantName: string) => {
+          if (this.config.mutantAdvice) {
+            const [sourceClass, targetClass] = mutantName.split(' ')
+            const mutantAdvice = this.config.mutantAdvice.find(
+              (ma) =>
+                ma.sourceClass === sourceClass && ma.targetClass === targetClass
+            )
+            if (mutantAdvice) {
+              return mutantAdvice.prompt
+            }
+          }
+          return mutantName
+        }
+        const getMutantShortName = (mutantName: string) => {
+          if (this.config.mutantAdvice) {
+            const [sourceClass, targetClass] = mutantName.split(' ')
+            const mutantAdvice = this.config.mutantAdvice.find(
+              (ma) =>
+                ma.sourceClass === sourceClass && ma.targetClass === targetClass
+            )
+            if (mutantAdvice) {
+              return mutantAdvice.name
+            }
+          }
+          return undefined
+        }
+
+        const mutantsDetected = studentImplMutantResults
+          .filter((mr) => mr.status === 'pass')
+          .map((mr) => {
+            const prompt = getMutantPrompt(mr.name)
+            const shortName = getMutantShortName(mr.name)
+            return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
+          })
+        const mutantsNotDetected = studentImplMutantResults
+          .filter((mr) => mr.status === 'fail')
+          .map((mr) => {
+            const prompt = getMutantPrompt(mr.name)
+            return `* **${mr.name}** (${prompt})`
+          })
+        studentImplMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
+        studentImplMutationOutput += `${mutantsDetected.join('\n')}\n\n`
+        studentImplMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
+        studentImplMutationOutput += `${mutantsNotDetected.join('\n')}`
+      }
+      this.logger.log('hidden', studentImplMutationOutput)
+      if (this.config.mutantAdvice) {
+        testFeedbacks.push({
+          name: 'Student Implementation Fault Coverage Report',
+          output: studentImplMutationOutput,
+          output_format: 'markdown',
+          score: 0,
+          max_score: 0,
+          part: 'Student Implementation Tests'
         })
       }
     }
