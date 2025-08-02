@@ -2,41 +2,32 @@
   requires: [],
   provides: {
     values: {
-      "get-stdin": ["arrow", [], "String"]
-    }
+      "get-stdin": ["arrow", [], "String"],
+    },
   },
   nativeRequires: [],
-  theModule: (RUNTIME, NAMESPACE, uri) => {
-    let input = ""
-    let eof = false
+  theModule: function (runtime, _, _) {
+    let input = "";
+    let eof = false;
 
-    RUNTIME.stdin.setEncoding("utf8")
-
-    RUNTIME.stdin.on("data", (chunk) => {
-      input += chunk
-    })
-
-    RUNTIME.stdin.on("end", () => {
-      eof = true
-    })
+    runtime.stdin.setEncoding("utf8");
+    runtime.stdin.on("data", (chunk) => (input += chunk));
+    runtime.stdin.on("end", () => (eof = true));
 
     function getStdin() {
       if (!eof) {
-        return RUNTIME.pauseStack(async (restarter) => {
-          RUNTIME.stdin.on("end", () => {
-            restarter.resume(RUNTIME.makeString(input))
-          })
-        })
+        return runtime.pauseStack(async (restarter) => {
+          runtime.stdin.on("end", () => {
+            restarter.resume(runtime.makeString(input));
+          });
+        });
       }
 
-      return RUNTIME.makeString(input)
+      return runtime.makeString(input);
     }
 
-    return RUNTIME.makeModuleReturn(
-      {
-        "get-stdin": RUNTIME.makeFunction(getStdin, "get-stdin")
-      },
-      {}
-    )
-  }
+    return runtime.makeModuleReturn({
+      "get-stdin": runtime.makeFunction(getStdin, "get-stdin"),
+    }, {});
+  },
 })
