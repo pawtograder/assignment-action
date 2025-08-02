@@ -34,6 +34,7 @@ export async function makeGrader(
       )
     default: {
       throw new Error(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         `Unknown grader ${(config satisfies never as any).grader}`
       )
     }

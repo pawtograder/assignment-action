@@ -28,7 +28,8 @@ export default [
       '**/linter',
       '**/node_modules',
       'src/api',
-      'openapi-codegen.config.ts'
+      'openapi-codegen.config.ts',
+      'pyret/**'
     ]
   },
   ...compat.extends(
