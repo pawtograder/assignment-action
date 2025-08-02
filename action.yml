@@ -61,9 +61,9 @@ runs:
 
     - name: Build Pyret
       run:
-        npx pyret --builtin-js-dir
-        node_modules/pyret-autograder/pyret/src/js/trove/ -p pyret/grader.arr -o
-        pyret/grader.cjs -ck
+        npx pyret --builtin-js-dir node_modules/pyret-lang/src/js/trove/
+        --program pyret/main.arr --outfile pyret/main.cjs --no-check-mode
+        --quiet --norun
       shell: bash
       working-directory: action
 

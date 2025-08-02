@@ -36,18 +36,7 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
     const spec = await this.resolveSpec()
 
     return new Promise((resolve, reject) => {
-      // TODO: precompile this like done with the cli
-      const grader = spawn('npx', [
-        'pyret',
-        '--builtin-js-dir',
-        'node_modules/pyret-lang/src/js/trove/',
-        '--program',
-        'pyret/grader.arr',
-        '--outfile',
-        'pyret/grader.cjs',
-        '--quiet',
-        '--no-check-mode'
-      ])
+      const grader = spawn('node', ['pyret/main.cjs'])
       let output = ''
       let error = ''
       console.log('pyret child spawned')
@@ -60,10 +49,11 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
         if (code !== 0) {
           return reject(new Error(`Grader failed: ${error}`))
         }
+        const outputTail = output.trim().split('\n').at(-1)!
         try {
-          resolve(JSON.parse(output))
+          resolve(JSON.parse(outputTail))
         } catch (e) {
-          reject(new Error(`Invalid JSON from grader: ${output}\n${e}`))
+          reject(new Error(`Invalid JSON from grader: ${outputTail}\n${e}`))
         }
       })
 
