@@ -108,3 +108,6 @@ __tests__/runner/*
 
 pyret/*.jarr
 pyret/*.cjs
+pyret-npm
+
+.direnv/
