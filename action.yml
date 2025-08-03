@@ -43,13 +43,12 @@ runs:
         ref: ${{ inputs.action_ref }}
         path: action
 
-    - name: Cache node_modules
-      uses: actions/cache@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        path: action/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('action/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: action/package-lock.json
 
     - name: Install dependencies
       run: npm ci
