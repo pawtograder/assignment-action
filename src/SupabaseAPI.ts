@@ -58,6 +58,7 @@ export async function createSubmission(token: string) {
   }
   const resp = (await response.json()) as SubmissionResponse
   if (resp.error) {
+    console.error(resp)
     throw new Error(
       `Failed to create submission: ${resp.error.message} ${resp.error.details}`
     )
