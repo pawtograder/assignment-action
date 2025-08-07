@@ -46,9 +46,49 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: '24'
         cache: 'npm'
         cache-dependency-path: action/package-lock.json
+
+    - name: Diagnostics
+      shell: bash
+      run: |
+        echo "### Shell:"
+        echo "$SHELL"
+        echo
+
+        echo "### System info:"
+        uname -a
+        echo
+
+        echo "### CPU:"
+        lscpu || echo "lscpu not available"
+        echo
+
+        echo "### Memory:"
+        free -h || echo "free not available"
+        echo
+
+        echo "### Installed packages:"
+        dpkg -l | head -n 20 || echo "dpkg not available or truncated"
+        echo
+
+        echo "### PATH:"
+        echo "$PATH" | tr ':' '\n'
+        echo
+
+        echo "### Node version:"
+        node --version || echo "node not installed"
+        npm --version || echo "npm not installed"
+        echo
+
+        echo "### Working directory:"
+        pwd
+        ls -lah
+        echo
+
+        echo "### Environment variables:"
+        env | sort
 
     - name: Install Make
       run: sudo apt-get update && sudo apt-get install -y make
@@ -60,8 +100,12 @@ runs:
       shell: bash
       working-directory: action
 
-    # - name: Cache Pyret Build
+    # - name: Cache built Pyret file
+    #   id: cache-pyret
     #   uses: actions/cache@v4
+    #   with:
+    #     path: action/pyret/main.cjs
+    #     key: pyret-${{ hashFiles('action/pyret/main.arr', 'action/package-lock.json') }}
 
     - name: Build Pyret
       run:
