@@ -111,3 +111,5 @@ pyret/*.cjs
 pyret-npm
 
 .direnv/
+
+dist
