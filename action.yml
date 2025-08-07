@@ -50,59 +50,23 @@ runs:
         cache: 'npm'
         cache-dependency-path: action/package-lock.json
 
-    - name: Diagnostics
-      shell: bash
-      run: |
-        echo "### Shell:"
-        echo "$SHELL"
-        echo
-
-        echo "### System info:"
-        uname -a
-        echo
-
-        echo "### CPU:"
-        lscpu || echo "lscpu not available"
-        echo
-
-        echo "### Memory:"
-        free -h || echo "free not available"
-        echo
-
-        echo "### Installed packages:"
-        dpkg -l | head -n 20 || echo "dpkg not available or truncated"
-        echo
-
-        echo "### PATH:"
-        echo "$PATH" | tr ':' '\n'
-        echo
-
-        echo "### Node version:"
-        node --version || echo "node not installed"
-        npm --version || echo "npm not installed"
-        echo
-
-        echo "### Working directory:"
-        pwd
-        ls -lah
-        echo
-
-        echo "### Environment variables:"
-        env | sort
-    - name: Check if `make` is available
-      shell: bash
-      run: |
-        if command -v make >/dev/null 2>&1; then
-          echo "✅ make is already installed"
-          make --version
-        else
-          echo "❌ make not found; installing..."
-          sudo apt-get update && sudo apt-get install -y make
-        fi
-    - name: Install Make
-      run: sudo apt-get update && sudo apt-get install -y make
+    - name: Ensure make is available
       shell: bash
       working-directory: action
+      run: |
+        if command -v make >/dev/null 2>&1; then
+          echo "make is already available:"
+          make --version
+        else
+          echo "🔍 make not found, attempting install without update..."
+          if sudo apt-get install -y --no-install-recommends make; then
+            echo "make installed successfully without update"
+          else
+            echo "install failed, running apt-get update and retrying..."
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends make
+          fi
+        fi
 
     - name: Install dependencies
       run: npm ci
