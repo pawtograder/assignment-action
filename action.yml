@@ -31,7 +31,89 @@ inputs:
 outputs:
   score:
     description: The score of the submission
+    value: ${{ steps.grade.outputs.score }}
 
 runs:
-  using: node20
-  main: dist/index.js
+  using: 'composite'
+  steps:
+    - name: Check out action repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.action_repository }}
+        ref: ${{ inputs.action_ref }}
+        path: action
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        cache: 'npm'
+        cache-dependency-path: action/package-lock.json
+
+    - name: Ensure make is available
+      working-directory: action
+      shell: bash
+      run: |
+        echo "::group::Make"
+        start_time=$(date +%s)
+
+        if command -v make >/dev/null 2>&1; then
+          echo "✅ make is already available:"
+          make --version
+        else
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends make
+          echo "📥 make installed successfully:"
+          make --version
+        fi
+
+        end_time=$(date +%s)
+        echo "⏱️ Step took $((end_time - start_time)) seconds"
+        echo "::endgroup::"
+
+    - name: Install dependencies
+      working-directory: action
+      shell: bash
+      run: |
+        echo "::group::Installing dependencies"
+        start_time=$(date +%s)
+
+        npm ci
+
+        end_time=$(date +%s)
+        echo "⏱️ Step took $((end_time - start_time)) seconds"
+        echo "::endgroup::"
+
+    # - name: Cache built Pyret file
+    #   id: cache-pyret
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: action/pyret/main.cjs
+    #     key: pyret-${{ hashFiles('action/pyret/main.arr', 'action/package-lock.json') }}
+
+    - name: Build Pyret
+      working-directory: action
+      shell: bash
+      run: |
+        echo "::group::Building The Autograder"
+        start_time=$(date +%s)
+
+        npx pyret --builtin-js-dir node_modules/pyret-lang/src/js/trove/ \
+          --program pyret/main.arr --outfile pyret/main.cjs \
+          --no-check-mode --quiet --norun
+
+        end_time=$(date +%s)
+        echo "⏱️ Step took $((end_time - start_time)) seconds"
+        echo "::endgroup::"
+
+    - name: Run the autograder
+      id: grade
+      working-directory: action
+      shell: bash
+      env:
+        GRADING_SERVER: ${{ inputs.grading_server }}
+        HANDOUT_REPO: ${{ inputs.handout_repo }}
+        REGRESSION_TEST_JOB: ${{ inputs.regression_test_job }}
+        ACTION_REF: ${{ inputs.action_ref }}
+        ACTION_REPOSITORY: ${{ inputs.action_repository }}
+      run: node --enable-source-maps dist/index.js

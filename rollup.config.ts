@@ -14,7 +14,14 @@ const config = {
     format: 'es',
     sourcemap: true
   },
-  plugins: [typescript(), nodeResolve(), commonjs(), json()]
+  plugins: [
+    typescript({
+      include: ['src/**/*']
+    }),
+    nodeResolve(),
+    commonjs(),
+    json()
+  ]
 }
 
 export default config

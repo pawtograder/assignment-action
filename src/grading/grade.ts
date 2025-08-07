@@ -5,6 +5,7 @@ import yaml from 'yaml'
 import { AutograderFeedback } from '../api/adminServiceSchemas.js'
 import { PawtograderConfig } from './types.js'
 import { OverlayGrader } from './graders/OverlayGrader.js'
+import { PyretGrader } from './graders/PyretGrader.js'
 
 export async function makeGrader(
   config: PawtograderConfig,
@@ -24,8 +25,19 @@ export async function makeGrader(
         regressionTestJob
       )
     }
-    default:
-      throw new Error(`Unknown grader ${config.grader satisfies never}`)
+    case 'pyret':
+      return new PyretGrader(
+        solutionDir,
+        submissionDir,
+        config,
+        regressionTestJob
+      )
+    default: {
+      throw new Error(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        `Unknown grader ${(config satisfies never as any).grader}`
+      )
+    }
   }
 }
 
@@ -47,6 +59,9 @@ export default async function grade(
     regressionTestJob
   )
   const ret = await grader.grade()
+
+  console.log('Graded with:')
+  console.dir(ret)
 
   return ret
 }
