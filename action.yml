@@ -55,6 +55,7 @@ runs:
       working-directory: action
       shell: bash
       run: |
+        echo "::group::Make"
         start_time=$(date +%s)
 
         if command -v make >/dev/null 2>&1; then
@@ -68,20 +69,21 @@ runs:
         fi
 
         end_time=$(date +%s)
-        duration=$((end_time - start_time))
-        echo "⏱️ Step took $duration seconds"
+        echo "⏱️ Step took $((end_time - start_time)) seconds"
+        echo "::endgroup::"
 
     - name: Install dependencies
       working-directory: action
       shell: bash
       run: |
+        echo "::group::Installing dependencies"
         start_time=$(date +%s)
 
         npm ci
 
         end_time=$(date +%s)
-        duration=$((end_time - start_time))
-        echo "⏱️ Step took $duration seconds"
+        echo "⏱️ Step took $((end_time - start_time)) seconds"
+        echo "::endgroup::"
 
     # - name: Cache built Pyret file
     #   id: cache-pyret
@@ -94,15 +96,16 @@ runs:
       working-directory: action
       shell: bash
       run: |
+        echo "::group::Building The Autograder"
         start_time=$(date +%s)
 
         npx pyret --builtin-js-dir node_modules/pyret-lang/src/js/trove/ \
           --program pyret/main.arr --outfile pyret/main.cjs \
           --no-check-mode --quiet --norun
 
-        end_time=$(date +%s) 
-        duration=$((end_time - start_time)) 
-        echo "⏱️ Step took $duration seconds"
+        end_time=$(date +%s)
+        echo "⏱️ Step took $((end_time - start_time)) seconds"
+        echo "::endgroup::"
 
     - name: Run the autograder
       id: grade
