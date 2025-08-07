@@ -45,7 +45,6 @@ runs:
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
-      working-directory: action
       with:
         node-version: '24'
         cache: 'npm'
