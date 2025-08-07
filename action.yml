@@ -89,7 +89,16 @@ runs:
 
         echo "### Environment variables:"
         env | sort
-
+    - name: Check if `make` is available
+      shell: bash
+      run: |
+        if command -v make >/dev/null 2>&1; then
+          echo "✅ make is already installed"
+          make --version
+        else
+          echo "❌ make not found; installing..."
+          sudo apt-get update && sudo apt-get install -y make
+        fi
     - name: Install Make
       run: sudo apt-get update && sudo apt-get install -y make
       shell: bash
