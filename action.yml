@@ -82,11 +82,13 @@ runs:
 
     - name: Check Nix config
       shell: bash
+      working-directory: action
       run: |
         nix config show
 
     - name: Build
       shell: bash
+      working-directory: action
       run: |
         nix build -L -v
 
