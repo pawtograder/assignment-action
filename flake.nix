@@ -35,7 +35,7 @@
           };
           nodejs = pkgs.nodejs_24;
           # npmDepsHash = lib.fakeHash;
-          npmDepsHash = "sha256-URzuH5jcu7pZjjiLM3kNuivHLhjVqHPSfaiVY4HIAkM=";
+          npmDepsHash = "sha256-I6T/ywWRhaMwX6xXrPcpzrZzRK3VSU5Tkmv4YQbUKaA=";
 
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
