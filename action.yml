@@ -66,7 +66,7 @@ runs:
       uses: cachix/install-nix-action@v27
       with:
         nix_path: nixpkgs=channel:nixos-25.05
-        enable_kvm: false
+        extra_nix_config: 'max-jobs = 1'
 
     - name: Set USER if not already set
       shell: bash
@@ -80,13 +80,10 @@ runs:
         name: pawtograder-runner-pyret
         # authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-    - name: Check Nix substituters
+    - name: Check Nix config
       shell: bash
       run: |
-        echo "Current substituters:"
-        nix show-config | grep substituters
-        echo "Checking cache info:"
-        curl -s https://pawtograder-runner-pyret.cachix.org/nix-cache-info || echo "Cache not accessible"
+        nix config show
 
     - name: Run the autograder
       id: grade
