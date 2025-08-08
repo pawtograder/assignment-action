@@ -1,8 +1,9 @@
 # TODO: nicer pyret entry?
 import npm("pyret-autograder-pawtograder", "../src/main.arr") as P
-include js-file("stdin")
+# FIXME: pyret's nested modules are broken
+include npm("pyret-autograder", "../src/tools/main.arr")
 
-input = get-stdin()
+input = io.get-stdin()
 result = P.grade-pawtograder-spec(input)
 
 print(result.serialize() + "\n")
