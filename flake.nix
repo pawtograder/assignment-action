@@ -59,19 +59,27 @@
           buildPhase = ''
             runHook preBuild
 
+            exec 2>&1
+            set -x
+
             # `/usr/bin/env` doesn't exist in minimal nix environment
             substituteInPlace node_modules/pyret-lang/Makefile \
               --replace "SHELL := /usr/bin/env bash" "SHELL := ${pkgs.bash}/bin/bash"
             cat node_modules/pyret-lang/Makefile
 
+            echo "start post install scripts"
             npm rebuild # post install scripts
+            echo "start ts package"
             npm run package
 
+            echo "start compile pyret"
             npx pyret \
               --builtin-js-dir node_modules/pyret-lang/src/js/trove/ \
               --program pyret/main.arr \
               --outfile pyret/main.cjs \
               --no-check-mode --norun
+
+            echo "done building"
 
             runHook postBuild
           '';

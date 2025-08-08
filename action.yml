@@ -85,6 +85,11 @@ runs:
       run: |
         nix config show
 
+    - name: Build
+      shell: bash
+      run: |
+        nix build -L -v
+
     - name: Run the autograder
       id: grade
       working-directory: action
