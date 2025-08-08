@@ -25,7 +25,7 @@ inputs:
     description: The ref of the action, e.g. github.action_ref
     required: true
   action_repository:
-    description: The repository of the action, e.g.  github.action_repository
+    description: The repository of the action, e.g. github.action_repository
     required: true
 
 outputs:
@@ -53,11 +53,19 @@ runs:
           echo "found=false" >> "$GITHUB_OUTPUT"
         fi
 
+    - name: Install xy
+      if: steps.has-nix.outputs.found == 'false'
+      shell: bash
+      run: |
+        wget -qO- https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -xz -C /usr/local/bin
+        chmod +x /usr/local/bin/xz
+
     - name: Install Nix
       if: steps.has-nix.outputs.found == 'false'
       uses: cachix/install-nix-action@v27
       with:
         nix_path: nixpkgs=channel:nixos-25.05
+        enable_kvm: false
 
     - uses: cachix/cachix-action@v15
       with:
