@@ -31,12 +31,14 @@ export interface BuildConfig {
     artifacts?: GraderArtifact[];
     linter?: {
         preset: 'checkstyle';
-        policy: 'fail' | 'warn' | 'ignore';
+        policy: 'fail' | 'ignore';
     };
     student_tests?: {
         student_impl?: {
             run_tests?: boolean;
             report_branch_coverage?: boolean;
+            run_mutation?: boolean;
+            report_mutation_coverage?: boolean;
         };
         instructor_impl?: {
             run_tests?: boolean;

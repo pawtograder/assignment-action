@@ -13,6 +13,7 @@ export default class PythonScriptBuilder extends Builder {
     }>;
     setupVenv(dir: string, key: string): Promise<void>;
     lint(): Promise<LintResult>;
+    getMutationCoverageReportDir(): string | undefined;
     getCoverageReport(): Promise<string>;
     getCoverageReportDir(): string;
     test({ timeoutSeconds }: BuildStepOptions): Promise<TestResult[]>;

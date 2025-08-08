@@ -3,11 +3,13 @@ import { SummaryTableRow } from '@actions/core/lib/summary.js'
 import { exec } from '@actions/exec'
 import { createWriteStream, readFileSync } from 'fs'
 import { createClient } from '@supabase/supabase-js'
+import JSZip from 'jszip'
 
 import { mkdir, rename } from 'fs/promises'
-import { stat } from 'fs/promises'
+import { stat, readdir } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
+import { join } from 'path'
 import {
   createRegressionTestRun,
   createSubmission,
@@ -31,6 +33,29 @@ async function downloadTarballAndExtractTo(url: string, dir: string) {
     '--strip-components',
     '1'
   ])
+}
+
+async function zipDirectory(dirPath: string): Promise<Buffer> {
+  const zip = new JSZip()
+
+  async function addFiles(currentPath: string, zipPath: string = '') {
+    const items = await readdir(currentPath, { withFileTypes: true })
+
+    for (const item of items) {
+      const fullPath = join(currentPath, item.name)
+      const zipEntryPath = zipPath ? join(zipPath, item.name) : item.name
+
+      if (item.isDirectory()) {
+        await addFiles(fullPath, zipEntryPath)
+      } else {
+        const fileBuffer = readFileSync(fullPath)
+        zip.file(zipEntryPath, fileBuffer)
+      }
+    }
+  }
+
+  await addFiles(dirPath)
+  return await zip.generateAsync({ type: 'nodebuffer' })
 }
 
 async function prepareForGrading(
@@ -214,10 +239,8 @@ export async function run(): Promise<void> {
               let fileToUpload: Buffer
 
               if (stats.isDirectory()) {
-                // Create a zip file for the directory
-                const zipPath = `${artifact.path}.zip`
-                await exec('zip', ['-r', zipPath, artifact.path])
-                fileToUpload = readFileSync(zipPath)
+                // Create a zip file for the directory using JSZip
+                fileToUpload = await zipDirectory(artifact.path)
               } else {
                 fileToUpload = readFileSync(artifact.path)
               }

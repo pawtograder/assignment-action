@@ -107,7 +107,14 @@ export abstract class Builder {
               new Error(`Command timed out after ${timeoutSeconds} seconds`)
             )
           } else {
-            reject(err)
+            myOutput += myError
+            logger.log('hidden', `Command failed with output:\n${myOutput}`)
+            if (ignoreFailures) {
+              logger.log('hidden', `Ignoring failure`)
+              resolve({ returnCode: 1, output: myOutput })
+            } else {
+              reject(err)
+            }
           }
         })
       }
@@ -121,6 +128,9 @@ export abstract class Builder {
   abstract buildClean(options: BuildStepOptions): Promise<void>
   abstract getCoverageReport(): Promise<string>
   abstract getCoverageReportDir(): string | null
+  getMutationCoverageReportDir(): string | undefined {
+    return undefined
+  }
   abstract setupVenv(dir: string, key: string): Promise<void>
 }
 
