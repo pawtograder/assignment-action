@@ -43,13 +43,6 @@ runs:
         ref: ${{ inputs.action_ref }}
         path: action
 
-    - name: DEBUG
-      shell: bash
-      run: |
-        echo "PATH: $PATH"
-        ls /bin/ 
-        ls /usr/local/bin
-
     - name: Check if Nix is installed
       id: has-nix
       shell: bash
@@ -64,7 +57,7 @@ runs:
       if: steps.has-nix.outputs.found == 'false'
       shell: bash
       run: |
-        wget -qO- https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -xz -C /usr/local/bin
+        curl -sL https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -xz -C /usr/local/bin
         chmod +x /usr/local/bin/xz
 
     - name: Install Nix
