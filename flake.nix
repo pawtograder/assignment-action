@@ -34,7 +34,8 @@
             ];
           };
           nodejs = pkgs.nodejs_24;
-          npmDepsHash = "sha256-tSjDttcCU/w9vNaomVKNIU/t1dkaaU0ESI+IB7zwHzA=";
+          # npmDepsHash = lib.fakeHash;
+          npmDepsHash = "sha256-URzuH5jcu7pZjjiLM3kNuivHLhjVqHPSfaiVY4HIAkM=";
 
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
@@ -61,7 +62,7 @@
 
             # `/usr/bin/env` doesn't exist in minimal nix environment
             substituteInPlace node_modules/pyret-lang/Makefile \
-              --replace "SHELL := /usr/bin/env bash" "SHELL := ${pkgs.bash}/bin/bash"
+              --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${pkgs.bash}/bin/bash"
 
             echo "start post install scripts"
             npm rebuild # post install scripts
