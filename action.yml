@@ -25,7 +25,7 @@ inputs:
     description: The ref of the action, e.g. github.action_ref
     required: true
   action_repository:
-    description: The repository of the action, e.g.  github.action_repository
+    description: The repository of the action, e.g. github.action_repository
     required: true
 
 outputs:
@@ -53,16 +53,44 @@ runs:
           echo "found=false" >> "$GITHUB_OUTPUT"
         fi
 
+    - name: Install xy
+      if: steps.has-nix.outputs.found == 'false'
+      shell: bash
+      run: |
+        curl -sL https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -x -C /tmp
+        sudo mv /tmp/xz-5.2.5-linux-x86_64/xz /usr/local/bin/
+        sudo chmod +x /usr/local/bin/xz
+
     - name: Install Nix
       if: steps.has-nix.outputs.found == 'false'
       uses: cachix/install-nix-action@v27
       with:
         nix_path: nixpkgs=channel:nixos-25.05
+        extra_nix_config: 'max-jobs = 1'
+
+    - name: Set USER if not already set
+      shell: bash
+      run: |
+        if [ -z "$USER" ]; then
+          echo "USER=runner" >> $GITHUB_ENV
+        fi
 
     - uses: cachix/cachix-action@v15
       with:
         name: pawtograder-runner-pyret
         # authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+    - name: Check Nix config
+      shell: bash
+      working-directory: action
+      run: |
+        nix config show
+
+    - name: Build
+      shell: bash
+      working-directory: action
+      run: |
+        nix build -L -v
 
     - name: Run the autograder
       id: grade
