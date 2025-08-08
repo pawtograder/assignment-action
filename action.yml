@@ -56,8 +56,15 @@ runs:
     - name: Install xy
       if: steps.has-nix.outputs.found == 'false'
       shell: bash
+      # run: |
+      #   curl -sL https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -xz -C /usr/local/bin
+      #   chmod +x /usr/local/bin/xz
       run: |
-        curl -sL https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -xz -C /usr/local/bin
+        cd /tmp
+        curl -L -o xz.tar.gz https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz
+        file xz.tar.gz
+        tar -xvf xz.tar.gz
+        mv xz /usr/local/bin/
         chmod +x /usr/local/bin/xz
 
     - name: Install Nix
