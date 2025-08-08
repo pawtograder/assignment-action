@@ -83,13 +83,17 @@ runs:
       shell: bash
       working-directory: action
       run: |
+        echo "::group::Nix Configuration"
         nix config show
+        echo "::endgroup::"
 
     - name: Build
       shell: bash
       working-directory: action
       run: |
+        echo "::group::Nix Build Output"
         nix build -L -v
+        echo "::endgroup::"
 
     - name: Run the autograder
       id: grade
