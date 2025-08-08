@@ -68,6 +68,13 @@ runs:
         nix_path: nixpkgs=channel:nixos-25.05
         enable_kvm: false
 
+    - name: Set USER if not already set
+      shell: bash
+      run: |
+        if [ -z "$USER" ]; then
+          echo "USER=runner" >> $GITHUB_ENV
+        fi
+
     - uses: cachix/cachix-action@v15
       with:
         name: pawtograder-runner-pyret
