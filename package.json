@@ -47,7 +47,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.7.9",
-    "csv-parse": "^5.6.0",
+    "csv-parse": "^6.1.0",
     "glob": "^11.0.1",
     "jszip": "^3.10.1",
     "node-fetch": "^3.3.2",
