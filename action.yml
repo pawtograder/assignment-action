@@ -27,6 +27,11 @@ inputs:
   action_repository:
     description: The repository of the action, e.g. github.action_repository
     required: true
+  cachix_name:
+    description: The cachix cache to use
+    default: pawtograder-runner-pyret
+  cachix_auth_token:
+    description: Optionally provide a cachix auth token
 
 outputs:
   score:
@@ -76,8 +81,8 @@ runs:
 
     - uses: cachix/cachix-action@v15
       with:
-        name: pawtograder-runner-pyret
-        # authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        name: ${{ inputs.cachix_name }}
+        authToken: '${{ inputs.cachix_auth_token }}'
 
     - name: Check Nix config
       shell: bash
