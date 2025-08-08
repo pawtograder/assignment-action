@@ -43,6 +43,13 @@ runs:
         ref: ${{ inputs.action_ref }}
         path: action
 
+    - name: DEBUG
+      shell: bash
+      run: |
+        echo "PATH: $PATH"
+        ls /bin/ 
+        ls /usr/local/bin
+
     - name: Check if Nix is installed
       id: has-nix
       shell: bash
