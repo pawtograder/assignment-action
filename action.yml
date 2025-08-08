@@ -58,8 +58,8 @@ runs:
       shell: bash
       run: |
         curl -sL https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -x -C /tmp
-        mv /tmp/xz-5.2.5-linux-x86_64/xz /usr/local/bin/
-        chmod +x /usr/local/bin/xz
+        sudo mv /tmp/xz-5.2.5-linux-x86_64/xz /usr/local/bin/
+        sudo chmod +x /usr/local/bin/xz
 
     - name: Install Nix
       if: steps.has-nix.outputs.found == 'false'
