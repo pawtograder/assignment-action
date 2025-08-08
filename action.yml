@@ -97,7 +97,8 @@ runs:
       working-directory: action
       run: |
         echo "::group::Nix Build Output"
-        nix build -L -v
+        # nix build -L -v
+        nix build
         echo "::endgroup::"
 
     - name: Run the autograder
