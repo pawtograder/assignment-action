@@ -6,7 +6,7 @@ import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
-import PythonScriptBuilder from '../builders/ScriptBuilder.js'
+import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -210,39 +210,63 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               'No results from grading tests. Please check overall output for more details.',
             output_format: 'markdown',
             score: 0,
-            max_score: unit.breakPoints[0].pointsToAward
+            max_score:
+              unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
           }
         ]
       } else {
+        const maxScore =
+          unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
+        const maxMutantsToDetect =
+          unit.breakPoints?.[0].minimumMutantsDetected ??
+          unit.linearScoring?.total_faults
+
+        if (!maxScore || !maxMutantsToDetect) {
+          throw new Error(
+            `Incorrect mutation test specification (should either provide valid breakpoints or total points and faults): ${JSON.stringify(unit)}`
+          )
+        }
         const relevantMutantResults = mutantResults.filter((mr) => {
           const locations = unit.locations
           const mutantLocation = mr.location
-          const mutantLocationParts = mutantLocation.split(':')
-          const mutantLine = parseInt(mutantLocationParts[1])
-          const mutantEndLine = parseInt(mutantLocationParts[2])
-          return locations.some((location) => {
-            const locationParts = location.split('-')
-            const locationLine = parseInt(locationParts[1])
-            const locationEndLine = parseInt(locationParts[2])
-            return (
-              mutantLine >= locationLine && mutantEndLine <= locationEndLine
-            )
-          })
+          if (!mutantLocation.includes(':')) {
+            return locations.some((location) => {
+              return mutantLocation.startsWith(location)
+            })
+          } else {
+            const mutantLocationParts = mutantLocation.split(':')
+            const mutantLine = parseInt(mutantLocationParts[1])
+            const mutantEndLine = parseInt(mutantLocationParts[2])
+            return locations.some((location) => {
+              const locationParts = location.split('-')
+              const locationLine = parseInt(locationParts[1])
+              const locationEndLine = parseInt(locationParts[2])
+              return (
+                mutantLine >= locationLine && mutantEndLine <= locationEndLine
+              )
+            })
+          }
         })
         const mutantsDetected = relevantMutantResults.filter(
           (mr) => mr.status === 'pass'
         ).length
-        const maxMutantsToDetect = unit.breakPoints[0].minimumMutantsDetected
-        const breakPoint = unit.breakPoints.find(
-          (bp) => bp.minimumMutantsDetected <= mutantsDetected
-        )
+
+        let score: number | undefined = 0
+        if (unit.breakPoints) {
+          score = unit.breakPoints.find(
+            (bp) => bp.minimumMutantsDetected <= mutantsDetected
+          )?.pointsToAward
+        } else {
+          score = (mutantsDetected / maxMutantsToDetect) * maxScore
+        }
+
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}**`,
+            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}`,
             output_format: 'markdown',
-            score: breakPoint ? breakPoint.pointsToAward : 0,
-            max_score: unit.breakPoints[0].pointsToAward
+            score: score ?? 0,
+            max_score: maxScore
           }
         ]
       }
@@ -400,7 +424,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 output_format: 'text' as OutputFormat,
                 score: 0,
                 part: part.name,
-                max_score: gradedUnit.breakPoints[0].pointsToAward
+                max_score:
+                  gradedUnit.breakPoints?.[0].pointsToAward ??
+                  gradedUnit.linearScoring?.points
               }
             } else {
               throw new Error(
@@ -455,7 +481,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 output_format: 'text' as OutputFormat,
                 score: 0,
                 part: part.name,
-                max_score: gradedUnit.breakPoints[0].pointsToAward
+                max_score:
+                  gradedUnit.breakPoints?.[0].pointsToAward ??
+                  gradedUnit.linearScoring?.points
               }
             } else {
               throw new Error(
@@ -693,61 +721,31 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         studentMutationOutput = mutantFailureAdvice
       }
       if (mutantResults) {
-        const getMutantPrompt = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.prompt
-            }
-          }
-          return mutantName
-        }
-        const getMutantShortName = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.name
-            }
-          }
-          return undefined
-        }
-
         const mutantsDetected = mutantResults
           .filter((mr) => mr.status === 'pass')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            const shortName = getMutantShortName(mr.name)
-            return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
+            const shortName = mr.shortName ?? mr.name
+            return `* ${shortName} (${mr.prompt ?? 'No prompt provided for this bug :( '})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = mutantResults
           .filter((mr) => mr.status === 'fail')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            return `* **${mr.name}** (${prompt})`
+            const shortName = mr.shortName ?? mr.name
+            return `* **${shortName}** (${mr.prompt ?? 'No prompt provided for this bug :( '})`
           })
-        studentMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
+        studentMutationOutput += `Faults detected(${mutantsDetected.length}):\n`
         studentMutationOutput += `${mutantsDetected.join('\n')}\n\n`
-        studentMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
+        studentMutationOutput += `Faults not detected(${mutantsNotDetected.length}):\n`
         studentMutationOutput += `${mutantsNotDetected.join('\n')}`
       }
       this.logger.log('hidden', studentMutationOutput)
-      if (this.config.mutantAdvice) {
-        testFeedbacks.push({
-          name: 'Fault Coverage Report',
-          output: studentMutationOutput,
-          output_format: 'markdown',
-          score: 0,
-          max_score: 0
-        })
-      }
+      testFeedbacks.push({
+        name: 'Fault Coverage Report',
+        output: studentMutationOutput,
+        output_format: 'markdown',
+        score: 0,
+        max_score: 0
+      })
     }
     if (
       this.config.build.student_tests?.student_impl?.report_mutation_coverage
@@ -758,44 +756,21 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         studentImplMutationOutput = studentImplMutantFailureAdvice
       }
       if (studentImplMutantResults) {
-        const getMutantPrompt = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.prompt
-            }
-          }
-          return mutantName
-        }
-        const getMutantShortName = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.name
-            }
-          }
-          return undefined
+        const getMutantPrompt = (mr: MutantResult) => {
+          return mr.prompt ?? 'No prompt provided for this bug :( '
         }
 
         const mutantsDetected = studentImplMutantResults
           .filter((mr) => mr.status === 'pass')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            const shortName = getMutantShortName(mr.name)
+            const prompt = getMutantPrompt(mr)
+            const shortName = mr.shortName ?? mr.name
             return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = studentImplMutantResults
           .filter((mr) => mr.status === 'fail')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
+            const prompt = getMutantPrompt(mr)
             return `* **${mr.name}** (${prompt})`
           })
         studentImplMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
@@ -804,16 +779,14 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         studentImplMutationOutput += `${mutantsNotDetected.join('\n')}`
       }
       this.logger.log('hidden', studentImplMutationOutput)
-      if (this.config.mutantAdvice) {
-        testFeedbacks.push({
-          name: 'Student Implementation Fault Coverage Report',
-          output: studentImplMutationOutput,
-          output_format: 'markdown',
-          score: 0,
-          max_score: 0,
-          part: 'Student Implementation Tests'
-        })
-      }
+      testFeedbacks.push({
+        name: 'Student Implementation Fault Coverage Report',
+        output: studentImplMutationOutput,
+        output_format: 'markdown',
+        score: 0,
+        max_score: 0,
+        part: 'Student Implementation Tests'
+      })
     }
     if (this.config.build.student_tests?.student_impl?.report_branch_coverage) {
       const passingTestCount = studentTestResults?.filter(
