@@ -87,13 +87,13 @@
             rm -rf $out/lib/node_modules/pawtograder-assignment-action
 
             mkdir -p $out/lib/pawtograder/pyret
-            cp pyret/main.cjs $out/lib/pawtograder/pyret/ || true
+            cp pyret/main.cjs $out/lib/pawtograder/pyret/
 
             mkdir -p $out/bin
             makeWrapper ${pkgs.nodejs_24}/bin/node $out/bin/pawtograder \
               --add-flags "--enable-source-maps" \
               --add-flags "$out/lib/pawtograder/dist/index.js" \
-              # --chdir "$out/lib/pawtograder"
+              --set PYRET_MAIN_PATH "$out/lib/pawtograder/pyret/main.cjs"
           '';
         };
       });
