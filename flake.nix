@@ -96,7 +96,7 @@
             makeWrapper ${pkgs.nodejs_24}/bin/node $out/bin/pawtograder \
               --add-flags "--enable-source-maps" \
               --add-flags "$out/lib/pawtograder/dist/index.js" \
-              --chdir "$out/lib/pawtograder"
+              # --chdir "$out/lib/pawtograder"
           '';
         };
       });
