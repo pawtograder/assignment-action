@@ -59,13 +59,9 @@
           buildPhase = ''
             runHook preBuild
 
-            exec 2>&1
-            set -x
-
             # `/usr/bin/env` doesn't exist in minimal nix environment
             substituteInPlace node_modules/pyret-lang/Makefile \
               --replace "SHELL := /usr/bin/env bash" "SHELL := ${pkgs.bash}/bin/bash"
-            cat node_modules/pyret-lang/Makefile
 
             echo "start post install scripts"
             npm rebuild # post install scripts
