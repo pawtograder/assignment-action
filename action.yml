@@ -80,6 +80,14 @@ runs:
         name: pawtograder-runner-pyret
         # authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
+    - name: Check Nix substituters
+      shell: bash
+      run: |
+        echo "Current substituters:"
+        nix show-config | grep substituters
+        echo "Checking cache info:"
+        curl -s https://pawtograder-runner-pyret.cachix.org/nix-cache-info || echo "Cache not accessible"
+
     - name: Run the autograder
       id: grade
       working-directory: action
