@@ -36,7 +36,9 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
     const spec = await this.resolveSpec()
 
     return new Promise((resolve, reject) => {
-      const grader = spawn(process.execPath, ['pyret/main.cjs'])
+      const grader = spawn(process.execPath, [
+        process.env.PYRET_MAIN_PATH ?? 'pyret/main.cjs'
+      ])
       let output = ''
       let error = ''
       console.log('pyret child spawned')
