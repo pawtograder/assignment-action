@@ -18,8 +18,7 @@
     {
       packages = eachSystem (pkgs: rec {
         pyret-repos = pkgs.stdenv.mkDerivation {
-          pname = "pyret-repos";
-          version = "1.0.0";
+          name = "pyret-repos";
 
           sourceRoot = ".";
 
@@ -48,6 +47,52 @@
           installPhase = ''
             mkdir -p $out
             cp -r ./* $out
+          '';
+        };
+
+        # so... the repl need to have access to compiled modules at runtime to
+        # avoid complete recompilation
+        compiled-pyret = pkgs.buildNpmPackage {
+          name = "pyret-built";
+
+          src = "${pyret-repos}/pyret-lang";
+          nodejs = pkgs.nodejs_24;
+
+          # npmDepsHash = lib.fakeHash;
+          npmDepsHash = "sha256-hxH66Mj2wbY5J6B9pRNen+qo8MHpw+X61D6Cgz+keMo=";
+
+          dontNpmBuild = true;
+          npmFlags = [ "--ignore-scripts" ];
+
+          nativeBuildInputs = with pkgs; [
+            gnumake
+            pkg-config
+            python3
+          ];
+
+          buildInputs = with pkgs; [
+            pixman
+            cairo
+            pango
+          ];
+
+          buildPhase = ''
+            runHook preBuild
+
+            substituteInPlace Makefile \
+              --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
+
+            npm rebuild
+            make phaseA libA
+            runHook postBuild
+          '';
+
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out
+            cp -r src $out/
+            cp -r build $out/
+            runHook postInstall
           '';
         };
 
@@ -83,8 +128,7 @@
             '';
           in
           (pkgs.buildNpmPackage {
-            pname = "pyret-runtime-deps";
-            version = "1.0.0";
+            name = "pyret-runtime-deps";
             inherit src;
 
             nodejs = pkgs.nodejs_24;
@@ -108,8 +152,7 @@
 
         action-build = (
           pkgs.buildNpmPackage {
-            pname = "pawtograder-assignment-action-build";
-            version = "1.0.0";
+            name = "pawtograder-assignment-action-build";
 
             src = lib.fileset.toSource {
               root = ./.;
@@ -126,7 +169,7 @@
 
             nodejs = pkgs.nodejs_24;
             # npmDepsHash = lib.fakeHash;
-            npmDepsHash = "sha256-I6T/ywWRhaMwX6xXrPcpzrZzRK3VSU5Tkmv4YQbUKaA=";
+            npmDepsHash = "sha256-NQZZxCwQAJfr6wDJjkcR5fkm0Qm5ax61rxDLYI3cR7Y=";
             dontNpmBuild = true;
             npmFlags = [ "--ignore-scripts" ];
 
@@ -199,11 +242,13 @@
               makeWrapper ${nodejs_24-slim-exec} $out/bin/action-runner \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/index.js" \
+                --set PA_PYRET_LANG_COMPILED_PATH ${compiled-pyret}/build/phaseA/lib-compiled \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
 
               makeWrapper ${nodejs_24-slim-exec} $out/bin/grading-cli \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/grading.js" \
+                --set PA_PYRET_LANG_COMPILED_PATH ${compiled-pyret}/build/phaseA/lib-compiled \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
             '';
       });
