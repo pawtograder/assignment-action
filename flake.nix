@@ -17,6 +17,8 @@
     in
     {
       packages = eachSystem (pkgs: rec {
+        node-js-very-slim = import ./nix/node-js-very-slim.nix { inherit pkgs; };
+
         pyret-repos = pkgs.stdenv.mkDerivation {
           name = "pyret-repos";
 
@@ -130,10 +132,6 @@
 
               cp ${pyret-repos}/pyret-lang/package-lock.json $out/package-lock.json
             '';
-
-            nodejs-slim = pkgs.nodejs_24.override {
-              enableNpm = false;
-            };
           in
           (pkgs.buildNpmPackage {
             name = "pyret-runtime-deps";
@@ -153,7 +151,7 @@
 
               # Replace all references to the full nodejs with the slim nodejs
               find $out -type f -exec sed -i \
-                "s|${pkgs.nodejs_24}/bin/node|${nodejs-slim}/bin/node|g" {} +
+                "s|${pkgs.nodejs_24}/bin/node|${node-js-very-slim}/bin/node|g" {} +
             '';
 
             disallowedReferences = [ pkgs.nodejs_24 ];
@@ -230,11 +228,7 @@
 
         default =
           let
-            nodejs_24-slim-exec = lib.getExe (
-              pkgs.nodejs_24.override {
-                enableNpm = false;
-              }
-            );
+            nodejs-very-slim-exec = lib.getExe (node-js-very-slim);
           in
           pkgs.runCommand "pawtograder-assignment-action"
             {
@@ -253,13 +247,13 @@
               cp -r ${action-build}/main.cjs $out/main.cjs
               cp -r ${pyret-runtime-deps}/node_modules $out/node_modules
 
-              makeWrapper ${nodejs_24-slim-exec} $out/bin/action-runner \
+              makeWrapper ${nodejs-very-slim-exec} $out/bin/action-runner \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/index.js" \
                 --set PA_PYRET_LANG_COMPILED_PATH ${compiled-pyret}/build/phaseA/lib-compiled \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
 
-              makeWrapper ${nodejs_24-slim-exec} $out/bin/grading-cli \
+              makeWrapper ${nodejs-very-slim-exec} $out/bin/grading-cli \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/grading.js" \
                 --set PA_PYRET_LANG_COMPILED_PATH ${compiled-pyret}/build/phaseA/lib-compiled \
