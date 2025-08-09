@@ -230,11 +230,11 @@
               ];
             }
             ''
-              mkdir -p $out/lib/pawtograder $out/bin
+              mkdir -p $out/bin
 
-              ln -s ${pawtograder-build}/dist $out/lib/pawtograder/dist
-              ln -s ${pawtograder-build}/main.cjs $out/lib/pawtograder/main.cjs
-              ln -s ${pyret-runtime-deps}/node_modules $out/lib/pawtograder/node_modules
+              ln -s ${pawtograder-build}/dist $out/dist
+              ln -s ${pawtograder-build}/main.cjs $out/main.cjs
+              ln -s ${pyret-runtime-deps}/node_modules $out/node_modules
 
               makeWrapper ${
                 lib.getExe (
@@ -245,8 +245,7 @@
               } $out/bin/pawtograder \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/lib/pawtograder/dist/index.js" \
-                --set PYRET_MAIN_PATH "$out/lib/pawtograder/main.cjs" \
-                --set NODE_PATH "$out/lib/pawtograder/node_modules"
+                --set PYRET_MAIN_PATH "$out/lib/pawtograder/main.cjs"
             '';
       });
 
