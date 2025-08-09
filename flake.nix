@@ -89,11 +89,15 @@
 
           installPhase = ''
             runHook preInstall
+
             mkdir -p $out
             cp -r src $out/
             cp -r build $out/
+
             runHook postInstall
           '';
+
+          disallowedReferences = [ pkgs.nodejs_24 ];
         };
 
         pyret-runtime-deps =
@@ -126,6 +130,10 @@
 
               cp ${pyret-repos}/pyret-lang/package-lock.json $out/package-lock.json
             '';
+
+            nodejs-slim = pkgs.nodejs_24.override {
+              enableNpm = false;
+            };
           in
           (pkgs.buildNpmPackage {
             name = "pyret-runtime-deps";
@@ -137,22 +145,26 @@
             dontNpmBuild = true;
             npmFlags = [ "--ignore-scripts" ];
             npmPruneFlags = [ "--omit=dev" ];
+            dontStrip = false;
 
             installPhase = ''
-              runHook preInstall
               mkdir -p $out
               cp -r node_modules $out/
-              runHook postInstall
+
+              # Replace all references to the full nodejs with the slim nodejs
+              find $out -type f -exec sed -i \
+                "s|${pkgs.nodejs_24}/bin/node|${nodejs-slim}/bin/node|g" {} +
             '';
+
+            disallowedReferences = [ pkgs.nodejs_24 ];
+
           }).overrideAttrs
-            ({
-              buildInputs = [ ];
-              propagatedBuildInputs = [ ];
-            });
+            ({ buildInputs = [ ]; });
 
         action-build = (
           pkgs.buildNpmPackage {
             name = "pawtograder-assignment-action-build";
+            version = "1.0.0";
 
             src = lib.fileset.toSource {
               root = ./.;
@@ -211,6 +223,8 @@
               cp pyret/main.cjs $out/
               runHook postInstall
             '';
+
+            disallowedReferences = [ pkgs.nodejs_24 ];
           }
         );
 
