@@ -52,8 +52,7 @@
           '';
         };
 
-        # so... the repl need to have access to compiled modules at runtime to
-        # avoid complete recompilation
+        # so... the repl need to have access to built-in modules at runtime
         compiled-pyret = pkgs.buildNpmPackage {
           name = "pyret-built";
 
@@ -85,7 +84,30 @@
               --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
 
             npm rebuild
+
             make phaseA libA
+
+            mkdir -p build/cpo
+
+            # if we compile directly, name will be wrong
+            cat > build/compile-dcic.arr << 'EOF'
+            import dcic2024 as _
+            EOF
+
+            # manually add dcic2024 context
+            node build/phaseA/pyret.jarr \
+              -allow-builtin-overrides \
+              --builtin-js-dir src/js/trove/ \
+              --builtin-js-dir ${pyret-repos}/cpo/src/web/js/trove/ \
+              --builtin-arr-dir src/arr/trove/ \
+              --builtin-arr-dir ${pyret-repos}/cpo/src/web/arr/trove/ \
+              --require-config src/scripts/standalone-configA.json \
+              --compiled-dir build/cpo/ \
+              --build-runnable build/compile-dcic.arr \
+              --standalone-file src/js/base/handalone.js \
+              --outfile build/cpo/compile-dcic.jarr \
+              -no-check-mode
+
             runHook postBuild
           '';
 
@@ -179,7 +201,7 @@
 
             nodejs = pkgs.nodejs_24;
             # npmDepsHash = lib.fakeHash;
-            npmDepsHash = "sha256-NQZZxCwQAJfr6wDJjkcR5fkm0Qm5ax61rxDLYI3cR7Y=";
+            npmDepsHash = "sha256-cKt+7luXpwPlZ0EM3yXJMnza1uuU8YTC3wo1FATPpMo=";
             dontNpmBuild = true;
             npmFlags = [ "--ignore-scripts" ];
 
@@ -250,13 +272,13 @@
               makeWrapper ${nodejs-very-slim-exec} $out/bin/action-runner \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/index.js" \
-                --set PA_PYRET_LANG_COMPILED_PATH ${compiled-pyret}/build/phaseA/lib-compiled \
+                --set PA_PYRET_LANG_COMPILED_PATH "${compiled-pyret}/build/phaseA/lib-compiled:${compiled-pyret}/build/cpo" \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
 
               makeWrapper ${nodejs-very-slim-exec} $out/bin/grading-cli \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/grading.js" \
-                --set PA_PYRET_LANG_COMPILED_PATH ${compiled-pyret}/build/phaseA/lib-compiled \
+                --set PA_PYRET_LANG_COMPILED_PATH "${compiled-pyret}/build/phaseA/lib-compiled:${compiled-pyret}/build/cpo" \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
             '';
       });
