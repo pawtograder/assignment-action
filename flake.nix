@@ -242,10 +242,10 @@
                     enableNpm = false;
                   }
                 )
-              } $out/bin/pawtograder \
+              } $out/bin/action-runner \
                 --add-flags "--enable-source-maps" \
-                --add-flags "$out/lib/pawtograder/dist/index.js" \
-                --set PYRET_MAIN_PATH "$out/lib/pawtograder/main.cjs"
+                --add-flags "$out/dist/index.js" \
+                --set PYRET_MAIN_PATH "$out/main.cjs"
             '';
       });
 
