@@ -17,19 +17,6 @@
     in
     {
       packages = eachSystem (pkgs: rec {
-        nodejs-minimal =
-          (pkgs.nodejs_24.override {
-            enableNpm = false;
-          }).overrideAttrs
-            (old: {
-              outputs = [
-                "out"
-                "libv8"
-              ];
-              postInstall =
-                builtins.replaceStrings [ "cp -r $out/include $dev/include" ] [ "# dev output disabled" ]
-                  (old.postInstall or "");
-            });
 
         pyret-runtime-deps =
           (pkgs.buildNpmPackage {
@@ -252,7 +239,7 @@
       apps = eachSystem (pkgs: {
         default = {
           type = "app";
-          program = "${self.packages.${pkgs.system}.default}/bin/pawtograder";
+          program = "${self.packages.${pkgs.system}.default}/bin/action-runner";
         };
       });
 
