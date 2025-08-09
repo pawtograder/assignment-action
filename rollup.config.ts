@@ -6,10 +6,12 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 
 const config = {
-  input: 'src/index.ts',
+  input: {
+    index: 'src/index.ts',
+    grading: 'src/grading/main.ts'
+  },
   output: {
     esModule: true,
-    // file: 'dist/index.js',
     dir: './dist',
     format: 'es',
     sourcemap: true
