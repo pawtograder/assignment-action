@@ -204,7 +204,7 @@ export async function run(): Promise<void> {
           })
           .join(', ')
         const status = `${graderConfig.handout_notice.message} Assignments: ${assignments || 'unknown'}`
-        core.setOutput('status', status)
+        core.info(status)
         return // Exit action successfully without running grader
       }
 
