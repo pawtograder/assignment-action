@@ -6,6 +6,16 @@
 export type SubmissionResponse = {
     grader_sha: string;
     grader_url: string;
+    handout_notice?: {
+        message: string;
+        assignments: {
+            id: number;
+            title: string;
+            slug?: string;
+            class_name?: string;
+            semester?: string;
+        }[];
+    };
     error?: {
         message: string;
         recoverable: boolean;

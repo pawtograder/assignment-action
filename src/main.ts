@@ -157,20 +157,19 @@ export async function run(): Promise<void> {
         'Unable to get OIDC token. Is workflow permission configured correctly?'
       )
     }
-    //Double check: is this the handout? If so, ignore the rest of the action and just log a warning
-    const handout = await core.getInput('handout_repo')
+    // Check for deprecated handout_repo parameter and warn if used
+    const handoutRepo = core.getInput('handout_repo')
+    if (handoutRepo) {
+      core.warning(
+        'The handout_repo parameter is deprecated and unused. It will be removed in v4. Handout detection is now handled automatically by the API.'
+      )
+    }
+
     const regressionTestJob = await core.getInput('regression_test_job')
     if (regressionTestJob) {
       core.info(
         `Running regression test for ${regressionTestJob} on ${process.env.GITHUB_REPOSITORY}`
       )
-    }
-
-    if (handout && handout === process.env.GITHUB_REPOSITORY) {
-      core.warning(
-        'This action appears to have been triggered by running in the handout repo. No submission has been created, and it will not be graded.'
-      )
-      return
     }
 
     const action_ref = core.getInput('action_ref')
@@ -191,6 +190,24 @@ export async function run(): Promise<void> {
       graderSha = process.env.GITHUB_SHA!
     } else {
       const graderConfig = await createSubmission(token)
+
+      // Check for handout notice and exit early if detected
+      if (graderConfig?.handout_notice) {
+        const assignments = (graderConfig.handout_notice.assignments || [])
+          .map((a) => {
+            const courseInfo =
+              a.class_name && a.semester
+                ? ` (${a.class_name} - ${a.semester})`
+                : ''
+            const slug = a.slug ? ` (${a.slug})` : ''
+            return `${a.title}${slug}${courseInfo}`
+          })
+          .join(', ')
+        const status = `${graderConfig.handout_notice.message} Assignments: ${assignments || 'unknown'}`
+        core.setOutput('status', status)
+        return // Exit action successfully without running grader
+      }
+
       const config = await prepareForGrading(graderConfig)
       graderDir = config.graderDir
       assignmentDir = config.assignmentDir
