@@ -121,7 +121,10 @@
             runHook postInstall
           '';
 
-          disallowedReferences = [ pkgs.nodejs_24 ];
+          disallowedReferences = with pkgs; [
+            nodejs_24
+            nodejs_24.src
+          ];
         };
 
         pyret-runtime-deps =
@@ -167,6 +170,28 @@
             npmPruneFlags = [ "--omit=dev" ];
             dontStrip = false;
 
+            nativeBuildInputs = with pkgs; [
+              gnumake
+              pkg-config
+              python3
+              removeReferencesTo
+            ];
+
+            buildInputs = with pkgs; [
+              pixman
+              cairo
+              pango
+            ];
+
+            buildPhase = ''
+              runHook preBuild
+
+              # canvas, etc
+              npm rebuild
+
+              runHook postBuild
+            '';
+
             installPhase = ''
               mkdir -p $out
               cp -r node_modules $out/
@@ -174,12 +199,20 @@
               # Replace all references to the full nodejs with the slim nodejs
               find $out -type f -exec sed -i \
                 "s|${pkgs.nodejs_24}/bin/node|${node-js-very-slim}/bin/node|g" {} +
+
+              find $out -type f \( -name "*.node" -o -name "*.a" -o -name "*.json" \) \
+                -exec remove-references-to -t ${pkgs.nodejs_24.src} {} +
+
+              rm $out/node_modules/canvas/build/canvas.target.mk
+              rm $out/node_modules/canvas/build/Makefile
+              rm $out/node_modules/canvas/build/config.gypi
             '';
 
-            disallowedReferences = [ pkgs.nodejs_24 ];
-
-          }).overrideAttrs
-            ({ buildInputs = [ ]; });
+            disallowedReferences = with pkgs; [
+              nodejs_24
+              nodejs_24.src
+            ];
+          });
 
         action-build = (
           pkgs.buildNpmPackage {
@@ -244,7 +277,10 @@
               runHook postInstall
             '';
 
-            disallowedReferences = [ pkgs.nodejs_24 ];
+            disallowedReferences = with pkgs; [
+              nodejs_24
+              nodejs_24.src
+            ];
           }
         );
 
