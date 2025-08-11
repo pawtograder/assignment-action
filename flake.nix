@@ -19,31 +19,44 @@
       packages = eachSystem (pkgs: rec {
         node-js-very-slim = import ./nix/node-js-very-slim.nix { inherit pkgs; };
 
-        pyret-repos = pkgs.stdenv.mkDerivation {
-          name = "pyret-repos";
+        pyret-lang-src = pkgs.stdenv.mkDerivation {
+          name = "pyret-lang-src";
 
-          sourceRoot = ".";
+          dontBuild = true;
 
-          srcs = [
-            # https://github.com/ironm00n/pyret-lang/tree/unmerged
-            (pkgs.fetchFromGitHub {
-              name = "pyret-lang";
-              owner = "ironm00n";
-              repo = "pyret-lang";
-              rev = "27a74f8dd4bcc762275b487e9d9e90630a25802d";
-              # sha256 = lib.fakeHash;
-              sha256 = "sha256-fIH8TzThMZcDoUfVOe0G+5rd6l8FuWoRf+64FoFjSko=";
-            })
+          # https://github.com/ironm00n/pyret-lang/tree/unmerged
+          src = pkgs.fetchFromGitHub {
+            name = "pyret-lang";
+            owner = "ironm00n";
+            repo = "pyret-lang";
+            rev = "27a74f8dd4bcc762275b487e9d9e90630a25802d";
+            # sha256 = lib.fakeHash;
+            sha256 = "sha256-fIH8TzThMZcDoUfVOe0G+5rd6l8FuWoRf+64FoFjSko=";
+          };
 
-            # https://github.com/ironm00n/code.pyret.org/tree/horizon
-            (pkgs.fetchFromGitHub {
-              name = "cpo";
-              owner = "ironm00n";
-              repo = "code.pyret.org";
-              rev = "756570952bbbd07081c7af515ecd7a177288dc50";
-              # sha256 = lib.fakeHash;
-              sha256 = "sha256-r5+0qd7crdthKT+6ppAyqSsAKu50rOvpXpeVsacd8/U=";
-            })
+          installPhase = ''
+            mkdir -p $out
+            cp -r ./* $out
+          '';
+        };
+
+        cpo-src = pkgs.stdenv.mkDerivation {
+          name = "code.pyret.org-src";
+
+          dontBuild = true;
+
+          # https://github.com/ironm00n/code.pyret.org/tree/unmerged
+          src = pkgs.fetchFromGitHub {
+            name = "cpo";
+            owner = "ironm00n";
+            repo = "code.pyret.org";
+            rev = "8460d0a97f0aef62f73128ae26ef2fb54f58f6e8";
+            # sha256 = lib.fakeHash;
+            sha256 = "sha256-URrY4cGFE84K49oHB8Msbe03oFnGx1ZPF1xIpQPmojs=";
+          };
+
+          patches = [
+            ./nix/dcic2024-charts.patch
           ];
 
           installPhase = ''
@@ -56,7 +69,7 @@
         compiled-pyret = pkgs.buildNpmPackage {
           name = "pyret-built";
 
-          src = "${pyret-repos}/pyret-lang";
+          src = pyret-lang-src;
           nodejs = pkgs.nodejs_24;
 
           # npmDepsHash = lib.fakeHash;
@@ -98,9 +111,8 @@
             node build/phaseA/pyret.jarr \
               -allow-builtin-overrides \
               --builtin-js-dir src/js/trove/ \
-              --builtin-js-dir ${pyret-repos}/cpo/src/web/js/trove/ \
               --builtin-arr-dir src/arr/trove/ \
-              --builtin-arr-dir ${pyret-repos}/cpo/src/web/arr/trove/ \
+              --builtin-arr-dir ${cpo-src}/src/web/arr/trove/ \
               --require-config src/scripts/standalone-configA.json \
               --compiled-dir build/cpo/ \
               --build-runnable build/compile-dcic.arr \
@@ -153,9 +165,9 @@
                 { name:"pyret-runtime-deps", version:"1.0.0",
                   dependencies: ((.dependencies // {}) | with_entries(select(.key as $k | $keep | index($k))))
                 }
-              ' ${pyret-repos}/pyret-lang/package.json > $out/package.json
+              ' ${pyret-lang-src}/package.json > $out/package.json
 
-              cp ${pyret-repos}/pyret-lang/package-lock.json $out/package-lock.json
+              cp ${pyret-lang-src}/package-lock.json $out/package-lock.json
             '';
           in
           (pkgs.buildNpmPackage {
@@ -260,8 +272,7 @@
               npm run package
 
               npm exec --no pyret -- \
-                --builtin-js-dir ${pyret-repos}/pyret-lang/src/js/trove/ \
-                --builtin-arr-dir ${pyret-repos}/cpo/src/web/arr/trove/ \
+                --builtin-js-dir ${pyret-lang-src}/src/js/trove/ \
                 --program pyret/main.arr \
                 --outfile pyret/main.cjs \
                 --no-check-mode --norun
