@@ -255,11 +255,16 @@
             python3
           ];
 
-          buildInputs = with pkgs; [
-            pixman
-            cairo
-            pango
-          ];
+          buildInputs =
+            with pkgs;
+            [
+              pixman
+              cairo
+              pango
+            ]
+            ++ lib.optionals stdenv.isDarwin [
+              giflib
+            ];
 
           buildPhase = ''
             runHook preBuild
