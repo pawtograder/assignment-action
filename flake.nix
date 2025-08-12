@@ -14,51 +14,83 @@
     let
       inherit (nixpkgs) lib legacyPackages;
       eachSystem = f: lib.genAttrs (import systems) (system: f legacyPackages.${system});
-      mkCanvasNativeBuildInputs =
-        pkgs: with pkgs; [
-          gnumake
-          pkg-config
-          python3
-        ];
-      mkCanvasBuildInputs =
-        pkgs:
-        with pkgs;
-        [
-          pixman
-          cairo
-          pango
-        ]
-        ++ lib.optionals stdenv.isDarwin [
-          giflib
-          libjpeg
-          libpng
-          libiconv
-        ];
-
-      mkCanvasEnv =
-        pkgs:
-        lib.optionalAttrs pkgs.stdenv.isDarwin {
-          # CPATH = lib.concatStringsSep ":" [
-          #   "${pkgs.giflib}/include"
-          #   "${pkgs.libjpeg}/include"
-          #   "${pkgs.libpng}/include"
-          # ];
-
-          LIBRARY_PATH = lib.makeLibraryPath [
-            pkgs.giflib
-            pkgs.libjpeg
-            pkgs.libpng
-          ];
-          # NIX_CFLAGS_COMPILE = "-I${pkgs.giflib}/include -I${pkgs.libjpeg}/include -I${pkgs.libpng}/include";
-          # NIX_LDFLAGS =
-          #   "-L${pkgs.giflib}/lib -L${pkgs.libjpeg}/lib -L${pkgs.libpng}/lib "
-          #   + "-Wl,-rpath,${pkgs.giflib}/lib -Wl,-rpath,${pkgs.libjpeg}/lib -Wl,-rpath,${pkgs.libpng}/lib "
-          #   + "-lgif";
-        };
-
+      noOptimize = pkgs: pkgs.stdenv.isDarwin;
     in
     {
       packages = eachSystem (pkgs: rec {
+        customBuildNpmPackage = lib.extendMkDerivation {
+          constructDrv = pkgs.buildNpmPackage;
+          excludeDrvArgNames = [
+            "needsCanvas"
+          ];
+          extendDrvArgs =
+            finalAttrs:
+            {
+              nodejs ? pkgs.nodejs_24,
+              needsCanvas ? false,
+              disallowedReferences ? lib.optionals (nodejs != node-js-very-slim) [ pkgs.nodejs_24 ],
+              nativeBuildInputs ? [ ],
+              buildInputs ? [ ],
+              dontNpmBuild ? true,
+              npmFlags ? if dontNpmBuild then [ "--ignore-scripts" ] else [ ],
+              env ? { },
+              dontStrip ? !(noOptimize pkgs), # buildNpmPackage enabled this by default
+              ...
+            }@args:
+            let
+              canvasNativeBuildInputs = with pkgs; [
+                gnumake
+                pkg-config
+                python3
+              ];
+              canvasBuildInputs =
+                with pkgs;
+                [
+                  pixman
+                  cairo
+                  pango
+                ]
+                ++ lib.optionals stdenv.isDarwin [
+                  giflib
+                  libjpeg
+                  libpng
+                  libiconv
+                ];
+
+              canvasEnv = lib.optionalAttrs pkgs.stdenv.isDarwin {
+                # CPATH = lib.concatStringsSep ":" [
+                #   "${pkgs.giflib}/include"
+                #   "${pkgs.libjpeg}/include"
+                #   "${pkgs.libpng}/include"
+                # ];
+
+                LIBRARY_PATH = lib.makeLibraryPath [
+                  pkgs.giflib
+                  pkgs.libjpeg
+                  pkgs.libpng
+                ];
+                # NIX_CFLAGS_COMPILE = "-I${pkgs.giflib}/include -I${pkgs.libjpeg}/include -I${pkgs.libpng}/include";
+                # NIX_LDFLAGS =
+                #   "-L${pkgs.giflib}/lib -L${pkgs.libjpeg}/lib -L${pkgs.libpng}/lib "
+                #   + "-Wl,-rpath,${pkgs.giflib}/lib -Wl,-rpath,${pkgs.libjpeg}/lib -Wl,-rpath,${pkgs.libpng}/lib "
+                #   + "-lgif";
+              };
+            in
+            {
+              inherit
+                nodejs
+                disallowedReferences
+                dontNpmBuild
+                npmFlags
+                dontStrip
+                ;
+
+              nativeBuildInputs = nativeBuildInputs ++ lib.optionals needsCanvas canvasNativeBuildInputs;
+              buildInputs = buildInputs ++ lib.optionals needsCanvas canvasBuildInputs;
+              env = env // canvasEnv;
+            };
+        };
+
         node-js-very-slim =
           if pkgs.stdenv.isDarwin then
             pkgs.nodejs_24
@@ -112,21 +144,14 @@
         };
 
         # so... the repl need to have access to built-in modules at runtime
-        compiled-pyret = pkgs.buildNpmPackage {
+        compiled-pyret = customBuildNpmPackage {
           name = "pyret-built";
 
           src = pyret-lang-src;
-          nodejs = pkgs.nodejs_24;
+          needsCanvas = true;
 
           # npmDepsHash = lib.fakeHash;
           npmDepsHash = "sha256-hxH66Mj2wbY5J6B9pRNen+qo8MHpw+X61D6Cgz+keMo=";
-
-          dontNpmBuild = true;
-          npmFlags = [ "--ignore-scripts" ];
-
-          env = mkCanvasEnv pkgs;
-          nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
-          buildInputs = mkCanvasBuildInputs pkgs;
 
           buildPhase = ''
             runHook preBuild
@@ -170,11 +195,6 @@
 
             runHook postInstall
           '';
-
-          disallowedReferences = with pkgs; [
-            nodejs_24
-            nodejs_24.src
-          ];
         };
 
         pyret-runtime-deps =
@@ -208,21 +228,17 @@
               cp ${pyret-lang-src}/package-lock.json $out/package-lock.json
             '';
           in
-          pkgs.buildNpmPackage {
+          customBuildNpmPackage {
             name = "pyret-runtime-deps";
-            inherit src;
 
-            nodejs = pkgs.nodejs_24;
+            inherit src;
+            needsCanvas = true;
+
             # npmDepsHash = lib.fakeHash;
             npmDepsHash = "sha256-hxH66Mj2wbY5J6B9pRNen+qo8MHpw+X61D6Cgz+keMo=";
-            dontNpmBuild = true;
-            npmFlags = [ "--ignore-scripts" ];
             npmPruneFlags = [ "--omit=dev" ];
-            dontStrip = false;
 
-            env = mkCanvasEnv pkgs;
-            nativeBuildInputs = (mkCanvasNativeBuildInputs pkgs) ++ [ pkgs.removeReferencesTo ];
-            buildInputs = mkCanvasBuildInputs pkgs;
+            nativeBuildInputs = [ pkgs.removeReferencesTo ];
 
             buildPhase = ''
               runHook preBuild
@@ -248,15 +264,10 @@
               rm -rf $out/node_modules/canvas/build/Release/.deps
             '';
 
-            disallowedReferences = with pkgs; [
-              nodejs_24
-              nodejs_24.src
-            ];
           };
 
-        action-build = pkgs.buildNpmPackage {
+        action-build = customBuildNpmPackage {
           name = "pawtograder-assignment-action-build";
-          version = "1.0.0";
 
           src = lib.fileset.toSource {
             root = ./.;
@@ -271,15 +282,10 @@
             ];
           };
 
-          nodejs = pkgs.nodejs_24;
+          needsCanvas = true;
+
           # npmDepsHash = lib.fakeHash;
           npmDepsHash = "sha256-1CYx+rscxPEZAGNZFDAJcATMKxvmp3/gVeSP4FpO9RA=";
-          dontNpmBuild = true;
-          npmFlags = [ "--ignore-scripts" ];
-
-          env = mkCanvasEnv pkgs;
-          nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
-          buildInputs = mkCanvasBuildInputs pkgs;
 
           buildPhase = ''
             runHook preBuild
@@ -301,16 +307,13 @@
 
           installPhase = ''
             runHook preInstall
+
             mkdir -p $out
             cp -r dist $out/
             cp pyret/main.cjs $out/
+
             runHook postInstall
           '';
-
-          disallowedReferences = with pkgs; [
-            nodejs_24
-            nodejs_24.src
-          ];
         };
 
         default =
