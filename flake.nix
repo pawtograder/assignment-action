@@ -21,41 +21,11 @@
           python3
         ];
       mkCanvasBuildInputs =
-        pkgs:
-        with pkgs;
-        [
+        pkgs: with pkgs; [
           pixman
           cairo
           pango
-        ]
-        ++ lib.optionals stdenv.isDarwin [
-          giflib
-          libjpeg
-          libpng
-          libiconv
         ];
-
-      mkCanvasEnv =
-        pkgs:
-        lib.optionalAttrs pkgs.stdenv.isDarwin {
-          CPATH = lib.concatStringsSep ":" [
-            "${pkgs.giflib}/include"
-            "${pkgs.libjpeg}/include"
-            "${pkgs.libpng}/include"
-          ];
-
-          LIBRARY_PATH = lib.makeLibraryPath [
-            pkgs.giflib
-            pkgs.libjpeg
-            pkgs.libpng
-          ];
-          NIX_CFLAGS_COMPILE = "-I${pkgs.giflib}/include -I${pkgs.libjpeg}/include -I${pkgs.libpng}/include";
-          NIX_LDFLAGS =
-            "-L${pkgs.giflib}/lib -L${pkgs.libjpeg}/lib -L${pkgs.libpng}/lib "
-            + "-Wl,-rpath,${pkgs.giflib}/lib -Wl,-rpath,${pkgs.libjpeg}/lib -Wl,-rpath,${pkgs.libpng}/lib "
-            + "-lgif";
-        };
-
     in
     {
       packages = eachSystem (pkgs: rec {
@@ -120,7 +90,6 @@
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
 
-          env = mkCanvasEnv pkgs;
           nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
           buildInputs = mkCanvasBuildInputs pkgs;
 
@@ -216,7 +185,6 @@
             npmPruneFlags = [ "--omit=dev" ];
             dontStrip = false;
 
-            env = mkCanvasEnv pkgs;
             nativeBuildInputs = (mkCanvasNativeBuildInputs pkgs) ++ [ pkgs.removeReferencesTo ];
             buildInputs = mkCanvasBuildInputs pkgs;
 
@@ -273,7 +241,6 @@
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
 
-          env = mkCanvasEnv pkgs;
           nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
           buildInputs = mkCanvasBuildInputs pkgs;
 
