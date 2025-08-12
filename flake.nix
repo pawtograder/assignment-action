@@ -59,7 +59,11 @@
     in
     {
       packages = eachSystem (pkgs: rec {
-        node-js-very-slim = import ./nix/node-js-very-slim.nix { inherit pkgs; };
+        node-js-very-slim =
+          if pkgs.stdenv.isDarwin then
+            pkgs.nodejs_24
+          else
+            import ./nix/node-js-very-slim.nix { inherit pkgs; };
 
         pyret-lang-src = pkgs.stdenv.mkDerivation {
           name = "pyret-lang-src";
