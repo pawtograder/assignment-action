@@ -217,7 +217,7 @@
             dontStrip = false;
 
             env = mkCanvasEnv pkgs;
-            nativeBuildInputs = mkCanvasNativeBuildInputs pkgs ++ [ pkgs.removeReferencesTo ];
+            nativeBuildInputs = (mkCanvasNativeBuildInputs pkgs) ++ [ pkgs.removeReferencesTo ];
             buildInputs = mkCanvasBuildInputs pkgs;
 
             buildPhase = ''
@@ -237,12 +237,11 @@
               find $out -type f -exec sed -i \
                 "s|${pkgs.nodejs_24}/bin/node|${node-js-very-slim}/bin/node|g" {} +
 
-              find $out -type f \( -name "*.node" -o -name "*.a" -o -name "*.json" \) \
-                -exec remove-references-to -t ${pkgs.nodejs_24.src} {} +
-
+              # HACK: these build artifacts reference node-src
               rm $out/node_modules/canvas/build/canvas.target.mk
               rm $out/node_modules/canvas/build/Makefile
               rm $out/node_modules/canvas/build/config.gypi
+              rm -rf $out/node_modules/canvas/build/Release/.deps
             '';
 
             disallowedReferences = with pkgs; [
