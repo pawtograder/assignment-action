@@ -269,7 +269,7 @@
 
           nodejs = pkgs.nodejs_24;
           # npmDepsHash = lib.fakeHash;
-          npmDepsHash = "sha256-QLCEfd+mOJKMyJ2Sr8ZGq94ffZ9/MPgFi2u92OmAtaA=";
+          npmDepsHash = "sha256-1CYx+rscxPEZAGNZFDAJcATMKxvmp3/gVeSP4FpO9RA=";
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
 
