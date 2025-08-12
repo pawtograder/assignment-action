@@ -34,7 +34,7 @@
               dontNpmBuild ? true,
               npmFlags ? if dontNpmBuild then [ "--ignore-scripts" ] else [ ],
               env ? { },
-              dontStrip ? !(noOptimize pkgs), # buildNpmPackage enabled this by default
+              dontStrip ? (noOptimize pkgs), # buildNpmPackage enabled this by default
               ...
             }@args:
             let
@@ -159,8 +159,10 @@
             substituteInPlace Makefile \
               --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
 
+            echo "Running install scripts"
             npm rebuild
 
+            echo "making pyret-lang phaseA and libA" 
             make phaseA libA
 
             mkdir -p build/cpo
@@ -170,7 +172,7 @@
             import dcic2024 as _
             EOF
 
-            # manually add dcic2024 context
+            echo "compiling dcic2024 context"
             node build/phaseA/pyret.jarr \
               -allow-builtin-overrides \
               --builtin-js-dir src/js/trove/ \
@@ -243,7 +245,7 @@
             buildPhase = ''
               runHook preBuild
 
-              # canvas, etc
+              echo "Running install scripts"
               npm rebuild
 
               runHook postBuild
@@ -253,11 +255,13 @@
               mkdir -p $out
               cp -r node_modules $out/
 
+              echo "Replacing references to full nodejs to slim nodejs"
               # Replace all references to the full nodejs with the slim nodejs
               find $out -type f -exec sed -i \
                 "s|${pkgs.nodejs_24}/bin/node|${node-js-very-slim}/bin/node|g" {} +
 
               # HACK: these build artifacts reference node-src
+              echo "Removing references to node-src"
               rm $out/node_modules/canvas/build/canvas.target.mk
               rm $out/node_modules/canvas/build/Makefile
               rm $out/node_modules/canvas/build/config.gypi
@@ -293,10 +297,14 @@
             substituteInPlace node_modules/pyret-lang/Makefile \
               --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
 
+            echo "Running install scripts"
             npm rebuild
+
+            echo "Packaging"
             npm run package
 
-            npm exec --no pyret -- \
+            echo "Building pyret-autograder"
+            npx --no pyret -- \
               --builtin-js-dir ${pyret-lang-src}/src/js/trove/ \
               --program pyret/main.arr \
               --outfile pyret/main.cjs \
@@ -327,10 +335,12 @@
             ''
               mkdir -p $out/bin
 
+              echo "Copying outputs"
               cp -r ${action-build}/dist $out/dist
               cp -r ${action-build}/main.cjs $out/main.cjs
               cp -r ${pyret-runtime-deps}/node_modules $out/node_modules
 
+              echo "Making wrappers"
               makeWrapper ${nodejs-very-slim-exec} $out/bin/action-runner \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/index.js" \
