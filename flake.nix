@@ -170,7 +170,7 @@
               cp ${pyret-lang-src}/package-lock.json $out/package-lock.json
             '';
           in
-          (pkgs.buildNpmPackage {
+          pkgs.buildNpmPackage {
             name = "pyret-runtime-deps";
             inherit src;
 
@@ -224,76 +224,74 @@
               nodejs_24
               nodejs_24.src
             ];
-          });
+          };
 
-        action-build = (
-          pkgs.buildNpmPackage {
-            name = "pawtograder-assignment-action-build";
-            version = "1.0.0";
+        action-build = pkgs.buildNpmPackage {
+          name = "pawtograder-assignment-action-build";
+          version = "1.0.0";
 
-            src = lib.fileset.toSource {
-              root = ./.;
-              fileset = lib.fileset.unions [
-                ./src
-                ./pyret
-                ./package.json
-                ./package-lock.json
-                ./rollup.config.ts
-                ./tsconfig.json
-                ./tsconfig.base.json
-              ];
-            };
-
-            nodejs = pkgs.nodejs_24;
-            # npmDepsHash = lib.fakeHash;
-            npmDepsHash = "sha256-cKt+7luXpwPlZ0EM3yXJMnza1uuU8YTC3wo1FATPpMo=";
-            dontNpmBuild = true;
-            npmFlags = [ "--ignore-scripts" ];
-
-            nativeBuildInputs = with pkgs; [
-              gnumake
-              pkg-config
-              python3
+          src = lib.fileset.toSource {
+            root = ./.;
+            fileset = lib.fileset.unions [
+              ./src
+              ./pyret
+              ./package.json
+              ./package-lock.json
+              ./rollup.config.ts
+              ./tsconfig.json
+              ./tsconfig.base.json
             ];
+          };
 
-            buildInputs = with pkgs; [
-              pixman
-              cairo
-              pango
-            ];
+          nodejs = pkgs.nodejs_24;
+          # npmDepsHash = lib.fakeHash;
+          npmDepsHash = "sha256-QLCEfd+mOJKMyJ2Sr8ZGq94ffZ9/MPgFi2u92OmAtaA=";
+          dontNpmBuild = true;
+          npmFlags = [ "--ignore-scripts" ];
 
-            buildPhase = ''
-              runHook preBuild
+          nativeBuildInputs = with pkgs; [
+            gnumake
+            pkg-config
+            python3
+          ];
 
-              substituteInPlace node_modules/pyret-lang/Makefile \
-                --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
+          buildInputs = with pkgs; [
+            pixman
+            cairo
+            pango
+          ];
 
-              npm rebuild
-              npm run package
+          buildPhase = ''
+            runHook preBuild
 
-              npm exec --no pyret -- \
-                --builtin-js-dir ${pyret-lang-src}/src/js/trove/ \
-                --program pyret/main.arr \
-                --outfile pyret/main.cjs \
-                --no-check-mode --norun
+            substituteInPlace node_modules/pyret-lang/Makefile \
+              --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
 
-              runHook postBuild
-            '';
+            npm rebuild
+            npm run package
 
-            installPhase = ''
-              runHook preInstall
-              mkdir -p $out
-              cp -r dist $out/
-              cp pyret/main.cjs $out/
-              runHook postInstall
-            '';
+            npm exec --no pyret -- \
+              --builtin-js-dir ${pyret-lang-src}/src/js/trove/ \
+              --program pyret/main.arr \
+              --outfile pyret/main.cjs \
+              --no-check-mode --norun
 
-            disallowedReferences = with pkgs; [
-              nodejs_24
-              nodejs_24.src
-            ];
-          }
-        );
+            runHook postBuild
+          '';
+
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out
+            cp -r dist $out/
+            cp pyret/main.cjs $out/
+            runHook postInstall
+          '';
+
+          disallowedReferences = with pkgs; [
+            nodejs_24
+            nodejs_24.src
+          ];
+        };
 
         default =
           let
