@@ -287,7 +287,10 @@
           };
 
           needsCanvas = true;
-          dontPatchShebangs = true;
+
+          # macos fs is really slow:
+          dontPatchShebangs = pkgs.stdenv.isDarwin;
+          noAuditTmpdir = pkgs.stdenv.isDarwin;
 
           # npmDepsHash = lib.fakeHash;
           npmDepsHash = "sha256-1CYx+rscxPEZAGNZFDAJcATMKxvmp3/gVeSP4FpO9RA=";
@@ -332,7 +335,6 @@
           pkgs.runCommand "pawtograder-assignment-action"
             {
               nativeBuildInputs = [ pkgs.makeWrapper ];
-              # dontPatchShebangs = true;
             }
             ''
               mkdir -p $out/bin
@@ -354,8 +356,6 @@
                 --add-flags "$out/dist/grading.js" \
                 --set PA_PYRET_LANG_COMPILED_PATH "${compiled-pyret}/build/phaseA/lib-compiled:${compiled-pyret}/build/cpo" \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
-
-              # patchShebangs "$out/bin"
             '';
       });
 
