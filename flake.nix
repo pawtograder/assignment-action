@@ -289,7 +289,9 @@
           needsCanvas = true;
 
           # macos fs is really slow:
+          dontStrip = pkgs.stdenv.isDarwin;
           dontPatchShebangs = pkgs.stdenv.isDarwin;
+          dontFixup = pkgs.stdenv.isDarwin;
           noAuditTmpdir = pkgs.stdenv.isDarwin;
 
           # npmDepsHash = lib.fakeHash;
