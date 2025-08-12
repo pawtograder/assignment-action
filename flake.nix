@@ -12,8 +12,25 @@
       ...
     }:
     let
-      inherit (nixpkgs) lib;
-      eachSystem = f: lib.genAttrs (import systems) (s: f nixpkgs.legacyPackages.${s});
+      inherit (nixpkgs) lib legacyPackages;
+      eachSystem = f: lib.genAttrs (import systems) (system: f legacyPackages.${system});
+      mkCanvasNativeBuildInputs =
+        pkgs: with pkgs; [
+          gnumake
+          pkg-config
+          python3
+        ];
+      mkCanvasBuildInputs =
+        pkgs:
+        with pkgs;
+        [
+          pixman
+          cairo
+          pango
+        ]
+        ++ lib.optionals stdenv.isDarwin [
+          giflib
+        ];
     in
     {
       packages = eachSystem (pkgs: rec {
@@ -78,17 +95,8 @@
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
 
-          nativeBuildInputs = with pkgs; [
-            gnumake
-            pkg-config
-            python3
-          ];
-
-          buildInputs = with pkgs; [
-            pixman
-            cairo
-            pango
-          ];
+          nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
+          buildInputs = mkCanvasBuildInputs pkgs;
 
           buildPhase = ''
             runHook preBuild
@@ -182,18 +190,8 @@
             npmPruneFlags = [ "--omit=dev" ];
             dontStrip = false;
 
-            nativeBuildInputs = with pkgs; [
-              gnumake
-              pkg-config
-              python3
-              removeReferencesTo
-            ];
-
-            buildInputs = with pkgs; [
-              pixman
-              cairo
-              pango
-            ];
+            nativeBuildInputs = mkCanvasNativeBuildInputs pkgs ++ [ pkgs.removeReferencesTo ];
+            buildInputs = mkCanvasBuildInputs pkgs;
 
             buildPhase = ''
               runHook preBuild
@@ -249,22 +247,8 @@
           dontNpmBuild = true;
           npmFlags = [ "--ignore-scripts" ];
 
-          nativeBuildInputs = with pkgs; [
-            gnumake
-            pkg-config
-            python3
-          ];
-
-          buildInputs =
-            with pkgs;
-            [
-              pixman
-              cairo
-              pango
-            ]
-            ++ lib.optionals stdenv.isDarwin [
-              giflib
-            ];
+          nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
+          buildInputs = mkCanvasBuildInputs pkgs;
 
           buildPhase = ''
             runHook preBuild
