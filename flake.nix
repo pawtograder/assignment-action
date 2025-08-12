@@ -322,8 +322,11 @@
           installPhase = ''
             runHook preInstall
 
+            echo "making out"
             mkdir -p $out
+            echo "copying dist"
             cp -r dist $out/
+            echo "copying compiled pyret"
             cp pyret/main.cjs $out/
 
             runHook postInstall
