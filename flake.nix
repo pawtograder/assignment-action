@@ -29,7 +29,8 @@
           pango
         ]
         ++ lib.optionals stdenv.isDarwin [
-          giflib
+          (lib.getLib giflib)
+          (lib.getDev giflib)
         ];
     in
     {
@@ -289,12 +290,6 @@
           pkgs.runCommand "pawtograder-assignment-action"
             {
               nativeBuildInputs = [ pkgs.makeWrapper ];
-
-              propagatedBuildInputs = with pkgs; [
-                cairo
-                pango
-                pixman
-              ];
             }
             ''
               mkdir -p $out/bin
