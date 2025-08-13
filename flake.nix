@@ -14,22 +14,56 @@
     let
       inherit (nixpkgs) lib legacyPackages;
       eachSystem = f: lib.genAttrs (import systems) (system: f legacyPackages.${system});
-      mkCanvasNativeBuildInputs =
-        pkgs: with pkgs; [
-          gnumake
-          pkg-config
-          python3
-        ];
-      mkCanvasBuildInputs =
-        pkgs: with pkgs; [
-          pixman
-          cairo
-          pango
-        ];
+      # mainNpmDepsHash = lib.fakeHash;
+      mainNpmDepsHash = "sha256-1CYx+rscxPEZAGNZFDAJcATMKxvmp3/gVeSP4FpO9RA=";
     in
     {
       packages = eachSystem (pkgs: rec {
         node-js-very-slim = import ./nix/node-js-very-slim.nix { inherit pkgs; };
+
+        customBuildNpmPackage = lib.extendMkDerivation {
+          constructDrv = pkgs.buildNpmPackage;
+          excludeDrvArgNames = [
+            "needsCanvas"
+          ];
+          extendDrvArgs =
+            finalAttrs:
+            {
+              nodejs ? pkgs.nodejs_24,
+              needsCanvas ? false,
+              disallowedReferences ? lib.optionals (nodejs != node-js-very-slim) [ pkgs.nodejs_24 ],
+              nativeBuildInputs ? [ ],
+              buildInputs ? [ ],
+              dontNpmBuild ? true,
+              npmFlags ? if dontNpmBuild then [ "--ignore-scripts" ] else [ ],
+              dontStrip ? false, # buildNpmPackage enabled this by default
+              ...
+            }:
+            let
+              canvasNativeBuildInputs = with pkgs; [
+                gnumake
+                pkg-config
+                python3
+              ];
+              canvasBuildInputs = with pkgs; [
+                pixman
+                cairo
+                pango
+              ];
+            in
+            {
+              inherit
+                nodejs
+                disallowedReferences
+                dontNpmBuild
+                npmFlags
+                dontStrip
+                ;
+
+              nativeBuildInputs = nativeBuildInputs ++ lib.optionals needsCanvas canvasNativeBuildInputs;
+              buildInputs = buildInputs ++ lib.optionals needsCanvas canvasBuildInputs;
+            };
+        };
 
         pyret-lang-src = pkgs.stdenv.mkDerivation {
           name = "pyret-lang-src";
@@ -78,20 +112,14 @@
         };
 
         # so... the repl need to have access to built-in modules at runtime
-        compiled-pyret = pkgs.buildNpmPackage {
+        compiled-pyret = customBuildNpmPackage {
           name = "pyret-built";
 
           src = pyret-lang-src;
-          nodejs = pkgs.nodejs_24;
+          needsCanvas = true;
 
           # npmDepsHash = lib.fakeHash;
           npmDepsHash = "sha256-hxH66Mj2wbY5J6B9pRNen+qo8MHpw+X61D6Cgz+keMo=";
-
-          dontNpmBuild = true;
-          npmFlags = [ "--ignore-scripts" ];
-
-          nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
-          buildInputs = mkCanvasBuildInputs pkgs;
 
           buildPhase = ''
             runHook preBuild
@@ -103,7 +131,7 @@
 
             make phaseA libA
 
-            mkdir -p build/cpo
+            mkdir -p build/cpo-compiled
 
             # if we compile directly, name will be wrong
             cat > build/compile-dcic.arr << 'EOF'
@@ -117,10 +145,10 @@
               --builtin-arr-dir src/arr/trove/ \
               --builtin-arr-dir ${cpo-src}/src/web/arr/trove/ \
               --require-config src/scripts/standalone-configA.json \
-              --compiled-dir build/cpo/ \
+              --compiled-dir build/cpo-compiled/ \
               --build-runnable build/compile-dcic.arr \
               --standalone-file src/js/base/handalone.js \
-              --outfile build/cpo/compile-dcic.jarr \
+              --outfile build/compile-dcic.jarr \
               -no-check-mode
 
             runHook postBuild
@@ -130,16 +158,11 @@
             runHook preInstall
 
             mkdir -p $out
-            cp -r src $out/
-            cp -r build $out/
+            cp -r build/phaseA/lib-compiled $out/
+            cp -r build/cpo-compiled $out/
 
             runHook postInstall
           '';
-
-          disallowedReferences = with pkgs; [
-            nodejs_24
-            nodejs_24.src
-          ];
         };
 
         pyret-runtime-deps =
@@ -173,20 +196,14 @@
               cp ${pyret-lang-src}/package-lock.json $out/package-lock.json
             '';
           in
-          pkgs.buildNpmPackage {
+          customBuildNpmPackage {
             name = "pyret-runtime-deps";
             inherit src;
+            needsCanvas = true;
 
-            nodejs = pkgs.nodejs_24;
             # npmDepsHash = lib.fakeHash;
             npmDepsHash = "sha256-hxH66Mj2wbY5J6B9pRNen+qo8MHpw+X61D6Cgz+keMo=";
-            dontNpmBuild = true;
-            npmFlags = [ "--ignore-scripts" ];
             npmPruneFlags = [ "--omit=dev" ];
-            dontStrip = false;
-
-            nativeBuildInputs = (mkCanvasNativeBuildInputs pkgs) ++ [ pkgs.removeReferencesTo ];
-            buildInputs = mkCanvasBuildInputs pkgs;
 
             buildPhase = ''
               runHook preBuild
@@ -198,6 +215,8 @@
             '';
 
             installPhase = ''
+              runHook preInstall
+
               mkdir -p $out
               cp -r node_modules $out/
 
@@ -210,23 +229,18 @@
               rm $out/node_modules/canvas/build/Makefile
               rm $out/node_modules/canvas/build/config.gypi
               rm -rf $out/node_modules/canvas/build/Release/.deps
-            '';
 
-            disallowedReferences = with pkgs; [
-              nodejs_24
-              nodejs_24.src
-            ];
+              runHook postInstall
+            '';
           };
 
-        action-build = pkgs.buildNpmPackage {
-          name = "pawtograder-assignment-action-build";
-          version = "1.0.0";
+        action-runner = customBuildNpmPackage {
+          name = "pawtograder-assignment-action-runner";
 
           src = lib.fileset.toSource {
             root = ./.;
             fileset = lib.fileset.unions [
               ./src
-              ./pyret
               ./package.json
               ./package-lock.json
               ./rollup.config.ts
@@ -235,14 +249,40 @@
             ];
           };
 
-          nodejs = pkgs.nodejs_24;
-          # npmDepsHash = lib.fakeHash;
-          npmDepsHash = "sha256-1CYx+rscxPEZAGNZFDAJcATMKxvmp3/gVeSP4FpO9RA=";
-          dontNpmBuild = true;
-          npmFlags = [ "--ignore-scripts" ];
+          npmDepsHash = mainNpmDepsHash;
 
-          nativeBuildInputs = mkCanvasNativeBuildInputs pkgs;
-          buildInputs = mkCanvasBuildInputs pkgs;
+          buildPhase = ''
+            runHook preBuild
+
+            npm run package
+
+            runHook postBuild
+          '';
+
+          installPhase = ''
+            runHook preInstall
+
+            mkdir -p $out
+            cp -r dist $out/
+
+            runHook postInstall
+          '';
+        };
+
+        action-pyret = customBuildNpmPackage {
+          name = "pawtograder-assignment-action-pyret";
+
+          src = lib.fileset.toSource {
+            root = ./.;
+            fileset = lib.fileset.unions [
+              ./pyret
+              ./package.json
+              ./package-lock.json
+            ];
+          };
+          needsCanvas = true;
+
+          npmDepsHash = mainNpmDepsHash;
 
           buildPhase = ''
             runHook preBuild
@@ -251,7 +291,6 @@
               --replace-fail "SHELL := /usr/bin/env bash" "SHELL := ${lib.getExe pkgs.bash}"
 
             npm rebuild
-            npm run package
 
             npm exec --no pyret -- \
               --builtin-js-dir ${pyret-lang-src}/src/js/trove/ \
@@ -264,16 +303,12 @@
 
           installPhase = ''
             runHook preInstall
+
             mkdir -p $out
-            cp -r dist $out/
             cp pyret/main.cjs $out/
+
             runHook postInstall
           '';
-
-          disallowedReferences = with pkgs; [
-            nodejs_24
-            nodejs_24.src
-          ];
         };
 
         default =
@@ -287,20 +322,21 @@
             ''
               mkdir -p $out/bin
 
-              cp -r ${action-build}/dist $out/dist
-              cp -r ${action-build}/main.cjs $out/main.cjs
+              cp -r ${action-runner}/dist $out/dist
+              cp -r ${action-pyret}/main.cjs $out/main.cjs
               cp -r ${pyret-runtime-deps}/node_modules $out/node_modules
+              ln -s ${compiled-pyret} $out/compiled
 
               makeWrapper ${nodejs-very-slim-exec} $out/bin/action-runner \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/index.js" \
-                --set PA_PYRET_LANG_COMPILED_PATH "${compiled-pyret}/build/phaseA/lib-compiled:${compiled-pyret}/build/cpo" \
+                --set PA_PYRET_LANG_COMPILED_PATH "$out/compiled/lib-compiled:$out/compiled/cpo-compiled" \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
 
               makeWrapper ${nodejs-very-slim-exec} $out/bin/grading-cli \
                 --add-flags "--enable-source-maps" \
                 --add-flags "$out/dist/grading.js" \
-                --set PA_PYRET_LANG_COMPILED_PATH "${compiled-pyret}/build/phaseA/lib-compiled:${compiled-pyret}/build/cpo" \
+                --set PA_PYRET_LANG_COMPILED_PATH "$out/compiled/lib-compiled:$out/compiled/cpo-compiled" \
                 --set PYRET_MAIN_PATH "$out/main.cjs"
             '';
       });
