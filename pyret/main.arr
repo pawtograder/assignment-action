@@ -6,4 +6,4 @@ include npm("pyret-autograder", "../src/tools/main.arr")
 input = io.get-stdin()
 result = P.grade-pawtograder-spec(input)
 
-print(result.serialize() + "\n")
+io.send-final(result.serialize())
