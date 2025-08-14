@@ -60,8 +60,5 @@ export default async function grade(
   )
   const ret = await grader.grade()
 
-  console.log('Graded with:')
-  console.dir(ret)
-
   return ret
 }
