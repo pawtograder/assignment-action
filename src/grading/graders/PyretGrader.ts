@@ -39,35 +39,58 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
       const env = {
         ...process.env,
         PA_CURRENT_LOAD_PATH: this.submissionDir,
-        PWD: this.submissionDir // students will likely make this assumption
+        PWD: this.submissionDir
       }
-      const grader = spawn(
+
+      const child = spawn(
         process.execPath,
         [process.env.PYRET_MAIN_PATH ?? 'pyret/main.cjs'],
-        { env, cwd: this.submissionDir }
-      )
-      let output = ''
-      let error = ''
-      console.log('pyret child spawned')
-
-      grader.stdout.on('data', (data) => (output += data.toString()))
-      grader.stderr.on('data', (data) => (error += data.toString()))
-
-      grader.on('close', (code) => {
-        console.log('pyret child closed')
-        if (code !== 0) {
-          return reject(new Error(`Grader failed: ${error}`))
+        {
+          env,
+          cwd: this.submissionDir,
+          //     [ stdin, stdout, stderr, custom]
+          stdio: ['pipe', 'pipe', 'pipe', 'pipe']
         }
-        const outputTail = output.trim().split('\n').at(-1)!
+      )
+
+      console.log('grader started')
+
+      for (const [stream, target, name] of [
+        [child.stdout, process.stdout, `stdout`],
+        [child.stderr, process.stderr, `stderr`]
+      ] as const) {
+        const prefix = `${name} » `
+        let leftover = ''
+        stream.setEncoding('utf8')
+        stream.on('data', (chunk) => {
+          const lines = (leftover + chunk).split(/\n/)
+          leftover = lines.pop()!
+          for (const line of lines) target.write(`${prefix}${line}\n`)
+        })
+        stream.on('end', () => {
+          if (leftover) target.write(`${prefix}${leftover}\n`)
+        })
+      }
+
+      const fd3 = child.stdio[3] as NodeJS.ReadableStream
+      let output = ''
+      fd3.setEncoding('utf8')
+      fd3.on('data', (chunk: string) => (output += chunk))
+
+      child.on('close', (code) => {
+        console.log('grader ended')
+        if (code !== 0) {
+          return reject(new Error(`Grader failed with code ${code}.`))
+        }
         try {
-          resolve(JSON.parse(outputTail))
+          resolve(JSON.parse(output))
         } catch (e) {
-          reject(new Error(`Invalid JSON from grader: ${outputTail}\n${e}`))
+          reject(new Error(`Invalid JSON from grader: ${output}\n${e}`))
         }
       })
 
-      grader.stdin.write(JSON.stringify(spec))
-      grader.stdin.end()
+      child.stdin.write(JSON.stringify(spec))
+      child.stdin.end()
     })
   }
 
