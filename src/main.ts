@@ -63,6 +63,8 @@ async function zipDirectory(dirPath: string): Promise<Buffer> {
 async function prepareForGrading(
   graderConfig: Awaited<ReturnType<typeof createSubmission>>
 ) {
+  console.error(graderConfig)
+
   const workDir = process.env.GITHUB_WORKSPACE
   await downloadTarballAndExtractTo(
     graderConfig.grader_url,
