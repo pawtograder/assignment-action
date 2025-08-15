@@ -412,7 +412,7 @@ export default async function grade(
         score: 0,
         part: 'tree-ormap'
       }
-    ],
+    ].sort((a, b) => a.part.localeCompare(b.part)),
     output: {
       visible: {
         output_format: 'markdown',
