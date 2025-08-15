@@ -19,6 +19,7 @@ import grade from './grading/grade.js'
 import { getEnv } from './utils.js'
 
 async function downloadTarballAndExtractTo(url: string, dir: string) {
+  console.log(downloadTarballAndExtractTo, url)
   const file = await fetch(url)
   if (!file.body) {
     throw new Error('No body in response')
