@@ -52,7 +52,7 @@
     "jszip": "^3.10.1",
     "node-fetch": "^3.3.2",
     "pyret-autograder": "0.0.1-pre.28",
-    "pyret-autograder-pawtograder": "0.0.1-pre.19",
+    "pyret-autograder-pawtograder": "0.0.1-pre.21",
     "tinyspawn": "^1.5.0",
     "ts-interface-checker": "^1.0.2"
   },

@@ -19,7 +19,7 @@ console.log(
   `Grading submissions in ${submissionDir} against solution in ${solutionDir}`
 )
 grade(solutionDir, submissionDir).then(async (feedback) => {
-  // console.log(JSON.stringify(feedback, null, 2))
+  console.dir(feedback)
   console.log('Artifacts:')
   console.log(feedback.artifacts)
   await writeFile(
