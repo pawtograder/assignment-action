@@ -33,7 +33,7 @@ export default class Logger {
       'hidden',
       'after_due_date',
       'after_published'
-    ] as OutputVisibility[]) {
+    ] satisfies OutputVisibility[]) {
       if (this.hasOutput(visibility)) {
         ret[visibility] = {
           output: this.getOutput(visibility),

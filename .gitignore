@@ -103,3 +103,16 @@ __tests__/runner/*
 
 
 .tsimp
+# Pyret
+.pyret
+
+pyret/*.jarr
+pyret/*.cjs
+pyret-npm
+
+.direnv/
+
+dist
+
+result
+

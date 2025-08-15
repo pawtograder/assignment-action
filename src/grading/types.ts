@@ -106,7 +106,13 @@ export interface OverlayPawtograderConfig {
   }
 }
 
-export type PawtograderConfig = OverlayPawtograderConfig
+export interface PyretPawtograderConfig {
+  grader: 'pyret'
+}
+
+export type PawtograderConfig =
+  | OverlayPawtograderConfig
+  | PyretPawtograderConfig
 
 // Type guard to check if a unit is a mutation test unit
 export function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {

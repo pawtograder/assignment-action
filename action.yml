@@ -25,13 +25,90 @@ inputs:
     description: The ref of the action, e.g. github.action_ref
     required: true
   action_repository:
-    description: The repository of the action, e.g.  github.action_repository
+    description: The repository of the action, e.g. github.action_repository
     required: true
+  cachix_name:
+    description: The cachix cache to use
+    default: pawtograder-runner-pyret
+  cachix_auth_token:
+    description: Optionally provide a cachix auth token
 
 outputs:
   score:
     description: The score of the submission
+    value: ${{ steps.grade.outputs.score }}
 
 runs:
-  using: node20
-  main: dist/index.js
+  using: 'composite'
+  steps:
+    - name: Check out action repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.action_repository }}
+        ref: ${{ inputs.action_ref }}
+        path: action
+
+    - name: Check if Nix is installed
+      id: has-nix
+      shell: bash
+      run: |
+        if command -v nix >/dev/null; then
+          echo "found=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "found=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install xy
+      if: steps.has-nix.outputs.found == 'false'
+      shell: bash
+      run: |
+        curl -sL https://github.com/therootcompany/xz-static/releases/download/v5.2.5/xz-5.2.5-linux-x86_64.tar.gz | tar -x -C /tmp
+        sudo mv /tmp/xz-5.2.5-linux-x86_64/xz /usr/local/bin/
+        sudo chmod +x /usr/local/bin/xz
+
+    - name: Install Nix
+      if: steps.has-nix.outputs.found == 'false'
+      uses: cachix/install-nix-action@v27
+      with:
+        nix_path: nixpkgs=channel:nixos-25.05
+
+    - name: Set USER if not already set
+      shell: bash
+      run: |
+        if [ -z "$USER" ]; then
+          echo "USER=runner" >> $GITHUB_ENV
+        fi
+
+    - uses: cachix/cachix-action@v15
+      with:
+        name: ${{ inputs.cachix_name }}
+        authToken: '${{ inputs.cachix_auth_token }}'
+
+    - name: Check Nix config
+      shell: bash
+      working-directory: action
+      run: |
+        echo "::group::Nix Configuration"
+        nix config show
+        echo "::endgroup::"
+
+    - name: Build
+      shell: bash
+      working-directory: action
+      run: |
+        echo "::group::Nix Build Output"
+        # nix build -L -v
+        nix build
+        echo "::endgroup::"
+
+    - name: Run the autograder
+      id: grade
+      working-directory: action
+      shell: bash
+      env:
+        GRADING_SERVER: ${{ inputs.grading_server }}
+        HANDOUT_REPO: ${{ inputs.handout_repo }}
+        REGRESSION_TEST_JOB: ${{ inputs.regression_test_job }}
+        ACTION_REF: ${{ inputs.action_ref }}
+        ACTION_REPOSITORY: ${{ inputs.action_repository }}
+      run: nix run

@@ -4,7 +4,8 @@ import {
   RegressionTestRunResponse,
   SubmissionResponse
 } from './api/adminServiceSchemas.js'
-import { getInput } from '@actions/core'
+import { getEnv } from './utils.js'
+
 export async function submitFeedback(
   body: GradingScriptResult,
   token: string,
@@ -12,7 +13,7 @@ export async function submitFeedback(
     autograder_regression_test_id?: number
   }
 ): Promise<GradeResponse> {
-  const gradingServerURL = getInput('grading_server')
+  const gradingServerURL = getEnv('GRADING_SERVER', true)
   const response = await fetch(
     `${gradingServerURL}/functions/v1/autograder-submit-feedback${
       queryParams?.autograder_regression_test_id
@@ -41,7 +42,7 @@ export async function submitFeedback(
 }
 
 export async function createSubmission(token: string) {
-  const gradingServerURL = getInput('grading_server')
+  const gradingServerURL = getEnv('GRADING_SERVER', true)
   const response = await fetch(
     `${gradingServerURL}/functions/v1/autograder-create-submission`,
     {
@@ -57,10 +58,12 @@ export async function createSubmission(token: string) {
   }
   const resp = (await response.json()) as SubmissionResponse
   if (resp.error) {
+    console.error(resp)
     throw new Error(
       `Failed to create submission: ${resp.error.message} ${resp.error.details}`
     )
   }
+
   return resp
 }
 
@@ -68,7 +71,7 @@ export async function createRegressionTestRun(
   token: string,
   regression_test_id: number
 ) {
-  const gradingServerURL = getInput('grading_server')
+  const gradingServerURL = getEnv('GRADING_SERVER', true)
   const response = await fetch(
     `${gradingServerURL}/functions/v1/autograder-create-regression-test-run/${regression_test_id}`,
     {
