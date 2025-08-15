@@ -73,11 +73,13 @@ export default async function grade(
         max_score: 3,
         score: 0,
         part: 'tree-map',
-        pyret_repl: {
-          initial_code: 'use context dcic2024\n\nfun add(x, y):\n  x + y\nend',
-          initial_interactions: ['add(5, 3)', 'add(10, 20)'],
-          height: '500px',
-          width: '100%'
+        extra_data: {
+          pyret_repl: {
+            initial_code:
+              'use context starter2024\n\nfun add(x, y):\n  x + y\nend',
+            initial_interactions: ['add(5, 3)', 'add(10, 20)'],
+            height: '500px'
+          }
         }
       },
       {
