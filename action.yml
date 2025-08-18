@@ -58,7 +58,7 @@ runs:
           echo "found=false" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Install xy
+    - name: Install xz
       if: steps.has-nix.outputs.found == 'false'
       shell: bash
       run: |
