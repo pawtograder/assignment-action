@@ -42,60 +42,40 @@ export type GradeResponse = {
 }
 
 export type OutputFormat = 'text' | 'markdown' | 'ansi'
+export type OutputVisibility =
+  | 'hidden' // Never shown to students
+  | 'visible' // Always shown to students
+  | 'after_due_date' // Shown to students after the due date
+  | 'after_published' // Shown to students after grades are published
 
 export type AutograderFeedback = {
-  tests: {
-    extra_data?: {
-      [key: string]: string
+  score?: number
+  max_score?: number
+  output: {
+    [key in OutputVisibility]?: {
+      output: string
+      output_format?: OutputFormat
     }
-    part?: string
-    output_format?: OutputFormat
+  }
+  lint: {
+    status: 'pass' | 'fail'
     output: string
+    output_format?: OutputFormat
+  }
+  tests: {
+    score?: number
+    max_score?: number
+    name: string
+    name_format?: OutputFormat
+    output: string
+    output_format?: OutputFormat
     hidden_output?: string
     hidden_output_format?: OutputFormat
-    name_format?: OutputFormat
-    name: string
-    /**
-     * @format double
-     */
-    max_score?: number
-    /**
-     * @format double
-     */
-    score?: number
+    part?: string
     hide_until_released?: boolean
+    extra_data?: any
+    hidden_extra_data?: any
   }[]
-  lint: {
-    output_format?: OutputFormat
-    output: string
-    status: 'pass' | 'fail'
-  }
-  output: {
-    visible?: {
-      output_format?: OutputFormat
-      output: string
-    }
-    hidden?: {
-      output_format?: OutputFormat
-      output: string
-    }
-    after_due_date?: {
-      output_format?: OutputFormat
-      output: string
-    }
-    after_published?: {
-      output_format?: OutputFormat
-      output: string
-    }
-  }
-  /**
-   * @format double
-   */
-  max_score?: number
-  /**
-   * @format double
-   */
-  score?: number
   artifacts?: {
     name: string
     path: string // Local path in the grader container
@@ -129,20 +109,21 @@ export type FeedbackArtifactComment = FeedbackComment & {
 }
 
 export type GradingScriptResult = {
-  regression_test_repo?: string
-  action_repository: string
-  action_ref: string
-  grader_sha: string
-  feedback: AutograderFeedback
-  /**
-   * @format double
-   */
-  execution_time: number
-  output: string
-  /**
-   * @format double
-   */
+  /** @format double */
   ret_code: number
+  output: string
+  /** @format double */
+  execution_time: number
+  feedback: AutograderFeedback
+  grader_sha: string
+  action_ref: string
+  action_repository: string
+  regression_test_repo?: string
+  errors?: {
+    name: string
+    data: any
+    is_private: boolean
+  }[]
 }
 
 export type Calendar = {
