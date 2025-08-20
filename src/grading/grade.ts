@@ -58,14 +58,5 @@ export default async function grade(
     submissionDir,
     regressionTestJob
   )
-  const ret = await grader.grade()
-
-  return {
-    ...ret,
-    tests: ret.tests.map((test) => ({
-      ...test,
-      // HACK: until supported by API
-      extra_data: { ...test.extra_data, ...test.hidden_extra_data }
-    }))
-  }
+  return await grader.grade()
 }
