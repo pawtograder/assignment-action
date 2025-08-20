@@ -28,6 +28,7 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
       const pretty = z.prettifyError(parseRes.error)
       const err = `Invalid specification provided:\n${pretty}\n\nSee the cause field for the full error.`
 
+      // TODO: probably shouldn't expose this
       throw new Error(err, { cause: parseRes.error })
     }
   }
