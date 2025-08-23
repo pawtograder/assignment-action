@@ -213,6 +213,7 @@ export async function run(): Promise<void> {
       assignmentDir = config.assignmentDir
       graderSha = graderConfig.grader_sha
     }
+    process.exit(100) //For testing
 
     const start = Date.now()
     try {
