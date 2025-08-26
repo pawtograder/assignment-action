@@ -64,7 +64,7 @@ export abstract class Builder {
         child.stdout.on('data', (data: Buffer) => {
           const output = data.toString()
           myOutput += output
-          if (this.regressionTestJob) {
+          if (this.logger.isVerboseDebug) {
             console.log(`CIDebug: ${output}`)
           }
         })
@@ -72,7 +72,7 @@ export abstract class Builder {
         child.stderr.on('data', (data: Buffer) => {
           const error = data.toString()
           myError += error
-          if (this.regressionTestJob) {
+          if (this.logger.isVerboseDebug) {
             console.log(`CIDebug: ${error}`)
           }
         })

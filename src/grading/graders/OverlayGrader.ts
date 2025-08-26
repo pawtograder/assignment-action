@@ -705,7 +705,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
       )
       .flat()
-    if (this.regressionTestJob) {
+    if (this.logger.isVerboseDebug) {
       console.log('DEBUG: Test results')
       console.log(JSON.stringify(testFeedbacks, null, 2))
     }

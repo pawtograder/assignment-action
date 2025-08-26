@@ -3,6 +3,7 @@ export default class Logger {
     private regressionTestJob?;
     private output;
     constructor(regressionTestJob?: number | undefined);
+    get isVerboseDebug(): boolean | "" | undefined;
     log(visibility: OutputVisibility, message: string): void;
     hasOutput(visibility: OutputVisibility): boolean;
     getEachOutput(): {
