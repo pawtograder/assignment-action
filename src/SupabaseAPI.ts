@@ -83,26 +83,29 @@ export async function submitFeedback(
 
 export async function createSubmission(token: string) {
   const gradingServerURL = getInput('grading_server')
-  const response = await fetch(
-    `${gradingServerURL}/functions/v1/autograder-create-submission`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${token}`
+
+  return retryWithExponentialBackoff(async () => {
+    const response = await fetch(
+      `${gradingServerURL}/functions/v1/autograder-create-submission`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`
+        }
       }
-    }
-  )
-  if (!response.ok) {
-    throw new Error(`Failed to create submission: ${response.statusText}`)
-  }
-  const resp = (await response.json()) as SubmissionResponse
-  if (resp.error) {
-    throw new Error(
-      `Failed to create submission: ${resp.error.message} ${resp.error.details}`
     )
-  }
-  return resp
+    if (!response.ok) {
+      throw new Error(`Failed to create submission: ${response.statusText}`)
+    }
+    const resp = (await response.json()) as SubmissionResponse
+    if (resp.error) {
+      throw new Error(
+        `Failed to create submission: ${resp.error.message} ${resp.error.details}`
+      )
+    }
+    return resp
+  })
 }
 
 export async function createRegressionTestRun(
@@ -110,26 +113,29 @@ export async function createRegressionTestRun(
   regression_test_id: number
 ) {
   const gradingServerURL = getInput('grading_server')
-  const response = await fetch(
-    `${gradingServerURL}/functions/v1/autograder-create-regression-test-run/${regression_test_id}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${token}`
+
+  return retryWithExponentialBackoff(async () => {
+    const response = await fetch(
+      `${gradingServerURL}/functions/v1/autograder-create-regression-test-run/${regression_test_id}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`
+        }
       }
+    )
+    if (!response.ok) {
+      throw new Error(
+        `Failed to create regression test run: ${response.statusText}`
+      )
     }
-  )
-  if (!response.ok) {
-    throw new Error(
-      `Failed to create regression test run: ${response.statusText}`
-    )
-  }
-  const resp = (await response.json()) as RegressionTestRunResponse
-  if (resp.error) {
-    throw new Error(
-      `Failed to create regression test run: ${resp.error.message} ${resp.error.details}`
-    )
-  }
-  return resp
+    const resp = (await response.json()) as RegressionTestRunResponse
+    if (resp.error) {
+      throw new Error(
+        `Failed to create regression test run: ${resp.error.message} ${resp.error.details}`
+      )
+    }
+    return resp
+  })
 }
