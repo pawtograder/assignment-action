@@ -83,7 +83,10 @@ export abstract class Builder {
           }
           const returnCode = code ?? 1
           myOutput += myError
-          logger.log('hidden', `${myOutput}`)
+          if (!this.logger.isVerboseDebug) {
+            //Don't print the output if we're not in verbose debug mode, we already printed it line-by-line!
+            logger.log('hidden', `${myOutput}`)
+          }
           logger.log('hidden', `Return code: ${returnCode}`)
 
           if (returnCode === 143) {
