@@ -42,7 +42,7 @@ runs:
   using: 'composite'
   steps:
     - name: Check out action repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         repository: ${{ inputs.action_repository }}
         ref: ${{ inputs.action_ref }}
@@ -58,7 +58,7 @@ runs:
           echo "found=false" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Install xy
+    - name: Install xz
       if: steps.has-nix.outputs.found == 'false'
       shell: bash
       run: |
