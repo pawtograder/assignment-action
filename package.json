@@ -49,8 +49,8 @@
     "csv-parse": "^5.6.0",
     "glob": "^11.0.1",
     "node-fetch": "^3.3.2",
-    "pyret-autograder": "0.0.1-pre.29",
-    "pyret-autograder-pawtograder": "0.0.1-pre.23",
+    "pyret-autograder": "0.0.1-pre.31",
+    "pyret-autograder-pawtograder": "0.0.1-pre.25",
     "tinyspawn": "^1.5.0",
     "ts-interface-checker": "^1.0.2"
   },
