@@ -15,7 +15,7 @@
       inherit (nixpkgs) lib legacyPackages;
       eachSystem = f: lib.genAttrs (import systems) (system: f legacyPackages.${system});
       # mainNpmDepsHash = lib.fakeHash;
-      mainNpmDepsHash = "sha256-S3V98FK/2x63f8C9UVT5qSeOhySZl9HAv1DDR8lK8ek=";
+      mainNpmDepsHash = "sha256-g+7M5obG7Hsgwz9Y+oz+VpOjRcX8kTunEfJod7swYR8=";
     in
     {
       packages = eachSystem (pkgs: rec {
