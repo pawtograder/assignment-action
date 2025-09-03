@@ -37,6 +37,7 @@ export class PyretGrader extends Grader<PyretPawtograderConfig> {
 
     return new Promise((resolve, reject) => {
       const env = {
+        PA_ARTIFACT_DIR: process.cwd(),
         ...process.env,
         PA_CURRENT_LOAD_PATH: this.submissionDir,
         PWD: this.submissionDir
