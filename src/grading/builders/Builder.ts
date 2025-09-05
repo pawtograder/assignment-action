@@ -19,6 +19,8 @@ export type MutantResult = {
   status: 'pass' | 'fail'
   tests: string[]
   output: string
+  prompt?: string
+  shortName?: string
   output_format?: OutputFormat
 }
 
@@ -62,7 +64,7 @@ export abstract class Builder {
         child.stdout.on('data', (data: Buffer) => {
           const output = data.toString()
           myOutput += output
-          if (this.regressionTestJob) {
+          if (this.logger.isVerboseDebug) {
             console.log(`CIDebug: ${output}`)
           }
         })
@@ -70,7 +72,7 @@ export abstract class Builder {
         child.stderr.on('data', (data: Buffer) => {
           const error = data.toString()
           myError += error
-          if (this.regressionTestJob) {
+          if (this.logger.isVerboseDebug) {
             console.log(`CIDebug: ${error}`)
           }
         })
@@ -81,7 +83,10 @@ export abstract class Builder {
           }
           const returnCode = code ?? 1
           myOutput += myError
-          logger.log('hidden', `${myOutput}`)
+          if (!this.logger.isVerboseDebug) {
+            //Don't print the output if we're not in verbose debug mode, we already printed it line-by-line!
+            logger.log('hidden', `${myOutput}`)
+          }
           logger.log('hidden', `Return code: ${returnCode}`)
 
           if (returnCode === 143) {
@@ -107,7 +112,14 @@ export abstract class Builder {
               new Error(`Command timed out after ${timeoutSeconds} seconds`)
             )
           } else {
-            reject(err)
+            myOutput += myError
+            logger.log('hidden', `Command failed with output:\n${myOutput}`)
+            if (ignoreFailures) {
+              logger.log('hidden', `Ignoring failure`)
+              resolve({ returnCode: 1, output: myOutput })
+            } else {
+              reject(err)
+            }
           }
         })
       }
@@ -121,6 +133,9 @@ export abstract class Builder {
   abstract buildClean(options: BuildStepOptions): Promise<void>
   abstract getCoverageReport(): Promise<string>
   abstract getCoverageReportDir(): string | null
+  getMutationCoverageReportDir(): string | undefined {
+    return undefined
+  }
   abstract setupVenv(dir: string, key: string): Promise<void>
 }
 

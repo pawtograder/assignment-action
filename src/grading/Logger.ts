@@ -7,10 +7,18 @@ export default class Logger {
   }[] = []
   constructor(private regressionTestJob?: number) {}
 
+  get isVerboseDebug() {
+    return (
+      this.regressionTestJob !== undefined ||
+      (process.env.GRADER_DEBUG &&
+        process.env.GRADER_DEBUG.toLowerCase() !== 'false')
+    )
+  }
+
   log(visibility: OutputVisibility, message: string) {
     if (visibility === 'visible') {
       console.log(message)
-    } else if (this.regressionTestJob) {
+    } else if (this.isVerboseDebug) {
       console.log(`CIDebug: ${message}`)
     }
     this.output.push({

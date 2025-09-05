@@ -3,11 +3,13 @@ import { SummaryTableRow } from '@actions/core/lib/summary.js'
 import { exec } from '@actions/exec'
 import { createWriteStream, readFileSync } from 'fs'
 import { createClient } from '@supabase/supabase-js'
+import JSZip from 'jszip'
 
 import { mkdir, rename } from 'fs/promises'
-import { stat } from 'fs/promises'
+import { stat, readdir } from 'fs/promises'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
+import { join } from 'path'
 import {
   createRegressionTestRun,
   createSubmission,
@@ -32,6 +34,29 @@ async function downloadTarballAndExtractTo(url: string, dir: string) {
     '--strip-components',
     '1'
   ])
+}
+
+async function zipDirectory(dirPath: string): Promise<Buffer> {
+  const zip = new JSZip()
+
+  async function addFiles(currentPath: string, zipPath: string = '') {
+    const items = await readdir(currentPath, { withFileTypes: true })
+
+    for (const item of items) {
+      const fullPath = join(currentPath, item.name)
+      const zipEntryPath = zipPath ? join(zipPath, item.name) : item.name
+
+      if (item.isDirectory()) {
+        await addFiles(fullPath, zipEntryPath)
+      } else {
+        const fileBuffer = readFileSync(fullPath)
+        zip.file(zipEntryPath, fileBuffer)
+      }
+    }
+  }
+
+  await addFiles(dirPath)
+  return await zip.generateAsync({ type: 'nodebuffer' })
 }
 
 async function prepareForGrading(
@@ -136,20 +161,19 @@ export async function run(): Promise<void> {
         'Unable to get OIDC token. Is workflow permission configured correctly?'
       )
     }
-    //Double check: is this the handout? If so, ignore the rest of the action and just log a warning
-    const handout = getEnv('HANDOUT_REPO')
+    // Check for deprecated handout_repo parameter and warn if used
+    const handoutRepo = getEnv('HANDOUT_REPO')
+    if (handoutRepo) {
+      core.warning(
+        'The handout_repo parameter is deprecated and unused. It will be removed in v4. Handout detection is now handled automatically by the API.'
+      )
+    }
+
     const regressionTestJob = getEnv('REGRESSION_TEST_JOB')
     if (regressionTestJob) {
       core.info(
         `Running regression test for ${regressionTestJob} on ${process.env.GITHUB_REPOSITORY}`
       )
-    }
-
-    if (handout && handout === process.env.GITHUB_REPOSITORY) {
-      core.warning(
-        'This action appears to have been triggered by running in the handout repo. No submission has been created, and it will not be graded.'
-      )
-      return
     }
 
     const action_ref = getEnv('ACTION_REF', true)
@@ -167,6 +191,24 @@ export async function run(): Promise<void> {
       graderSha = process.env.GITHUB_SHA!
     } else {
       const graderConfig = await createSubmission(token)
+
+      // Check for handout notice and exit early if detected
+      if (graderConfig?.handout_notice) {
+        const assignments = (graderConfig.handout_notice.assignments || [])
+          .map((a) => {
+            const courseInfo =
+              a.class_name && a.semester
+                ? ` (${a.class_name} - ${a.semester})`
+                : ''
+            const slug = a.slug ? ` (${a.slug})` : ''
+            return `${a.title}${slug}${courseInfo}`
+          })
+          .join(', ')
+        const status = `${graderConfig.handout_notice.message} Assignments: ${assignments || 'unknown'}`
+        core.info(status)
+        return // Exit action successfully without running grader
+      }
+
       const config = await prepareForGrading(graderConfig)
       graderDir = config.graderDir
       assignmentDir = config.assignmentDir
@@ -215,10 +257,8 @@ export async function run(): Promise<void> {
               let fileToUpload: Buffer
 
               if (stats.isDirectory()) {
-                // Create a zip file for the directory
-                const zipPath = `${artifact.path}.zip`
-                await exec('zip', ['-r', zipPath, artifact.path])
-                fileToUpload = readFileSync(zipPath)
+                // Create a zip file for the directory using JSZip
+                fileToUpload = await zipDirectory(artifact.path)
               } else {
                 fileToUpload = readFileSync(artifact.path)
               }

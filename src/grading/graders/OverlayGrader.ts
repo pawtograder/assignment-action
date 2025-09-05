@@ -1,16 +1,19 @@
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import { access, readdir } from 'fs/promises'
+import { tmpdir } from 'os'
 import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
-import PythonScriptBuilder from '../builders/ScriptBuilder.js'
+import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
   GradedPart,
   GradedUnit,
+  GraderArtifact,
+  OverlayPawtograderConfig,
   isMutationTestUnit,
   isRegularTestUnit,
   OutputFormat,
@@ -47,8 +50,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const info = this.config.build.script_info
       if (!info) {
         throw Error(
-          'Expected SciptInfo to be provided in yml config, but nothing was provided',
-          info
+          'Expected SciptInfo to be provided in yml config, but nothing was provided'
         )
       }
       this.builder = new PythonScriptBuilder(
@@ -96,6 +98,37 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const dir = path.dirname(dest)
       await io.mkdirP(dir)
       await io.cp(file, dest, { recursive: true })
+    }
+  }
+
+  private async copyArtifactToTemp(artifact: GraderArtifact) {
+    const artifactsTempDir = path.join(
+      tmpdir(),
+      `pawtograder-artifacts-${Date.now()}`
+    )
+    await io.mkdirP(artifactsTempDir)
+    const sourcePath = artifact.path.startsWith('/')
+      ? artifact.path
+      : path.join(this.gradingDir, artifact.path)
+    try {
+      await access(sourcePath)
+      const tempArtifactPath = path.join(
+        artifactsTempDir,
+        `${Date.now()}-${path.basename(artifact.path)}`
+      )
+      await io.cp(sourcePath, tempArtifactPath, { recursive: true })
+      return {
+        name: artifact.name,
+        path: tempArtifactPath,
+        data: artifact.data
+      }
+    } catch (err) {
+      this.logger.log(
+        'visible',
+        `Warning: Could not copy artifact ${artifact.name} from ${artifact.path}`
+      )
+      this.logger.log('visible', JSON.stringify(err, null, 2))
+      throw err
     }
   }
 
@@ -177,39 +210,63 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               'No results from grading tests. Please check overall output for more details.',
             output_format: 'markdown',
             score: 0,
-            max_score: unit.breakPoints[0].pointsToAward
+            max_score:
+              unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
           }
         ]
       } else {
+        const maxScore =
+          unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
+        const maxMutantsToDetect =
+          unit.breakPoints?.[0].minimumMutantsDetected ??
+          unit.linearScoring?.total_faults
+
+        if (!maxScore || !maxMutantsToDetect) {
+          throw new Error(
+            `Incorrect mutation test specification (should either provide valid breakpoints or total points and faults): ${JSON.stringify(unit)}`
+          )
+        }
         const relevantMutantResults = mutantResults.filter((mr) => {
           const locations = unit.locations
           const mutantLocation = mr.location
-          const mutantLocationParts = mutantLocation.split(':')
-          const mutantLine = parseInt(mutantLocationParts[1])
-          const mutantEndLine = parseInt(mutantLocationParts[2])
-          return locations.some((location) => {
-            const locationParts = location.split('-')
-            const locationLine = parseInt(locationParts[1])
-            const locationEndLine = parseInt(locationParts[2])
-            return (
-              mutantLine >= locationLine && mutantEndLine <= locationEndLine
-            )
-          })
+          if (!mutantLocation.includes(':')) {
+            return locations.some((location) => {
+              return mutantLocation.startsWith(location)
+            })
+          } else {
+            const mutantLocationParts = mutantLocation.split(':')
+            const mutantLine = parseInt(mutantLocationParts[1])
+            const mutantEndLine = parseInt(mutantLocationParts[2])
+            return locations.some((location) => {
+              const locationParts = location.split('-')
+              const locationLine = parseInt(locationParts[1])
+              const locationEndLine = parseInt(locationParts[2])
+              return (
+                mutantLine >= locationLine && mutantEndLine <= locationEndLine
+              )
+            })
+          }
         })
         const mutantsDetected = relevantMutantResults.filter(
           (mr) => mr.status === 'pass'
         ).length
-        const maxMutantsToDetect = unit.breakPoints[0].minimumMutantsDetected
-        const breakPoint = unit.breakPoints.find(
-          (bp) => bp.minimumMutantsDetected <= mutantsDetected
-        )
+
+        let score: number | undefined = 0
+        if (unit.breakPoints) {
+          score = unit.breakPoints.find(
+            (bp) => bp.minimumMutantsDetected <= mutantsDetected
+          )?.pointsToAward
+        } else {
+          score = (mutantsDetected / maxMutantsToDetect) * maxScore
+        }
+
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${maxMutantsToDetect}**`,
+            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}`,
             output_format: 'markdown',
-            score: breakPoint ? breakPoint.pointsToAward : 0,
-            max_score: unit.breakPoints[0].pointsToAward
+            score: score ?? 0,
+            max_score: maxScore
           }
         ]
       }
@@ -267,10 +324,18 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         artifacts: []
       }
     }
-    // const tmpDir = await mkdtemp(path.join(tmpdir(), 'pawtograder-'));
-    console.log('Beginning grading')
+    this.logger.log('visible', 'Beginning grading')
+    const expectedArtifacts = this.config.build.artifacts || []
+
     const tmpDir = path.join(process.cwd(), 'pawtograder-grading')
     await io.mkdirP(tmpDir)
+
+    // Create temp directory for preserving artifacts
+    const artifactsTempDir = path.join(
+      tmpdir(),
+      `pawtograder-artifacts-${Date.now()}`
+    )
+    await io.mkdirP(artifactsTempDir)
     const solutionFiles = await readdir(this.solutionDir)
     await Promise.all(
       solutionFiles.map(async (file) => {
@@ -281,11 +346,11 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         }
       })
     )
-    console.log('Copying student files')
+    this.logger.log('visible', 'Copying student files')
     await this.copyStudentFiles('files')
     await this.copyStudentFiles('testFiles')
 
-    console.log('Setting up virtual environment')
+    this.logger.log('visible', 'Setting up virtual environment')
 
     if (this.config.build.venv?.cache_key && this.config.build.venv?.dir_name) {
       const venv_dir = this.config.build.venv.dir_name
@@ -293,16 +358,36 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       await this.builder.setupVenv(venv_dir, cache_key)
     }
 
-    console.log('Linting student submission')
+    this.logger.log('visible', 'Linting student submission')
     const lintResult = await this.builder.lint()
+    if (this.config.build.linter?.policy === 'fail') {
+      if (lintResult.status === 'fail') {
+        this.logger.log(
+          'visible',
+          `Linting failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`
+        )
+        this.logger.log('visible', lintResult.output)
+        return {
+          lint: lintResult,
+          output: this.logger.getEachOutput(),
+          tests: [],
+          score: 0,
+          artifacts: []
+        }
+      }
+    }
 
-    console.log('Resetting to run instructor tests on student submission')
+    this.logger.log(
+      'visible',
+      'Resetting to run instructor tests on student submission'
+    )
     await this.resetSolutionFiles()
     await this.copyStudentFiles('files')
     const gradedParts = this.config.gradedParts || []
 
     try {
-      console.log(
+      this.logger.log(
+        'visible',
         'Building project with student submission and running instructor tests'
       )
       await this.builder.buildClean({
@@ -339,7 +424,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 output_format: 'text' as OutputFormat,
                 score: 0,
                 part: part.name,
-                max_score: gradedUnit.breakPoints[0].pointsToAward
+                max_score:
+                  gradedUnit.breakPoints?.[0].pointsToAward ??
+                  gradedUnit.linearScoring?.points
               }
             } else {
               throw new Error(
@@ -394,7 +481,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 output_format: 'text' as OutputFormat,
                 score: 0,
                 part: part.name,
-                max_score: gradedUnit.breakPoints[0].pointsToAward
+                max_score:
+                  gradedUnit.breakPoints?.[0].pointsToAward ??
+                  gradedUnit.linearScoring?.points
               }
             } else {
               throw new Error(
@@ -419,12 +508,13 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       this.config.submissionFiles.testFiles.length > 0 &&
       this.config.build.student_tests?.instructor_impl?.run_tests
     ) {
-      console.log(
+      this.logger.log(
+        'visible',
         'Resetting to have student tests with the instructor solution'
       )
       await this.resetSolutionFiles()
       await this.copyStudentFiles('testFiles')
-      console.log('Building solution and running student tests')
+      this.logger.log('visible', 'Building solution and running student tests')
       try {
         await this.builder.buildClean({
           timeoutSeconds:
@@ -458,12 +548,19 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         !studentTestResults ||
         studentTestResults.some((result) => result.status === 'fail')
       ) {
-        this.logger.log(
-          'visible',
-          "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "
-        )
-        mutantFailureAdvice =
-          "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n"
+        if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
+          this.logger.log(
+            'visible',
+            "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "
+          )
+          mutantFailureAdvice =
+            "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n"
+        } else {
+          this.logger.log(
+            'visible',
+            "Some of your tests failed when run against the instructor's solution."
+          )
+        }
         this.logger.log('visible', 'Here are your failing test results:')
         if (studentTestResults) {
           for (const result of studentTestResults) {
@@ -477,14 +574,38 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         }
         mutantFailureAdvice +=
           '\n\nPlease fix the above errors and resubmit for grading.'
-      } else {
-        console.log('Running student tests against buggy solutions')
+      } else if (
+        this.config.build.student_tests?.instructor_impl?.run_mutation
+      ) {
+        this.logger.log(
+          'visible',
+          'Running student tests against buggy solutions'
+        )
         try {
           mutantResults = await this.builder.mutationTest({
             timeoutSeconds:
               this.config.build.timeouts_seconds?.mutants ||
               DEFAULT_TIMEOUTS.mutants
           })
+          if (
+            this.config.build.student_tests?.instructor_impl
+              ?.report_mutation_coverage
+          ) {
+            const coverageReportDir =
+              this.builder.getMutationCoverageReportDir()
+            if (coverageReportDir) {
+              expectedArtifacts.push(
+                await this.copyArtifactToTemp({
+                  name: 'Mutation Report: Student-Written Tests on Instructor Implementation',
+                  path: coverageReportDir,
+                  data: {
+                    format: 'zip',
+                    display: 'html_site'
+                  }
+                })
+              )
+            }
+          }
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Unknown error'
           this.logger.log('visible', 'Error running mutation tests: ' + msg)
@@ -492,12 +613,20 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       }
     }
     let studentTestAdvice: string | undefined
+    let studentImplMutantResults: MutantResult[] | undefined
+    let studentImplMutantFailureAdvice: string | undefined
     if (
       (this.config.build.student_tests?.student_impl?.report_branch_coverage ||
-        this.config.build.student_tests?.student_impl?.run_tests) &&
+        this.config.build.student_tests?.student_impl?.run_tests ||
+        this.config.build.student_tests?.student_impl?.run_mutation ||
+        this.config.build.student_tests?.student_impl
+          ?.report_mutation_coverage) &&
       this.config.submissionFiles.testFiles.length > 0
     ) {
-      console.log('Running student tests against student implementation')
+      this.logger.log(
+        'visible',
+        'Running student tests against student implementation'
+      )
       try {
         await this.resetSolutionFiles()
         await this.copyStudentFiles('testFiles')
@@ -511,25 +640,77 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             this.config.build.timeouts_seconds?.student_tests ||
             DEFAULT_TIMEOUTS.student_tests
         })
+
+        // Run mutation testing on student implementation if enabled
+        if (
+          this.config.build.student_tests?.student_impl?.run_mutation &&
+          studentTestResults &&
+          studentTestResults.every((result) => result.status === 'pass')
+        ) {
+          this.logger.log(
+            'visible',
+            'Running mutation tests on student implementation'
+          )
+          try {
+            studentImplMutantResults = await this.builder.mutationTest({
+              timeoutSeconds:
+                this.config.build.timeouts_seconds?.mutants ||
+                DEFAULT_TIMEOUTS.mutants
+            })
+            if (
+              this.config.build.student_tests?.student_impl
+                ?.report_mutation_coverage
+            ) {
+              const mutationCoverageReportDir =
+                this.builder.getMutationCoverageReportDir()
+              if (mutationCoverageReportDir) {
+                expectedArtifacts.push(
+                  await this.copyArtifactToTemp({
+                    name: 'Mutation Report: Student-Written Tests on Student Implementation',
+                    path: mutationCoverageReportDir,
+                    data: {
+                      format: 'zip',
+                      display: 'html_site'
+                    }
+                  })
+                )
+              }
+            }
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error'
+            this.logger.log(
+              'visible',
+              'Error running mutation tests on student implementation: ' + msg
+            )
+            studentImplMutantFailureAdvice =
+              'Error running mutation tests on student implementation. Please see overall output for more details.'
+          }
+        } else if (
+          this.config.build.student_tests?.student_impl?.run_mutation &&
+          studentTestResults &&
+          studentTestResults.some((result) => result.status === 'fail')
+        ) {
+          studentImplMutantFailureAdvice =
+            'Mutation testing was not run because some student tests failed against the student implementation.'
+        }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error'
         studentTestAdvice = 'Your tests failed to compile. ' + msg
         this.logger.log('visible', msg)
       }
     }
-    console.log('Wrapping up')
+    this.logger.log('visible', 'Wrapping up')
     const testFeedbacks = gradedParts
       .map((part) =>
         this.gradePart(part, testResults, mutantResults, mutantFailureAdvice)
       )
       .flat()
-    if (this.regressionTestJob) {
+    if (this.logger.isVerboseDebug) {
       console.log('DEBUG: Test results')
       console.log(JSON.stringify(testFeedbacks, null, 2))
     }
 
     //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
-    const expectedArtifacts = this.config.build.artifacts || []
 
     if (
       this.config.build.student_tests?.instructor_impl?.report_mutation_coverage
@@ -540,49 +721,21 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         studentMutationOutput = mutantFailureAdvice
       }
       if (mutantResults) {
-        const getMutantPrompt = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.prompt
-            }
-          }
-          return mutantName
-        }
-        const getMutantShortName = (mutantName: string) => {
-          if (this.config.mutantAdvice) {
-            const [sourceClass, targetClass] = mutantName.split(' ')
-            const mutantAdvice = this.config.mutantAdvice.find(
-              (ma) =>
-                ma.sourceClass === sourceClass && ma.targetClass === targetClass
-            )
-            if (mutantAdvice) {
-              return mutantAdvice.name
-            }
-          }
-          return undefined
-        }
-
         const mutantsDetected = mutantResults
           .filter((mr) => mr.status === 'pass')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            const shortName = getMutantShortName(mr.name)
-            return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
+            const shortName = mr.shortName ?? mr.name
+            return `* ${shortName} (${mr.prompt ?? 'No prompt provided for this bug :( '})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = mutantResults
           .filter((mr) => mr.status === 'fail')
           .map((mr) => {
-            const prompt = getMutantPrompt(mr.name)
-            return `* **${mr.name}** (${prompt})`
+            const shortName = mr.shortName ?? mr.name
+            return `* **${shortName}** (${mr.prompt ?? 'No prompt provided for this bug :( '})`
           })
-        studentMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
+        studentMutationOutput += `Faults detected(${mutantsDetected.length}):\n`
         studentMutationOutput += `${mutantsDetected.join('\n')}\n\n`
-        studentMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
+        studentMutationOutput += `Faults not detected(${mutantsNotDetected.length}):\n`
         studentMutationOutput += `${mutantsNotDetected.join('\n')}`
       }
       this.logger.log('hidden', studentMutationOutput)
@@ -592,6 +745,47 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         output_format: 'markdown',
         score: 0,
         max_score: 0
+      })
+    }
+    if (
+      this.config.build.student_tests?.student_impl?.report_mutation_coverage
+    ) {
+      let studentImplMutationOutput =
+        'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational: '
+      if (studentImplMutantFailureAdvice) {
+        studentImplMutationOutput = studentImplMutantFailureAdvice
+      }
+      if (studentImplMutantResults) {
+        const getMutantPrompt = (mr: MutantResult) => {
+          return mr.prompt ?? 'No prompt provided for this bug :( '
+        }
+
+        const mutantsDetected = studentImplMutantResults
+          .filter((mr) => mr.status === 'pass')
+          .map((mr) => {
+            const prompt = getMutantPrompt(mr)
+            const shortName = mr.shortName ?? mr.name
+            return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
+          })
+        const mutantsNotDetected = studentImplMutantResults
+          .filter((mr) => mr.status === 'fail')
+          .map((mr) => {
+            const prompt = getMutantPrompt(mr)
+            return `* **${mr.name}** (${prompt})`
+          })
+        studentImplMutationOutput += `Faults detected: ${mutantsDetected.length}:\n`
+        studentImplMutationOutput += `${mutantsDetected.join('\n')}\n\n`
+        studentImplMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
+        studentImplMutationOutput += `${mutantsNotDetected.join('\n')}`
+      }
+      this.logger.log('hidden', studentImplMutationOutput)
+      testFeedbacks.push({
+        name: 'Student Implementation Fault Coverage Report',
+        output: studentImplMutationOutput,
+        output_format: 'markdown',
+        score: 0,
+        max_score: 0,
+        part: 'Student Implementation Tests'
       })
     }
     if (this.config.build.student_tests?.student_impl?.report_branch_coverage) {
@@ -623,16 +817,29 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           hide_score: 'true'
         }
       })
-      const artifactDir = this.builder.getCoverageReportDir()
-      if (artifactDir) {
-        expectedArtifacts.push({
-          name: 'Coverage Report: Student-Written Tests',
-          path: artifactDir,
-          data: {
-            format: 'zip',
-            display: 'html_site'
-          }
-        })
+      const coverageReportDir = this.builder.getCoverageReportDir()
+      if (coverageReportDir) {
+        try {
+          expectedArtifacts.push(
+            await this.copyArtifactToTemp({
+              name: 'Coverage Report: Student-Written Tests on Student Implementation',
+              path: coverageReportDir,
+              data: {
+                format: 'zip',
+                display: 'html_site'
+              }
+            })
+          )
+        } catch (err) {
+          this.logger.log(
+            'visible',
+            `Error copying coverage report: ${err instanceof Error ? err.message : 'Unknown error'}`
+          )
+          this.logger.log(
+            'visible',
+            `Coverage report will not be available for this submission.`
+          )
+        }
       }
     }
 
@@ -645,7 +852,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             'visible',
             `Checking for artifact: ${artifact.name} at ${artifact.path}`
           )
-          const artifactPath = path.join(this.gradingDir, artifact.path)
+          const artifactPath = artifact.path.startsWith('/')
+            ? artifact.path
+            : path.join(this.gradingDir, artifact.path)
           try {
             await access(artifactPath)
             return {

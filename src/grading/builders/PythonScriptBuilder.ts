@@ -117,6 +117,9 @@ export default class PythonScriptBuilder extends Builder {
       this.logger
     )
   }
+  getMutationCoverageReportDir(): string | undefined {
+    return undefined
+  }
   async getCoverageReport(): Promise<string> {
     this.logger.log(
       'hidden',

@@ -11,11 +11,7 @@ import { parsePitestXml } from './pitest.js'
 import { processXMLResults } from './surefire.js'
 
 export default class GradleBuilder extends Builder {
-  async setupVenv(dir: string, key: string): Promise<void> {
-    console.log('Venv not implemented in gradle builder')
-    console.log('dir: ', dir)
-    console.log('key: ', key)
-  }
+  async setupVenv(): Promise<void> {}
   async lint(): Promise<LintResult> {
     this.logger.log('hidden', 'Linting with Gradle')
     const { returnCode, output } = await this.executeCommandAndGetOutput(
@@ -30,13 +26,14 @@ export default class GradleBuilder extends Builder {
         '-x',
         'compileTestJava'
       ],
-      this.logger
+      this.logger,
+      360,
+      true
     )
-    if (returnCode !== 0) {
-      throw new Error(
-        `Unable to invoke Gradle checkstyle task. Here is the output that Gradle produced on the grading server: ${output}`
-      )
-    }
+    this.logger.log(
+      'hidden',
+      `Gradle lint checkstyle return code: ${returnCode}, output: ${output}`
+    )
     return parseLintingReports(
       `${this.gradingDir}/build/reports/checkstyle/*.xml`,
       this.logger
@@ -60,7 +57,14 @@ export default class GradleBuilder extends Builder {
     this.logger.log('hidden', 'Testing with Gradle')
     const { returnCode } = await this.executeCommandAndGetOutput(
       './gradlew',
-      ['--console=plain', 'test'],
+      [
+        '--console=plain',
+        'test',
+        '-x',
+        'checkstyleMain',
+        '-x',
+        'checkstyleTest'
+      ],
       this.logger,
       timeoutSeconds,
       true
@@ -76,13 +80,24 @@ export default class GradleBuilder extends Builder {
       this.logger
     )
   }
+
+  getMutationCoverageReportDir(): string | undefined {
+    return 'build/reports/pitest'
+  }
   async mutationTest({
     timeoutSeconds
   }: BuildStepOptions): Promise<MutantResult[]> {
     this.logger.log('hidden', 'Running Pitest')
     await this.executeCommandAndGetOutput(
       './gradlew',
-      ['--console=plain', 'pitest'],
+      [
+        '--console=plain',
+        'pitest',
+        '-x',
+        'checkstyleMain',
+        '-x',
+        'checkstyleTest'
+      ],
       this.logger,
       timeoutSeconds,
       false
@@ -110,7 +125,15 @@ export default class GradleBuilder extends Builder {
     this.logger.log('hidden', 'Building clean with Gradle')
     const { returnCode, output } = await this.executeCommandAndGetOutput(
       './gradlew',
-      ['--console=plain', 'clean', '-x', 'test', 'build'],
+      [
+        '--console=plain',
+        'clean',
+        '-x',
+        'checkstyleMain',
+        '-x',
+        'checkstyleTest',
+        'build'
+      ],
       this.logger,
       timeoutSeconds,
       true

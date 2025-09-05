@@ -13,10 +13,8 @@ inputs:
     required: true
   handout_repo:
     description:
-      The name of the handout repo, e.g. khoury-classroom/handout-template. This
-      is only used to check if the action is being run in the handout repo, and
-      if so, no submission will be created (so your handout built can still be
-      green).
+      '[DEPRECATED] This parameter is unused and will be removed in v4. Handout
+      detection is now handled automatically by the API.'
     required: false
   regression_test_job:
     description: The ID of the Pawtograder regression test job to run
@@ -37,6 +35,9 @@ outputs:
   score:
     description: The score of the submission
     value: ${{ steps.grade.outputs.score }}
+  status:
+    description: 'Human-readable status message'
+    value: ${{ steps.grade.output.status }}
 
 runs:
   using: 'composite'

@@ -35,12 +35,14 @@ export interface BuildConfig {
   artifacts?: GraderArtifact[]
   linter?: {
     preset: 'checkstyle'
-    policy: 'fail' | 'warn' | 'ignore'
+    policy: 'fail' | 'ignore'
   }
   student_tests?: {
     student_impl?: {
       run_tests?: boolean
       report_branch_coverage?: boolean
+      run_mutation?: boolean
+      report_mutation_coverage?: boolean
     }
     instructor_impl?: {
       run_tests?: boolean
@@ -67,7 +69,11 @@ export interface BreakPoint {
 export interface MutationTestUnit {
   name: string
   locations: string[] // format: "file:line-line" (for normal pit mutators) OR format oldFile-newFile (for prebake mutators)
-  breakPoints: BreakPoint[]
+
+  //Either exact breakpoints are provided, or points are awarded linearly as (mutants detected/total_faults) * points
+  //one of these must be provided
+  breakPoints?: BreakPoint[]
+  linearScoring?: { total_faults: number; points: number }
 }
 
 // Regular test unit types
@@ -98,12 +104,6 @@ export interface OverlayPawtograderConfig {
     files: string[]
     testFiles: string[]
   }
-  mutantAdvice?: {
-    sourceClass: string
-    targetClass: string
-    name: string
-    prompt: string
-  }[]
 }
 
 export interface PyretPawtograderConfig {
@@ -116,7 +116,9 @@ export type PawtograderConfig =
 
 // Type guard to check if a unit is a mutation test unit
 export function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit {
-  return 'locations' in unit && 'breakPoints' in unit
+  return (
+    'locations' in unit && ('breakPoints' in unit || 'linearScoring' in unit)
+  )
 }
 
 // Type guard to check if a unit is a regular test unit
