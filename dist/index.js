@@ -136840,16 +136840,11 @@ async function submitFeedback(body, token, queryParams) {
                 Authorization: `${token}`
             }
         });
-        if (!response.ok) {
-            if (response.status === 500) {
-                throw new Error(`Failed to create submission: ${response.statusText}`);
-            }
-            else {
-                throw new NonRetriableError(`Failed to create submission: ${response.statusText}`);
-            }
-        }
         const resp = (await response.json());
         if (resp.error) {
+            if (!resp.error.recoverable) {
+                throw new NonRetriableError(`Failed to submit feedback: ${resp.error.message} ${resp.error.details}`);
+            }
             throw new Error(`Failed to submit feedback: ${resp.error.message} ${resp.error.details}`);
         }
         return resp;
@@ -136865,19 +136860,11 @@ async function createSubmission(token) {
                 Authorization: `${token}`
             }
         });
-        if (!response.ok) {
-            console.log(response.status);
-            console.log(response.statusText);
-            console.log(await response.text());
-            if (response.status === 500) {
-                throw new Error(`Failed to create submission: ${response.statusText}`);
-            }
-            else {
-                throw new NonRetriableError(`Failed to create submission: ${response.statusText}`);
-            }
-        }
         const resp = (await response.json());
         if (resp.error) {
+            if (!resp.error.recoverable) {
+                throw new NonRetriableError(`Failed to create submission: ${resp.error.message} ${resp.error.details}`);
+            }
             throw new Error(`Failed to create submission: ${resp.error.message} ${resp.error.details}`);
         }
         return resp;
@@ -136893,16 +136880,11 @@ async function createRegressionTestRun(token, regression_test_id) {
                 Authorization: `${token}`
             }
         });
-        if (!response.ok) {
-            if (response.status === 500) {
-                throw new Error(`Failed to create regression test run: ${response.statusText}`);
-            }
-            else {
-                throw new NonRetriableError(`Failed to create regression test run: ${response.statusText}`);
-            }
-        }
         const resp = (await response.json());
         if (resp.error) {
+            if (!resp.error.recoverable) {
+                throw new NonRetriableError(`Failed to create regression test run: ${resp.error.message} ${resp.error.details}`);
+            }
             throw new Error(`Failed to create regression test run: ${resp.error.message} ${resp.error.details}`);
         }
         return resp;
