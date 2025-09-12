@@ -136868,6 +136868,7 @@ async function createSubmission(token) {
         if (!response.ok) {
             console.log(response.status);
             console.log(response.statusText);
+            console.log(await response.text());
             if (response.status === 500) {
                 throw new Error(`Failed to create submission: ${response.statusText}`);
             }
