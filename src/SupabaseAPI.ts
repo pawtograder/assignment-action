@@ -34,7 +34,7 @@ export async function retryWithExponentialBackoff<T>(
 
       // If the error is non-retriable, throw it immediately
       if (lastError instanceof NonRetriableError) {
-        throw lastError.cause
+        throw lastError
       }
 
       if (attempt === maxRetries) {
@@ -83,6 +83,8 @@ export async function submitFeedback(
       }
     )
     if (!response.ok) {
+      console.log(response.status)
+      console.log(response.statusText)
       if (response.status === 500) {
         throw new Error(`Failed to create submission: ${response.statusText}`)
       } else {

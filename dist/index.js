@@ -136810,7 +136810,7 @@ async function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay 
             console.log(JSON.stringify(lastError, null, 2));
             // If the error is non-retriable, throw it immediately
             if (lastError instanceof NonRetriableError) {
-                throw lastError.cause;
+                throw lastError;
             }
             if (attempt === maxRetries) {
                 throw lastError;
@@ -136841,6 +136841,8 @@ async function submitFeedback(body, token, queryParams) {
             }
         });
         if (!response.ok) {
+            console.log(response.status);
+            console.log(response.statusText);
             if (response.status === 500) {
                 throw new Error(`Failed to create submission: ${response.statusText}`);
             }
