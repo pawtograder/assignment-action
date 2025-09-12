@@ -83,8 +83,6 @@ export async function submitFeedback(
       }
     )
     if (!response.ok) {
-      console.log(response.status)
-      console.log(response.statusText)
       if (response.status === 500) {
         throw new Error(`Failed to create submission: ${response.statusText}`)
       } else {
@@ -118,6 +116,8 @@ export async function createSubmission(token: string) {
       }
     )
     if (!response.ok) {
+      console.log(response.status)
+      console.log(response.statusText)
       if (response.status === 500) {
         throw new Error(`Failed to create submission: ${response.statusText}`)
       } else {

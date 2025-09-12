@@ -136841,8 +136841,6 @@ async function submitFeedback(body, token, queryParams) {
             }
         });
         if (!response.ok) {
-            console.log(response.status);
-            console.log(response.statusText);
             if (response.status === 500) {
                 throw new Error(`Failed to create submission: ${response.statusText}`);
             }
@@ -136868,6 +136866,8 @@ async function createSubmission(token) {
             }
         });
         if (!response.ok) {
+            console.log(response.status);
+            console.log(response.statusText);
             if (response.status === 500) {
                 throw new Error(`Failed to create submission: ${response.statusText}`);
             }
