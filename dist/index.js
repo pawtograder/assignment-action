@@ -136810,7 +136810,7 @@ async function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay 
             console.log(JSON.stringify(lastError, null, 2));
             // If the error is non-retriable, throw it immediately
             if (lastError instanceof NonRetriableError) {
-                throw lastError;
+                throw lastError.cause;
             }
             if (attempt === maxRetries) {
                 throw lastError;

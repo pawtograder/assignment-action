@@ -34,7 +34,7 @@ export async function retryWithExponentialBackoff<T>(
 
       // If the error is non-retriable, throw it immediately
       if (lastError instanceof NonRetriableError) {
-        throw lastError
+        throw lastError.cause
       }
 
       if (attempt === maxRetries) {
