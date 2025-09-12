@@ -136792,6 +136792,13 @@ var JSZip = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 async function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
+class NonRetriableError extends Error {
+    constructor(message, cause) {
+        super(message);
+        this.name = 'NonRetriableError';
+        this.cause = cause;
+    }
+}
 async function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay = 1000) {
     let lastError;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -136800,6 +136807,11 @@ async function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay 
         }
         catch (error) {
             lastError = error;
+            console.log(JSON.stringify(lastError, null, 2));
+            // If the error is non-retriable, throw it immediately
+            if (lastError instanceof NonRetriableError) {
+                throw lastError;
+            }
             if (attempt === maxRetries) {
                 throw lastError;
             }
@@ -136829,7 +136841,12 @@ async function submitFeedback(body, token, queryParams) {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to submit feedback: ${response.statusText}`);
+            if (response.status === 500) {
+                throw new Error(`Failed to create submission: ${response.statusText}`);
+            }
+            else {
+                throw new NonRetriableError(`Failed to create submission: ${response.statusText}`);
+            }
         }
         const resp = (await response.json());
         if (resp.error) {
@@ -136849,7 +136866,12 @@ async function createSubmission(token) {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to create submission: ${response.statusText}`);
+            if (response.status === 500) {
+                throw new Error(`Failed to create submission: ${response.statusText}`);
+            }
+            else {
+                throw new NonRetriableError(`Failed to create submission: ${response.statusText}`);
+            }
         }
         const resp = (await response.json());
         if (resp.error) {
@@ -136869,7 +136891,12 @@ async function createRegressionTestRun(token, regression_test_id) {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to create regression test run: ${response.statusText}`);
+            if (response.status === 500) {
+                throw new Error(`Failed to create regression test run: ${response.statusText}`);
+            }
+            else {
+                throw new NonRetriableError(`Failed to create regression test run: ${response.statusText}`);
+            }
         }
         const resp = (await response.json());
         if (resp.error) {

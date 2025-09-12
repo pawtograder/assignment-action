@@ -10,7 +10,15 @@ async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function retryWithExponentialBackoff<T>(
+export class NonRetriableError extends Error {
+  constructor(message: string, cause?: Error) {
+    super(message)
+    this.name = 'NonRetriableError'
+    this.cause = cause
+  }
+}
+
+export async function retryWithExponentialBackoff<T>(
   operation: () => Promise<T>,
   maxRetries: number = 5,
   baseDelay: number = 1000
@@ -22,6 +30,12 @@ async function retryWithExponentialBackoff<T>(
       return await operation()
     } catch (error) {
       lastError = error as Error
+      console.log(JSON.stringify(lastError, null, 2))
+
+      // If the error is non-retriable, throw it immediately
+      if (lastError instanceof NonRetriableError) {
+        throw lastError
+      }
 
       if (attempt === maxRetries) {
         throw lastError
@@ -69,7 +83,13 @@ export async function submitFeedback(
       }
     )
     if (!response.ok) {
-      throw new Error(`Failed to submit feedback: ${response.statusText}`)
+      if (response.status === 500) {
+        throw new Error(`Failed to create submission: ${response.statusText}`)
+      } else {
+        throw new NonRetriableError(
+          `Failed to create submission: ${response.statusText}`
+        )
+      }
     }
     const resp = (await response.json()) as GradeResponse
     if (resp.error) {
@@ -96,7 +116,13 @@ export async function createSubmission(token: string) {
       }
     )
     if (!response.ok) {
-      throw new Error(`Failed to create submission: ${response.statusText}`)
+      if (response.status === 500) {
+        throw new Error(`Failed to create submission: ${response.statusText}`)
+      } else {
+        throw new NonRetriableError(
+          `Failed to create submission: ${response.statusText}`
+        )
+      }
     }
     const resp = (await response.json()) as SubmissionResponse
     if (resp.error) {
@@ -126,9 +152,15 @@ export async function createRegressionTestRun(
       }
     )
     if (!response.ok) {
-      throw new Error(
-        `Failed to create regression test run: ${response.statusText}`
-      )
+      if (response.status === 500) {
+        throw new Error(
+          `Failed to create regression test run: ${response.statusText}`
+        )
+      } else {
+        throw new NonRetriableError(
+          `Failed to create regression test run: ${response.statusText}`
+        )
+      }
     }
     const resp = (await response.json()) as RegressionTestRunResponse
     if (resp.error) {
