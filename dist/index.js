@@ -136795,7 +136795,7 @@ async function sleep(ms) {
 class NonRetriableError extends Error {
     constructor(message, cause) {
         super(message);
-        this.name = 'NonRetriableError';
+        this.name = 'Error';
         this.cause = cause;
     }
 }
@@ -136807,7 +136807,6 @@ async function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay 
         }
         catch (error) {
             lastError = error;
-            console.log(JSON.stringify(lastError, null, 2));
             // If the error is non-retriable, throw it immediately
             if (lastError instanceof NonRetriableError) {
                 throw lastError;
@@ -136843,7 +136842,7 @@ async function submitFeedback(body, token, queryParams) {
         const resp = (await response.json());
         if (resp.error) {
             if (!resp.error.recoverable) {
-                throw new NonRetriableError(`Failed to submit feedback: ${resp.error.message} ${resp.error.details}`);
+                throw new NonRetriableError(`Failed to submit feedback: ${resp.error.details}`);
             }
             throw new Error(`Failed to submit feedback: ${resp.error.message} ${resp.error.details}`);
         }

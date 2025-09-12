@@ -13,7 +13,7 @@ async function sleep(ms: number): Promise<void> {
 export class NonRetriableError extends Error {
   constructor(message: string, cause?: Error) {
     super(message)
-    this.name = 'NonRetriableError'
+    this.name = 'Error'
     this.cause = cause
   }
 }
@@ -30,7 +30,6 @@ export async function retryWithExponentialBackoff<T>(
       return await operation()
     } catch (error) {
       lastError = error as Error
-      console.log(JSON.stringify(lastError, null, 2))
 
       // If the error is non-retriable, throw it immediately
       if (lastError instanceof NonRetriableError) {
@@ -86,7 +85,7 @@ export async function submitFeedback(
     if (resp.error) {
       if (!resp.error.recoverable) {
         throw new NonRetriableError(
-          `Failed to submit feedback: ${resp.error.message} ${resp.error.details}`
+          `Failed to submit feedback: ${resp.error.details}`
         )
       }
       throw new Error(
