@@ -203603,11 +203603,20 @@ class OverlayGrader extends Grader {
             return [
                 {
                     name: unit.name,
-                    output: `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((result) => `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`)
-                        .join('\n')}`,
+                    output: unit.hide_output
+                        ? 'This test output has been hidden by the instructor.'
+                        : `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((result) => `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`)
+                            .join('\n')}`,
                     output_format: 'markdown',
+                    hidden_output: unit.hide_output
+                        ? `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((result) => `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`)
+                            .join('\n')}`
+                        : undefined,
+                    hidden_output_format: unit.hide_output ? 'markdown' : undefined,
                     score,
                     hide_until_released: part.hide_until_released,
                     max_score: unit.points

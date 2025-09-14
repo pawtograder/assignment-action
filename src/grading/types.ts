@@ -83,6 +83,7 @@ export interface RegularTestUnit {
   points: number
   testCount: number
   allow_partial_credit?: boolean
+  hide_output?: boolean
 }
 
 // Combined graded unit type
