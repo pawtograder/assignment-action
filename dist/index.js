@@ -203604,7 +203604,7 @@ class OverlayGrader extends Grader {
                 {
                     name: unit.name,
                     output: unit.hide_output
-                        ? 'This test output has been hidden by the instructor.'
+                        ? 'Output for this test is intentionally hidden.'
                         : `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
                             .sort((a, b) => a.name.localeCompare(b.name))
                             .map((result) => `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`)
