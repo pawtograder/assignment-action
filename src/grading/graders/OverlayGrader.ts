@@ -7,6 +7,7 @@ import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
 import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
+import SmeLLMBuilder from '../builders/SmeLLMBuilder.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -57,6 +58,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         this.logger,
         this.gradingDir,
         info,
+        this.regressionTestJob
+      )
+    } else if (this.config.build.preset == 'smellm') {
+      this.builder = new SmeLLMBuilder(
+        this.logger,
+        this.gradingDir,
         this.regressionTestJob
       )
     } else if (this.config.build.preset == 'none') {

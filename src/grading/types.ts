@@ -24,18 +24,25 @@ export interface ScriptInfo {
 }
 
 export interface BuildConfig {
-  preset: 'java-gradle' | 'python-script' | 'none'
+  preset: 'java-gradle' | 'python-script' | 'none' | 'smellm'
   cmd?: string
   timeouts_seconds?: {
     build?: number
     student_tests?: number
     instructor_tests?: number
     mutants?: number
+    smellm_analysis?: number
   }
   artifacts?: GraderArtifact[]
   linter?: {
     preset: 'checkstyle'
     policy: 'fail' | 'ignore'
+  }
+  smellm?: {
+    model?: string
+    language?: 'java' | 'typescript'
+    output_format?: 'json' | 'markdown'
+    timeout_seconds?: number
   }
   student_tests?: {
     student_impl?: {
