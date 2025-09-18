@@ -137,6 +137,7 @@ export abstract class Builder {
     return undefined
   }
   abstract setupVenv(dir: string, key: string): Promise<void>
+  abstract withGradingDir(gradingDir: string): Builder
 }
 
 export type BuildStepOptions = {

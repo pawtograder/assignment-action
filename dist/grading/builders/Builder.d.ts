@@ -38,6 +38,7 @@ export declare abstract class Builder {
     abstract getCoverageReportDir(): string | null;
     getMutationCoverageReportDir(): string | undefined;
     abstract setupVenv(dir: string, key: string): Promise<void>;
+    abstract withGradingDir(gradingDir: string): Builder;
 }
 export type BuildStepOptions = {
     timeoutSeconds?: number;

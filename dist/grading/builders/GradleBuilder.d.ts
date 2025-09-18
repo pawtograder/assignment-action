@@ -8,4 +8,5 @@ export default class GradleBuilder extends Builder {
     getMutationCoverageReportDir(): string | undefined;
     mutationTest({ timeoutSeconds }: BuildStepOptions): Promise<MutantResult[]>;
     buildClean({ timeoutSeconds }: BuildStepOptions): Promise<void>;
+    withGradingDir(gradingDir: string): Builder;
 }

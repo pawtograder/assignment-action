@@ -144,4 +144,7 @@ export default class GradleBuilder extends Builder {
       )
     }
   }
+  withGradingDir(gradingDir: string): Builder {
+    return new GradleBuilder(this.logger, gradingDir, this.regressionTestJob)
+  }
 }

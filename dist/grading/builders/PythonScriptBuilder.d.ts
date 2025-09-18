@@ -7,6 +7,7 @@ export default class PythonScriptBuilder extends Builder {
     protected script_info: ScriptInfo;
     protected regressionTestJob?: number | undefined;
     constructor(logger: Logger, gradingDir: string, script_info: ScriptInfo, regressionTestJob?: number | undefined);
+    withGradingDir(gradingDir: string): Builder;
     activateVenvAndExecuteCommand(command: string, timeoutSeconds?: number, ignoreFailures?: boolean): Promise<{
         returnCode: number;
         output: string;
