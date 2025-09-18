@@ -4,7 +4,12 @@ import { access, readdir } from 'fs/promises'
 import { tmpdir } from 'os'
 import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
-import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
+import {
+  Builder,
+  LintResult,
+  MutantResult,
+  TestResult
+} from '../builders/Builder.js'
 import GradleBuilder from '../builders/GradleBuilder.js'
 import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
 import {
@@ -64,6 +69,35 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     } else {
       throw new Error(`Unsupported build preset: ${this.config.build.preset}`)
     }
+  }
+
+  private async lintInCleanStudentDir(): Promise<LintResult> {
+    if (!this.builder) {
+      throw new Error('Builder is not set')
+    }
+    const tmpDir = path.join(process.cwd(), 'pawtograder-student-linting')
+    await io.mkdirP(tmpDir)
+    //Copy ALL files from the student directory to the tmpDir
+    const studentFiles = await readdir(this.submissionDir)
+    await Promise.all(
+      studentFiles.map(async (file) => {
+        await io.cp(
+          path.join(this.submissionDir, file),
+          path.join(tmpDir, file),
+          { recursive: true }
+        )
+      })
+    )
+    const builder = this.builder.withGradingDir(tmpDir)
+    if (this.config.build.venv?.cache_key && this.config.build.venv?.dir_name) {
+      const venv_dir = this.config.build.venv.dir_name
+      const cache_key = this.config.build.venv.cache_key
+      await builder.setupVenv(venv_dir, cache_key)
+    }
+
+    const lintResult = await builder.lint()
+    await io.rmRF(tmpDir)
+    return lintResult
   }
 
   async copyStudentFiles(whichFiles: 'files' | 'testFiles') {
@@ -371,7 +405,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     }
 
     this.logger.log('visible', 'Linting student submission')
-    const lintResult = await this.builder.lint()
+    const lintResult = await this.lintInCleanStudentDir()
     if (this.config.build.linter?.policy === 'fail') {
       if (lintResult.status === 'fail') {
         this.logger.log(

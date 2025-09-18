@@ -37,6 +37,15 @@ export default class PythonScriptBuilder extends Builder {
     super(logger, gradingDir, regressionTestJob)
   }
 
+  withGradingDir(gradingDir: string): Builder {
+    return new PythonScriptBuilder(
+      this.logger,
+      gradingDir,
+      this.script_info,
+      this.regressionTestJob
+    )
+  }
+
   async activateVenvAndExecuteCommand(
     command: string,
     timeoutSeconds?: number,
@@ -54,7 +63,7 @@ export default class PythonScriptBuilder extends Builder {
   async setupVenv(dir: string, key: string): Promise<void> {
     const isGitHubAction = process.env.GITHUB_ACTIONS === 'true'
     let found_cache = false
-    const venv_dir = `pawtograder-grading/${dir}`
+    const venv_dir = `${this.gradingDir}/${dir}`
     console.log(venv_dir)
     if (isGitHubAction) {
       console.log('Looking for existing cached virtual environment')

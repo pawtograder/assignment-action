@@ -5,6 +5,7 @@ export declare class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     private gradingDir;
     private builder;
     constructor(solutionDir: string, submissionDir: string, config: PawtograderConfig, gradingDir: string, regressionTestJob?: number);
+    private lintInCleanStudentDir;
     copyStudentFiles(whichFiles: 'files' | 'testFiles'): Promise<void>;
     private copyArtifactToTemp;
     resetSolutionFiles(): Promise<void>;

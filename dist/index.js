@@ -30,7 +30,7 @@ import require$$0$d from 'diagnostics_channel';
 import require$$2$3, { spawn } from 'child_process';
 import require$$6$1 from 'timers';
 import require$$0$e from 'punycode';
-import { readFile, access as access$1, readdir as readdir$2, stat, rename, mkdir } from 'fs/promises';
+import { readFile, readdir as readdir$2, access as access$1, stat, rename, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import { fileURLToPath } from 'node:url';
 import { win32, posix } from 'node:path';
@@ -159074,6 +159074,9 @@ class GradleBuilder extends Builder$1 {
             throw new Error(`Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`);
         }
     }
+    withGradingDir(gradingDir) {
+        return new GradleBuilder(this.logger, gradingDir, this.regressionTestJob);
+    }
 }
 
 var cache$1 = {};
@@ -203218,13 +203221,16 @@ class PythonScriptBuilder extends Builder$1 {
         this.script_info = script_info;
         this.regressionTestJob = regressionTestJob;
     }
+    withGradingDir(gradingDir) {
+        return new PythonScriptBuilder(this.logger, gradingDir, this.script_info, this.regressionTestJob);
+    }
     async activateVenvAndExecuteCommand(command, timeoutSeconds, ignoreFailures = false) {
         return await this.executeCommandAndGetOutput(`${this.script_info.activate_venv} && ${command}`, [], this.logger, timeoutSeconds, ignoreFailures);
     }
     async setupVenv(dir, key) {
         const isGitHubAction = process.env.GITHUB_ACTIONS === 'true';
         let found_cache = false;
-        const venv_dir = `pawtograder-grading/${dir}`;
+        const venv_dir = `${this.gradingDir}/${dir}`;
         console.log(venv_dir);
         if (isGitHubAction) {
             console.log('Looking for existing cached virtual environment');
@@ -203439,6 +203445,27 @@ class OverlayGrader extends Grader {
         else {
             throw new Error(`Unsupported build preset: ${this.config.build.preset}`);
         }
+    }
+    async lintInCleanStudentDir() {
+        if (!this.builder) {
+            throw new Error('Builder is not set');
+        }
+        const tmpDir = path$1.join(process.cwd(), 'pawtograder-student-linting');
+        await ioExports.mkdirP(tmpDir);
+        //Copy ALL files from the student directory to the tmpDir
+        const studentFiles = await readdir$2(this.submissionDir);
+        await Promise.all(studentFiles.map(async (file) => {
+            await ioExports.cp(path$1.join(this.submissionDir, file), path$1.join(tmpDir, file), { recursive: true });
+        }));
+        const builder = this.builder.withGradingDir(tmpDir);
+        if (this.config.build.venv?.cache_key && this.config.build.venv?.dir_name) {
+            const venv_dir = this.config.build.venv.dir_name;
+            const cache_key = this.config.build.venv.cache_key;
+            await builder.setupVenv(venv_dir, cache_key);
+        }
+        const lintResult = await builder.lint();
+        await ioExports.rmRF(tmpDir);
+        return lintResult;
     }
     async copyStudentFiles(whichFiles) {
         const files = this.config.submissionFiles[whichFiles];
@@ -203663,7 +203690,7 @@ class OverlayGrader extends Grader {
             await this.builder.setupVenv(venv_dir, cache_key);
         }
         this.logger.log('visible', 'Linting student submission');
-        const lintResult = await this.builder.lint();
+        const lintResult = await this.lintInCleanStudentDir();
         if (this.config.build.linter?.policy === 'fail') {
             if (lintResult.status === 'fail') {
                 this.logger.log('visible', `Linting failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`);
