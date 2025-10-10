@@ -39,7 +39,7 @@ export function getCoverageSummary(records: JacocoCsvRecord[]): string {
       .filter((r) => parseInt(r.BRANCH_COVERED) + parseInt(r.BRANCH_MISSED) > 0)
       .map(
         (r) =>
-          ` * ${r.PACKAGE}.${r.CLASS}: ${r.BRANCH_COVERED} / ${r.BRANCH_COVERED + r.BRANCH_MISSED} (${((parseInt(r.BRANCH_COVERED) / (parseInt(r.BRANCH_COVERED) + parseInt(r.BRANCH_MISSED))) * 100).toFixed(2)}%)`
+          ` * ${r.PACKAGE}.${r.CLASS}: ${r.BRANCH_COVERED} / ${parseInt(r.BRANCH_COVERED) + parseInt(r.BRANCH_MISSED)} (${((parseInt(r.BRANCH_COVERED) / (parseInt(r.BRANCH_COVERED) + parseInt(r.BRANCH_MISSED))) * 100).toFixed(2)}%)`
       )
       .join('\n')
   )
