@@ -113,9 +113,28 @@
       "required": ["preset"],
       "type": "object"
     },
+    "Dependency": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/PartDependencyRef"
+        },
+        {
+          "$ref": "#/definitions/UnitDependencyRef"
+        }
+      ]
+    },
     "GradedPart": {
       "additionalProperties": false,
       "properties": {
+        "dependencies": {
+          "items": {
+            "$ref": "#/definitions/Dependency"
+          },
+          "type": "array"
+        },
         "gradedUnits": {
           "items": {
             "$ref": "#/definitions/GradedUnit"
@@ -135,10 +154,86 @@
     "GradedUnit": {
       "anyOf": [
         {
-          "$ref": "#/definitions/MutationTestUnit"
+          "additionalProperties": false,
+          "properties": {
+            "breakPoints": {
+              "items": {
+                "$ref": "#/definitions/BreakPoint"
+              },
+              "type": "array"
+            },
+            "dependencies": {
+              "items": {
+                "$ref": "#/definitions/Dependency"
+              },
+              "type": "array"
+            },
+            "linearScoring": {
+              "additionalProperties": false,
+              "properties": {
+                "points": {
+                  "type": "number"
+                },
+                "total_faults": {
+                  "type": "number"
+                }
+              },
+              "required": ["total_faults", "points"],
+              "type": "object"
+            },
+            "locations": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": ["locations", "name"],
+          "type": "object"
         },
         {
-          "$ref": "#/definitions/RegularTestUnit"
+          "additionalProperties": false,
+          "properties": {
+            "allow_partial_credit": {
+              "type": "boolean"
+            },
+            "dependencies": {
+              "items": {
+                "$ref": "#/definitions/Dependency"
+              },
+              "type": "array"
+            },
+            "hide_output": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "points": {
+              "type": "number"
+            },
+            "testCount": {
+              "type": "number"
+            },
+            "tests": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            }
+          },
+          "required": ["name", "points", "testCount", "tests"],
+          "type": "object"
         }
       ]
     },
@@ -158,26 +253,23 @@
       "required": ["name", "path"],
       "type": "object"
     },
-    "MutationTestUnit": {
+    "MutantAdvice": {
       "additionalProperties": false,
       "properties": {
-        "breakPoints": {
-          "items": {
-            "$ref": "#/definitions/BreakPoint"
-          },
-          "type": "array"
-        },
-        "locations": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
         "name": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "sourceClass": {
+          "type": "string"
+        },
+        "targetClass": {
           "type": "string"
         }
       },
-      "required": ["name", "locations", "breakPoints"],
+      "required": ["name", "prompt", "sourceClass", "targetClass"],
       "type": "object"
     },
     "OverlayPawtograderConfig": {
@@ -185,6 +277,9 @@
       "properties": {
         "build": {
           "$ref": "#/definitions/BuildConfig"
+        },
+        "fallbackFiles": {
+          "type": "string"
         },
         "gradedParts": {
           "items": {
@@ -196,25 +291,12 @@
           "const": "overlay",
           "type": "string"
         },
+        "maxMutantHints": {
+          "type": "number"
+        },
         "mutantAdvice": {
           "items": {
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "prompt": {
-                "type": "string"
-              },
-              "sourceClass": {
-                "type": "string"
-              },
-              "targetClass": {
-                "type": "string"
-              }
-            },
-            "required": ["sourceClass", "targetClass", "name", "prompt"],
-            "type": "object"
+            "$ref": "#/definitions/MutantAdvice"
           },
           "type": "array"
         },
@@ -241,40 +323,21 @@
       "required": ["grader", "build", "submissionFiles"],
       "type": "object"
     },
-    "PawtograderConfig": {
-      "$ref": "#/definitions/OverlayPawtograderConfig"
-    },
-    "RegularTestUnit": {
+    "PartDependencyRef": {
       "additionalProperties": false,
       "properties": {
-        "allow_partial_credit": {
-          "type": "boolean"
+        "minScore": {
+          "type": "number"
         },
-        "name": {
+        "part": {
           "type": "string"
-        },
-        "points": {
-          "type": "number"
-        },
-        "testCount": {
-          "type": "number"
-        },
-        "tests": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            }
-          ]
         }
       },
-      "required": ["name", "tests", "points", "testCount"],
+      "required": ["part"],
       "type": "object"
+    },
+    "PawtograderConfig": {
+      "$ref": "#/definitions/OverlayPawtograderConfig"
     },
     "ScriptInfo": {
       "additionalProperties": false,
@@ -314,6 +377,19 @@
         "mutation_test_runner",
         "install_deps"
       ],
+      "type": "object"
+    },
+    "UnitDependencyRef": {
+      "additionalProperties": false,
+      "properties": {
+        "minScore": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": ["unit"],
       "type": "object"
     },
     "VenvInfo": {

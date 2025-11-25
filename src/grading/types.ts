@@ -86,14 +86,60 @@ export interface RegularTestUnit {
   hide_output?: boolean
 }
 
-// Combined graded unit type
-export type GradedUnit = MutationTestUnit | RegularTestUnit
+// Combined graded unit type - base type without dependencies
+export type GradedUnitBase = MutationTestUnit | RegularTestUnit
+
+// Unified Dependency Types
+// A dependency can reference either a part or a unit
+
+// Explicit part dependency
+export interface PartDependencyRef {
+  part: string
+  minScore?: number // raw score threshold, defaults to max score (100%) if omitted
+}
+
+// Unit dependency
+export interface UnitDependencyRef {
+  unit: string
+  minScore?: number // raw score threshold, defaults to max score (100%) if omitted
+}
+
+// Simple string = part name requiring full marks (backward compatible)
+// Union type - part and unit are mutually exclusive in object form
+export type Dependency = string | PartDependencyRef | UnitDependencyRef
+
+// Type guards for dependencies
+export function isPartDependency(dep: Dependency): dep is PartDependencyRef {
+  return typeof dep === 'object' && 'part' in dep
+}
+
+export function isUnitDependency(dep: Dependency): dep is UnitDependencyRef {
+  return typeof dep === 'object' && 'unit' in dep
+}
+
+export function isSimpleDependency(dep: Dependency): dep is string {
+  return typeof dep === 'string'
+}
+
+// GradedUnit with optional dependencies
+export type GradedUnit = GradedUnitBase & {
+  dependencies?: Dependency[]
+}
 
 // Graded part type
 export interface GradedPart {
   name: string
   gradedUnits: GradedUnit[]
   hide_until_released?: boolean
+  dependencies?: Dependency[]
+}
+
+// Mutant advice configuration
+export interface MutantAdvice {
+  name: string
+  prompt: string
+  sourceClass: string
+  targetClass: string
 }
 
 // Main configuration type
@@ -105,6 +151,9 @@ export interface OverlayPawtograderConfig {
     files: string[]
     testFiles: string[]
   }
+  fallbackFiles?: string
+  mutantAdvice?: MutantAdvice[]
+  maxMutantHints?: number // Maximum number of mutant hints to show across all units. If undefined, shows all.
 }
 
 export type PawtograderConfig = OverlayPawtograderConfig

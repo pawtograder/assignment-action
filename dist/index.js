@@ -30,7 +30,7 @@ import require$$0$d from 'diagnostics_channel';
 import require$$2$3, { spawn } from 'child_process';
 import require$$6$1 from 'timers';
 import require$$0$e from 'punycode';
-import { readFile, access as access$1, readdir as readdir$2, stat, rename, mkdir } from 'fs/promises';
+import { readFile, stat, access as access$1, readdir as readdir$2, rename, mkdir } from 'fs/promises';
 import { finished } from 'stream/promises';
 import { fileURLToPath } from 'node:url';
 import { win32, posix } from 'node:path';
@@ -203316,6 +203316,16 @@ const DEFAULT_TIMEOUTS = {
     instructor_tests: 300,
     mutants: 1800
 };
+// Type guards for dependencies
+function isPartDependency(dep) {
+    return typeof dep === 'object' && 'part' in dep;
+}
+function isUnitDependency(dep) {
+    return typeof dep === 'object' && 'unit' in dep;
+}
+function isSimpleDependency(dep) {
+    return typeof dep === 'string';
+}
 // Type guard to check if a unit is a mutation test unit
 function isMutationTestUnit(unit) {
     return ('locations' in unit && ('breakPoints' in unit || 'linearScoring' in unit));
@@ -203420,6 +203430,7 @@ function icon(result) {
 class OverlayGrader extends Grader {
     gradingDir;
     builder;
+    mutantHintsShown = 0; // Running tally of mutant hints shown
     constructor(solutionDir, submissionDir, config, gradingDir, regressionTestJob) {
         super(solutionDir, submissionDir, config, regressionTestJob);
         this.gradingDir = gradingDir;
@@ -203460,6 +203471,43 @@ class OverlayGrader extends Grader {
             const dir = path$1.dirname(dest);
             await ioExports.mkdirP(dir);
             await ioExports.cp(file, dest, { recursive: true });
+        }
+    }
+    async copyFallbackFiles() {
+        if (!this.config.fallbackFiles) {
+            return;
+        }
+        const fallbackDir = path$1.join(this.solutionDir, this.config.fallbackFiles);
+        // Recursively glob all files in the fallback directory
+        const fallbackGlobber = await globExports.create(path$1.join(fallbackDir, '**/*'));
+        const fallbackFiles = await fallbackGlobber.glob();
+        // Filter to only include files (not directories)
+        const fileChecks = await Promise.all(fallbackFiles.map(async (file) => {
+            try {
+                const fileStat = await stat(file);
+                return fileStat.isFile() ? file : null;
+            }
+            catch {
+                return null;
+            }
+        }));
+        const validFiles = fileChecks.filter((file) => file !== null);
+        for (const fallbackFile of validFiles) {
+            // Calculate relative path from fallback directory
+            const relativePath = path$1.relative(fallbackDir, fallbackFile);
+            const dest = path$1.join(this.gradingDir, relativePath);
+            // Check if the file already exists in the grading directory
+            try {
+                await access$1(dest);
+                // File exists, skip it
+                continue;
+            }
+            catch {
+                // File doesn't exist, copy it
+                const dir = path$1.dirname(dest);
+                await ioExports.mkdirP(dir);
+                await ioExports.cp(fallbackFile, dest, { recursive: true });
+            }
         }
     }
     async copyArtifactToTemp(artifact) {
@@ -203510,17 +203558,6 @@ class OverlayGrader extends Grader {
             await ioExports.cp(file, dest, { recursive: true });
         }
     }
-    gradePart(part, testResults, mutantResults, mutantFailureAdvice) {
-        return part.gradedUnits
-            .map((unit) => {
-            const ret = this.gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice);
-            for (const feedback of ret) {
-                feedback.part = part.name;
-            }
-            return ret;
-        })
-            .flat();
-    }
     gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice) {
         if (isMutationTestUnit(unit)) {
             if (!mutantResults) {
@@ -203552,9 +203589,15 @@ class OverlayGrader extends Grader {
                     }
                     else {
                         const mutantLocationParts = mutantLocation.split(':');
+                        const mutantClass = mutantLocationParts[0];
                         const mutantLine = parseInt(mutantLocationParts[1]);
                         const mutantEndLine = parseInt(mutantLocationParts[2]);
                         return locations.some((location) => {
+                            if (!location.includes('-')) {
+                                // Unit location is just a class name, check if mutant class matches
+                                return mutantClass.startsWith(location);
+                            }
+                            // Line range matching for locations like "ClassName-10-50"
                             const locationParts = location.split('-');
                             const locationLine = parseInt(locationParts[1]);
                             const locationEndLine = parseInt(locationParts[2]);
@@ -203563,6 +203606,32 @@ class OverlayGrader extends Grader {
                     }
                 });
                 const mutantsDetected = relevantMutantResults.filter((mr) => mr.status === 'pass').length;
+                // Collect advice for non-killed mutants from config
+                const nonKilledMutants = relevantMutantResults.filter((mr) => mr.status === 'fail');
+                const mutantsWithAdvice = nonKilledMutants
+                    .map((mr) => {
+                    // Extract targetClass from mutant name (format: "sourceClass targetClass")
+                    const nameParts = mr.name.split(' ');
+                    const targetClass = nameParts.length > 1 ? nameParts[nameParts.length - 1] : null;
+                    // Look up advice in config
+                    const advice = targetClass && this.config.mutantAdvice
+                        ? this.config.mutantAdvice.find((a) => a.targetClass === targetClass)
+                        : null;
+                    return advice ? { mutant: mr, advice } : null;
+                })
+                    .filter((item) => item !== null);
+                // Apply the maxMutantHints limit
+                const maxHints = this.config.maxMutantHints;
+                const remainingHints = maxHints !== undefined ? maxHints - this.mutantHintsShown : Infinity;
+                const hintsToShow = mutantsWithAdvice.slice(0, Math.max(0, remainingHints));
+                // Update the running tally
+                this.mutantHintsShown += hintsToShow.length;
+                const adviceSection = hintsToShow.length > 0
+                    ? '\n\n**Hints for undetected faults:**\n' +
+                        hintsToShow
+                            .map((item) => `- ${item.advice.name}: ${item.advice.prompt}`)
+                            .join('\n')
+                    : '';
                 let score = 0;
                 if (unit.breakPoints) {
                     score = unit.breakPoints.find((bp) => bp.minimumMutantsDetected <= mutantsDetected)?.pointsToAward;
@@ -203573,7 +203642,7 @@ class OverlayGrader extends Grader {
                 return [
                     {
                         name: unit.name,
-                        output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}`,
+                        output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`,
                         output_format: 'markdown',
                         score: score ?? 0,
                         max_score: maxScore
@@ -203624,6 +203693,131 @@ class OverlayGrader extends Grader {
             ];
         }
         throw new Error(`Unknown unit type in grading config: ${JSON.stringify(unit)}`);
+    }
+    /**
+     * Check if dependencies are satisfied based on part and unit scores.
+     * Works for both GradedPart and GradedUnit dependencies.
+     * Returns an object with:
+     * - satisfied: boolean indicating if all dependencies are met
+     * - unmetDependencies: array of strings describing which dependencies were not met
+     */
+    checkDependencies(dependencies, partScores, unitScores) {
+        if (!dependencies || dependencies.length === 0) {
+            return { satisfied: true, unmetDependencies: [] };
+        }
+        const unmetDependencies = [];
+        for (const dep of dependencies) {
+            let targetName;
+            let minScore;
+            let scoresMap;
+            let depType;
+            if (isSimpleDependency(dep)) {
+                // String = part name requiring 100%
+                targetName = dep;
+                minScore = undefined;
+                scoresMap = partScores;
+                depType = 'part';
+            }
+            else if (isPartDependency(dep)) {
+                targetName = dep.part;
+                minScore = dep.minScore;
+                scoresMap = partScores;
+                depType = 'part';
+            }
+            else if (isUnitDependency(dep)) {
+                targetName = dep.unit;
+                minScore = dep.minScore;
+                scoresMap = unitScores;
+                depType = 'unit';
+            }
+            else {
+                continue;
+            }
+            const depScores = scoresMap.get(targetName);
+            if (!depScores) {
+                // Dependency not found - this is a configuration error
+                unmetDependencies.push(`Dependency ${depType} "${targetName}" not found in grading configuration`);
+                continue;
+            }
+            const { score, maxScore } = depScores;
+            if (minScore !== undefined) {
+                // Use minScore as raw score threshold
+                if (score < minScore) {
+                    unmetDependencies.push(`${depType} "${targetName}" (scored ${score}/${maxScore}, required at least ${minScore})`);
+                }
+            }
+            else {
+                // Require full marks
+                if (score < maxScore) {
+                    unmetDependencies.push(`${depType} "${targetName}" (scored ${score}/${maxScore}, required ${maxScore})`);
+                }
+            }
+        }
+        return {
+            satisfied: unmetDependencies.length === 0,
+            unmetDependencies
+        };
+    }
+    /**
+     * Check if any dependency has a custom minScore
+     */
+    hasCustomMinScore(dependencies) {
+        if (!dependencies)
+            return false;
+        return dependencies.some((dep) => (isPartDependency(dep) && dep.minScore !== undefined) ||
+            (isUnitDependency(dep) && dep.minScore !== undefined));
+    }
+    /**
+     * Create feedback for a part whose dependencies were not met
+     */
+    createPartDependencyNotMetFeedback(part, unmetDependencies) {
+        // Calculate total max score for this part
+        const totalMaxScore = part.gradedUnits.reduce((sum, unit) => {
+            if (isRegularTestUnit(unit)) {
+                return sum + unit.points;
+            }
+            else if (isMutationTestUnit(unit)) {
+                return (sum +
+                    (unit.breakPoints?.[0].pointsToAward ??
+                        unit.linearScoring?.points ??
+                        0));
+            }
+            return sum;
+        }, 0);
+        const requirementText = this.hasCustomMinScore(part.dependencies)
+            ? 'Please meet the required score thresholds shown above before this part will be graded.'
+            : 'Please receive full marks on all dependent parts before this part will be graded.';
+        return [
+            {
+                name: `${part.name} (Dependencies Not Met)`,
+                output: `This part was not graded because the following dependencies were not satisfied:\n\n${unmetDependencies.map((d) => `* ${d}`).join('\n')}\n\n${requirementText}`,
+                output_format: 'markdown',
+                score: 0,
+                max_score: totalMaxScore,
+                part: part.name,
+                hide_until_released: part.hide_until_released
+            }
+        ];
+    }
+    /**
+     * Create feedback for a unit whose dependencies were not met
+     */
+    createUnitDependencyNotMetFeedback(unit, part, unmetDependencies) {
+        const maxScore = isRegularTestUnit(unit)
+            ? unit.points
+            : (unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points ?? 0);
+        const requirementText = this.hasCustomMinScore(unit.dependencies)
+            ? 'Please meet the required score thresholds shown above before this unit will be graded.'
+            : 'Please receive full marks on all dependencies before this unit will be graded.';
+        return {
+            name: `${unit.name} (Dependencies Not Met)`,
+            output: `This unit was not graded because the following dependencies were not satisfied:\n\n${unmetDependencies.map((d) => `* ${d}`).join('\n')}\n\n${requirementText}`,
+            output_format: 'markdown',
+            score: 0,
+            max_score: maxScore,
+            part: part.name,
+            hide_until_released: part.hide_until_released
+        };
     }
     async grade() {
         if (!this.builder) {
@@ -203680,6 +203874,7 @@ class OverlayGrader extends Grader {
         this.logger.log('visible', 'Resetting to run instructor tests on student submission');
         await this.resetSolutionFiles();
         await this.copyStudentFiles('files');
+        await this.copyFallbackFiles();
         const gradedParts = this.config.gradedParts || [];
         try {
             this.logger.log('visible', 'Building project with student submission and running instructor tests');
@@ -203929,9 +204124,65 @@ class OverlayGrader extends Grader {
             }
         }
         this.logger.log('visible', 'Wrapping up');
-        const testFeedbacks = gradedParts
-            .map((part) => this.gradePart(part, testResults, mutantResults, mutantFailureAdvice))
-            .flat();
+        // First pass: grade all units (without dependency checks) to calculate scores
+        const unitScores = new Map();
+        const unitFeedbacksMap = new Map();
+        for (const part of gradedParts) {
+            for (const unit of part.gradedUnits) {
+                const feedbacks = this.gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice);
+                // Each unit produces one feedback item
+                const feedback = feedbacks[0];
+                if (feedback) {
+                    feedback.part = part.name;
+                    unitFeedbacksMap.set(unit.name, feedback);
+                    unitScores.set(unit.name, {
+                        score: feedback.score ?? 0,
+                        maxScore: feedback.max_score ?? 0
+                    });
+                }
+            }
+        }
+        // Calculate part scores from unit scores
+        const partScores = new Map();
+        for (const part of gradedParts) {
+            let totalScore = 0;
+            let totalMaxScore = 0;
+            for (const unit of part.gradedUnits) {
+                const unitScore = unitScores.get(unit.name);
+                if (unitScore) {
+                    totalScore += unitScore.score;
+                    totalMaxScore += unitScore.maxScore;
+                }
+            }
+            partScores.set(part.name, { score: totalScore, maxScore: totalMaxScore });
+        }
+        // Second pass: apply dependency checks for parts and units
+        const testFeedbacks = [];
+        for (const part of gradedParts) {
+            // Check part-level dependencies first
+            const { satisfied: partSatisfied, unmetDependencies: partUnmet } = this.checkDependencies(part.dependencies, partScores, unitScores);
+            if (!partSatisfied) {
+                // Part dependencies not met - show single message for entire part
+                testFeedbacks.push(...this.createPartDependencyNotMetFeedback(part, partUnmet));
+            }
+            else {
+                // Part dependencies satisfied - check each unit's dependencies
+                for (const unit of part.gradedUnits) {
+                    const { satisfied: unitSatisfied, unmetDependencies: unitUnmet } = this.checkDependencies(unit.dependencies, partScores, unitScores);
+                    if (unitSatisfied) {
+                        // Unit dependencies satisfied - use original feedback
+                        const feedback = unitFeedbacksMap.get(unit.name);
+                        if (feedback) {
+                            testFeedbacks.push(feedback);
+                        }
+                    }
+                    else {
+                        // Unit dependencies not met - replace with dependency message
+                        testFeedbacks.push(this.createUnitDependencyNotMetFeedback(unit, part, unitUnmet));
+                    }
+                }
+            }
+        }
         if (this.logger.isVerboseDebug) {
             console.log('DEBUG: Test results');
             console.log(JSON.stringify(testFeedbacks, null, 2));

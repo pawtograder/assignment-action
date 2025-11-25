@@ -112,3 +112,93 @@ level of granularity that can be graded. There are two kinds of `gradedUnit`:
   define the number of points to award based on the number of mutants detected
   within the specified locations, and are objects with keys
   `minimumMutantsDetected` and `pointsToAward`.
+
+## Dependencies
+
+Both `gradedParts` and `gradedUnits` can have dependencies, which allow you to
+conditionally grade parts or units based on the student's performance on other
+parts or units. If dependencies are not met, the dependent part/unit will show a
+message explaining which dependencies were not satisfied instead of the actual
+grading results.
+
+### Dependency Types
+
+A dependency can be specified in three formats:
+
+1. **String** (backward compatible): References a **part** by name, requires
+   full marks (100%)
+
+   ```yaml
+   dependencies:
+     - 'Part 1: Basics'
+   ```
+
+2. **Part reference object**: References a part with an optional `minScore`
+   threshold (raw score value)
+
+   ```yaml
+   dependencies:
+     - part: 'Part 1: Basics'
+       minScore: 15 # Requires at least 15 points on Part 1
+   ```
+
+3. **Unit reference object**: References a specific unit with an optional
+   `minScore` threshold (raw score value)
+   ```yaml
+   dependencies:
+     - unit: 'Unit 1.1: Setup'
+       minScore: 8 # Requires at least 8 points on Unit 1.1
+   ```
+
+### Behavior
+
+- If `minScore` is omitted, the dependency requires **full marks** (score equals
+  max score)
+- If `minScore` is specified, the dependency requires the student to score **at
+  least** that raw score value
+- Dependencies can reference parts or units from anywhere in the configuration
+- When a **part's** dependencies are not met, the entire part is replaced with a
+  single feedback message
+- When a **unit's** dependencies are not met (but the part's are satisfied),
+  only that unit is replaced with a feedback message
+
+### Example Configuration
+
+```yaml
+gradedParts:
+  - name: 'Part 1: Basics'
+    gradedUnits:
+      - name: 'Unit 1.1: Setup'
+        tests: '[T1.1'
+        points: 10
+        testCount: 5
+
+      - name: 'Unit 1.2: Core'
+        dependencies:
+          - unit: 'Unit 1.1: Setup' # Requires 100% on Unit 1.1
+        tests: '[T1.2'
+        points: 15
+        testCount: 8
+
+  - name: 'Part 2: Advanced'
+    dependencies:
+      - 'Part 1: Basics' # String shorthand = part requiring full marks
+    gradedUnits:
+      - name: 'Unit 2.1: Advanced Ops'
+        dependencies:
+          - part: 'Part 1: Basics'
+            minScore: 20 # Need at least 20 points on Part 1
+          - unit: 'Unit 1.2: Core' # Need full marks on this unit
+        tests: '[T2.1'
+        points: 20
+        testCount: 10
+```
+
+In this example:
+
+- "Unit 1.2: Core" will only be graded if the student gets full marks on "Unit
+  1.1: Setup"
+- "Part 2: Advanced" will only be graded if the student gets full marks on all
+  of "Part 1: Basics"
+- "Unit 2.1: Advanced Ops" has additional unit-level dependencies requiring at
+  least 20 points on Part 1 and full marks on Unit 1.2

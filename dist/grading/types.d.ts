@@ -75,11 +75,33 @@ export interface RegularTestUnit {
     allow_partial_credit?: boolean;
     hide_output?: boolean;
 }
-export type GradedUnit = MutationTestUnit | RegularTestUnit;
+export type GradedUnitBase = MutationTestUnit | RegularTestUnit;
+export interface PartDependencyRef {
+    part: string;
+    minScore?: number;
+}
+export interface UnitDependencyRef {
+    unit: string;
+    minScore?: number;
+}
+export type Dependency = string | PartDependencyRef | UnitDependencyRef;
+export declare function isPartDependency(dep: Dependency): dep is PartDependencyRef;
+export declare function isUnitDependency(dep: Dependency): dep is UnitDependencyRef;
+export declare function isSimpleDependency(dep: Dependency): dep is string;
+export type GradedUnit = GradedUnitBase & {
+    dependencies?: Dependency[];
+};
 export interface GradedPart {
     name: string;
     gradedUnits: GradedUnit[];
     hide_until_released?: boolean;
+    dependencies?: Dependency[];
+}
+export interface MutantAdvice {
+    name: string;
+    prompt: string;
+    sourceClass: string;
+    targetClass: string;
 }
 export interface OverlayPawtograderConfig {
     grader: 'overlay';
@@ -89,6 +111,9 @@ export interface OverlayPawtograderConfig {
         files: string[];
         testFiles: string[];
     };
+    fallbackFiles?: string;
+    mutantAdvice?: MutantAdvice[];
+    maxMutantHints?: number;
 }
 export type PawtograderConfig = OverlayPawtograderConfig;
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
