@@ -203474,6 +203474,7 @@ class OverlayGrader extends Grader {
         }
     }
     async copyFallbackFiles() {
+        console.log(`Copying fallback files: ${JSON.stringify(this.config.fallbackFiles)}`);
         if (!this.config.fallbackFiles) {
             return;
         }
@@ -203497,6 +203498,7 @@ class OverlayGrader extends Grader {
             const relativePath = path$1.relative(fallbackDir, fallbackFile);
             const dest = path$1.join(this.gradingDir, relativePath);
             // Check if the file already exists in the grading directory
+            console.log(`Checking if file exists in grading directory: ${dest}`);
             try {
                 await access$1(dest);
                 // File exists, skip it
