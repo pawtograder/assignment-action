@@ -37,6 +37,7 @@ function icon(result: TestResult) {
 export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
   private mutantHintsShown = 0 // Running tally of mutant hints shown
+  private implementationHintsShown = 0 // Running tally of failing test details shown
 
   constructor(
     solutionDir: string,
@@ -381,6 +382,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const passingTests = relevantTestResults.filter(
         (result) => result.status === 'pass'
       ).length
+      const failingTests = relevantTestResults.filter(
+        (result) => result.status === 'fail'
+      )
 
       let score = 0
       if (unit.allow_partial_credit) {
@@ -388,28 +392,67 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       } else {
         score = passingTests == expectedTests ? unit.points : 0
       }
+
+      // Generate output based on maxImplementationHints setting
+      const maxImplHints = this.config.maxImplementationHints
+      let output: string
+      let hiddenOutput: string | undefined
+
+      if (unit.hide_output) {
+        output = 'Output for this test is intentionally hidden.'
+        hiddenOutput = `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(
+            (result) =>
+              `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
+          )
+          .join('\n')}`
+      } else if (maxImplHints !== undefined) {
+        // Limited mode: only show failing tests, up to the limit
+        const remainingHints = maxImplHints - this.implementationHintsShown
+        const failingTestsToShow = failingTests
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .slice(0, Math.max(0, remainingHints))
+
+        // Update the running tally
+        this.implementationHintsShown += failingTestsToShow.length
+
+        // Calculate hints not shown
+        const hintsNotShown = failingTests.length - failingTestsToShow.length
+        const limitMessage =
+          hintsNotShown > 0
+            ? `\n\n*${hintsNotShown} additional failing test${hintsNotShown > 1 ? 's' : ''} not shown. You are limited to ${maxImplHints} failing test detail${maxImplHints > 1 ? 's' : ''} total.*`
+            : ''
+
+        output = `**Tests passed: ${passingTests} / ${expectedTests}**`
+        if (failingTestsToShow.length > 0) {
+          output +=
+            '\n' +
+            failingTestsToShow
+              .map(
+                (result) =>
+                  `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
+              )
+              .join('\n')
+        }
+        output += limitMessage
+      } else {
+        // Default mode: show all tests
+        output = `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(
+            (result) =>
+              `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
+          )
+          .join('\n')}`
+      }
+
       return [
         {
           name: unit.name,
-          output: unit.hide_output
-            ? 'Output for this test is intentionally hidden.'
-            : `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(
-                  (result) =>
-                    `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
-                )
-                .join('\n')}`,
+          output,
           output_format: 'markdown',
-          hidden_output: unit.hide_output
-            ? `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(
-                  (result) =>
-                    `  * ${icon(result)} ${result.name} ${result.output ? '\n```\n' + result.output + '\n```' : ''}`
-                )
-                .join('\n')}`
-            : undefined,
+          hidden_output: hiddenOutput,
           hidden_output_format: unit.hide_output ? 'markdown' : undefined,
           score,
           hide_until_released: part.hide_until_released,

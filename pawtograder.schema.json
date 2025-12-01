@@ -291,6 +291,9 @@
           "const": "overlay",
           "type": "string"
         },
+        "maxImplementationHints": {
+          "type": "number"
+        },
         "maxMutantHints": {
           "type": "number"
         },

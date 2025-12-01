@@ -154,6 +154,7 @@ export interface OverlayPawtograderConfig {
   fallbackFiles?: string
   mutantAdvice?: MutantAdvice[]
   maxMutantHints?: number // Maximum number of mutant hints to show across all units. If undefined, shows all.
+  maxImplementationHints?: number // Maximum number of failing test details to show across all units. If set, only shows failing tests (not passing). If undefined, shows all test results.
 }
 
 export type PawtograderConfig = OverlayPawtograderConfig

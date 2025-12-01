@@ -114,6 +114,7 @@ export interface OverlayPawtograderConfig {
     fallbackFiles?: string;
     mutantAdvice?: MutantAdvice[];
     maxMutantHints?: number;
+    maxImplementationHints?: number;
 }
 export type PawtograderConfig = OverlayPawtograderConfig;
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
