@@ -203560,17 +203560,22 @@ class OverlayGrader extends Grader {
             await ioExports.cp(file, dest, { recursive: true });
         }
     }
-    gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice) {
+    gradeGradedUnit(unit, part, testResults, mutantResults, mutantError) {
         if (isMutationTestUnit(unit)) {
             if (!mutantResults) {
+                const errorMessage = mutantError
+                    ? `**${mutantError.reason}**\n\n${mutantError.details}`
+                    : 'No results from grading tests. Please check overall output for more details.';
                 return [
                     {
                         name: unit.name,
-                        output: mutantFailureAdvice ||
-                            'No results from grading tests. Please check overall output for more details.',
+                        output: errorMessage,
                         output_format: 'markdown',
                         score: 0,
-                        max_score: unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
+                        max_score: unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points,
+                        extra_data: mutantError
+                            ? { icon: 'FaExclamationTriangle' }
+                            : undefined
                     }
                 ];
             }
@@ -203984,7 +203989,7 @@ class OverlayGrader extends Grader {
             };
         }
         let mutantResults;
-        let mutantFailureAdvice;
+        let mutantError;
         let studentTestResults;
         if (this.config.submissionFiles.testFiles.length > 0 &&
             this.config.build.student_tests?.instructor_impl?.run_tests) {
@@ -203999,8 +204004,10 @@ class OverlayGrader extends Grader {
             }
             catch (err) {
                 const msg = err instanceof Error ? err.message : 'Unknown error';
-                mutantFailureAdvice =
-                    'Your tests failed to compile. Please see overall output for more details.';
+                mutantError = {
+                    reason: 'Your tests failed to compile',
+                    details: 'Please see overall output for more details.'
+                };
                 this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
                 this.logger.log('visible', msg);
             }
@@ -204017,27 +204024,27 @@ class OverlayGrader extends Grader {
             }
             if (!studentTestResults ||
                 studentTestResults.some((result) => result.status === 'fail')) {
-                if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
-                    this.logger.log('visible', "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. ");
-                    mutantFailureAdvice =
-                        "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n";
-                }
-                else {
-                    this.logger.log('visible', "Some of your tests failed when run against the instructor's solution.");
-                }
+                this.logger.log('visible', "Some of your tests failed when run against the instructor's solution.");
                 this.logger.log('visible', 'Here are your failing test results:');
+                // Build details for failing tests
+                let failingTestDetails = '';
                 if (studentTestResults) {
                     for (const result of studentTestResults) {
                         if (result.status === 'fail') {
-                            mutantFailureAdvice += `\n❌ ${result.name}\n`;
-                            mutantFailureAdvice += '```\n' + result.output + '\n```';
+                            failingTestDetails += `❌ ${result.name}\n`;
+                            failingTestDetails += '```\n' + result.output + '\n```\n\n';
                             this.logger.log('visible', `${result.name}: ${result.status}`);
                             this.logger.log('visible', result.output);
                         }
                     }
                 }
-                mutantFailureAdvice +=
-                    '\n\nPlease fix the above errors and resubmit for grading.';
+                if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
+                    mutantError = {
+                        reason: "Your tests failed against the instructor's solution, and hence, can not be graded.",
+                        details: failingTestDetails +
+                            'Your tests must pass against a correct implementation before fault detection can be evaluated. Please fix the failing tests and resubmit.'
+                    };
+                }
             }
             else if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
                 this.logger.log('visible', 'Running student tests against buggy solutions');
@@ -204139,7 +204146,7 @@ class OverlayGrader extends Grader {
         const unitFeedbacksMap = new Map();
         for (const part of gradedParts) {
             for (const unit of part.gradedUnits) {
-                const feedbacks = this.gradeGradedUnit(unit, part, testResults, mutantResults, mutantFailureAdvice);
+                const feedbacks = this.gradeGradedUnit(unit, part, testResults, mutantResults, mutantError);
                 // Each unit produces one feedback item
                 const feedback = feedbacks[0];
                 if (feedback) {
@@ -204200,8 +204207,8 @@ class OverlayGrader extends Grader {
         //Future graders might want to dynamically generate some artifacts, this would be the place to add them to the feedback
         if (this.config.build.student_tests?.instructor_impl?.report_mutation_coverage) {
             let studentMutationOutput = 'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational: ';
-            if (mutantFailureAdvice) {
-                studentMutationOutput = mutantFailureAdvice;
+            if (mutantError) {
+                studentMutationOutput = `**${mutantError.reason}**\n\n${mutantError.details}`;
             }
             if (mutantResults) {
                 const mutantsDetected = mutantResults

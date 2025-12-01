@@ -230,20 +230,24 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     part: GradedPart,
     testResults: TestResult[],
     mutantResults?: MutantResult[],
-    mutantFailureAdvice?: string
+    mutantError?: { reason: string; details: string }
   ): AutograderTestFeedback[] {
     if (isMutationTestUnit(unit)) {
       if (!mutantResults) {
+        const errorMessage = mutantError
+          ? `**${mutantError.reason}**\n\n${mutantError.details}`
+          : 'No results from grading tests. Please check overall output for more details.'
         return [
           {
             name: unit.name,
-            output:
-              mutantFailureAdvice ||
-              'No results from grading tests. Please check overall output for more details.',
+            output: errorMessage,
             output_format: 'markdown',
             score: 0,
             max_score:
-              unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points
+              unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points,
+            extra_data: mutantError
+              ? { icon: 'FaExclamationTriangle' }
+              : undefined
           }
         ]
       } else {
@@ -766,7 +770,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       }
     }
     let mutantResults: MutantResult[] | undefined
-    let mutantFailureAdvice: string | undefined
+    let mutantError: { reason: string; details: string } | undefined
     let studentTestResults: TestResult[] | undefined
     if (
       this.config.submissionFiles.testFiles.length > 0 &&
@@ -786,8 +790,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         })
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error'
-        mutantFailureAdvice =
-          'Your tests failed to compile. Please see overall output for more details.'
+        mutantError = {
+          reason: 'Your tests failed to compile',
+          details: 'Please see overall output for more details.'
+        }
         this.logger.log(
           'visible',
           'Your tests failed to compile. Here is the output from building your tests with our solution:'
@@ -812,32 +818,34 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         !studentTestResults ||
         studentTestResults.some((result) => result.status === 'fail')
       ) {
-        if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
-          this.logger.log(
-            'visible',
-            "Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting. "
-          )
-          mutantFailureAdvice =
-            "**Error**: Some of your tests failed when run against the instructor's solution. Your tests will not be graded for this submission. Please fix them before resubmitting.\n\n\nHere are your failing test results:\n\n\n"
-        } else {
-          this.logger.log(
-            'visible',
-            "Some of your tests failed when run against the instructor's solution."
-          )
-        }
+        this.logger.log(
+          'visible',
+          "Some of your tests failed when run against the instructor's solution."
+        )
         this.logger.log('visible', 'Here are your failing test results:')
+
+        // Build details for failing tests
+        let failingTestDetails = ''
         if (studentTestResults) {
           for (const result of studentTestResults) {
             if (result.status === 'fail') {
-              mutantFailureAdvice += `\n❌ ${result.name}\n`
-              mutantFailureAdvice += '```\n' + result.output + '\n```'
+              failingTestDetails += `❌ ${result.name}\n`
+              failingTestDetails += '```\n' + result.output + '\n```\n\n'
               this.logger.log('visible', `${result.name}: ${result.status}`)
               this.logger.log('visible', result.output)
             }
           }
         }
-        mutantFailureAdvice +=
-          '\n\nPlease fix the above errors and resubmit for grading.'
+
+        if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
+          mutantError = {
+            reason:
+              "Your tests failed against the instructor's solution, and hence, can not be graded.",
+            details:
+              failingTestDetails +
+              'Your tests must pass against a correct implementation before fault detection can be evaluated. Please fix the failing tests and resubmit.'
+          }
+        }
       } else if (
         this.config.build.student_tests?.instructor_impl?.run_mutation
       ) {
@@ -976,7 +984,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           part,
           testResults,
           mutantResults,
-          mutantFailureAdvice
+          mutantError
         )
         // Each unit produces one feedback item
         const feedback = feedbacks[0]
@@ -1052,8 +1060,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     ) {
       let studentMutationOutput =
         'Please refer to your assignment instructions for the specifications of how (if at all) your tests will be graded. These results are purely informational: '
-      if (mutantFailureAdvice) {
-        studentMutationOutput = mutantFailureAdvice
+      if (mutantError) {
+        studentMutationOutput = `**${mutantError.reason}**\n\n${mutantError.details}`
       }
       if (mutantResults) {
         const mutantsDetected = mutantResults
