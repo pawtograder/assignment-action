@@ -203628,12 +203628,20 @@ class OverlayGrader extends Grader {
                 const hintsToShow = mutantsWithAdvice.slice(0, Math.max(0, remainingHints));
                 // Update the running tally
                 this.mutantHintsShown += hintsToShow.length;
+                // Calculate if there are hints available but not shown due to limit
+                const hintsNotShown = mutantsWithAdvice.length - hintsToShow.length;
+                const limitMessage = hintsNotShown > 0 && maxHints !== undefined
+                    ? `\n\n*${hintsNotShown} additional hint${hintsNotShown > 1 ? 's' : ''} available but not shown. You are limited to ${maxHints} hint${maxHints > 1 ? 's' : ''} total across all fault detection tests.*`
+                    : '';
                 const adviceSection = hintsToShow.length > 0
                     ? '\n\n**Hints for undetected faults:**\n' +
                         hintsToShow
                             .map((item) => `- ${item.advice.name}: ${item.advice.prompt}`)
-                            .join('\n')
-                    : '';
+                            .join('\n') +
+                        limitMessage
+                    : hintsNotShown > 0
+                        ? limitMessage
+                        : '';
                 let score = 0;
                 if (unit.breakPoints) {
                     score = unit.breakPoints.find((bp) => bp.minimumMutantsDetected <= mutantsDetected)?.pointsToAward;
