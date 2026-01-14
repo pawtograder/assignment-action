@@ -203590,9 +203590,16 @@ class OverlayGrader extends Grader {
                 const relevantMutantResults = mutantResults.filter((mr) => {
                     const locations = unit.locations;
                     const mutantLocation = mr.location;
+                    // Try class-based matching first (backward compatible)
+                    let classMatch = false;
                     if (!mutantLocation.includes(':')) {
-                        return locations.some((location) => {
-                            return mutantLocation.startsWith(location);
+                        classMatch = locations.some((location) => {
+                            // Check if location looks like a class name (contains dots or is simple identifier)
+                            const looksLikeClassName = location.includes('.') || /^[A-Z][a-zA-Z0-9]*$/.test(location);
+                            if (looksLikeClassName && !location.includes(' ')) {
+                                return mutantLocation.startsWith(location);
+                            }
+                            return false;
                         });
                     }
                     else {
@@ -203600,18 +203607,35 @@ class OverlayGrader extends Grader {
                         const mutantClass = mutantLocationParts[0];
                         const mutantLine = parseInt(mutantLocationParts[1]);
                         const mutantEndLine = parseInt(mutantLocationParts[2]);
-                        return locations.some((location) => {
+                        classMatch = locations.some((location) => {
                             if (!location.includes('-')) {
-                                // Unit location is just a class name, check if mutant class matches
-                                return mutantClass.startsWith(location);
+                                const looksLikeClassName = location.includes('.') || /^[A-Z][a-zA-Z0-9]*$/.test(location);
+                                if (looksLikeClassName && !location.includes(' ')) {
+                                    return mutantClass.startsWith(location);
+                                }
+                                return false;
                             }
                             // Line range matching for locations like "ClassName-10-50"
                             const locationParts = location.split('-');
-                            const locationLine = parseInt(locationParts[1]);
-                            const locationEndLine = parseInt(locationParts[2]);
-                            return (mutantLine >= locationLine && mutantEndLine <= locationEndLine);
+                            if (locationParts.length === 3 &&
+                                !isNaN(parseInt(locationParts[1])) &&
+                                !isNaN(parseInt(locationParts[2]))) {
+                                const locationLine = parseInt(locationParts[1]);
+                                const locationEndLine = parseInt(locationParts[2]);
+                                return (mutantLine >= locationLine && mutantEndLine <= locationEndLine);
+                            }
+                            return false;
                         });
                     }
+                    // If class-based matching found results, return them
+                    if (classMatch) {
+                        return true;
+                    }
+                    // Fallback: try mutator-based matching for all locations
+                    return locations.some((location) => {
+                        // Try matching against mutator name (full string)
+                        return mr.name.includes(location) || location === mr.name;
+                    });
                 });
                 const mutantsDetected = relevantMutantResults.filter((mr) => mr.status === 'pass').length;
                 // Collect advice for non-killed mutants from config

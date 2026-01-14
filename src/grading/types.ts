@@ -68,7 +68,8 @@ export interface BreakPoint {
 
 export interface MutationTestUnit {
   name: string
-  locations: string[] // format: "file:line-line" (for normal pit mutators) OR format oldFile-newFile (for prebake mutators)
+  locations: string[] // format: "ClassName" (class name), "ClassName-line-line" (line range),
+  // OR mutator name string (matched against mutation mutator field)
 
   //Either exact breakpoints are provided, or points are awarded linearly as (mutants detected/total_faults) * points
   //one of these must be provided
