@@ -867,7 +867,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const msg = err instanceof Error ? err.message : 'Unknown error'
         mutantError = {
           reason: 'Your tests failed to compile',
-          details: 'Please see overall output for more details.'
+          details:
+            'Please see overall output for more details. Pay attention to the error messages: they likely indicate an assumption that your tests make about the implementation that is not true.'
         }
         this.logger.log(
           'visible',
@@ -914,8 +915,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
 
         if (this.config.build.student_tests?.instructor_impl?.run_mutation) {
           mutantError = {
-            reason:
-              "Your tests failed against the instructor's solution, and hence, can not be graded.",
+            reason: `Your test suite contains incorrect tests. We ran YOUR tests against a known-correct implementation, and your tests failed. This means your tests are checking for wrong behavior.
+
+Before we can grade your test suite's ability to detect bugs, your tests must correctly describe the expected behavior from the specification.
+
+The following tests expect incorrect output:
+`,
             details:
               failingTestDetails +
               'Your tests must pass against a correct implementation before fault detection can be evaluated. Please fix the failing tests and resubmit.'
