@@ -203561,6 +203561,15 @@ class OverlayGrader extends Grader {
             await ioExports.cp(file, dest, { recursive: true });
         }
     }
+    /**
+     * Main code for grading a single unit as specified in pawtograder.yml
+     * @param unit
+     * @param part
+     * @param testResults
+     * @param mutantResults
+     * @param mutantError
+     * @returns
+     */
     gradeGradedUnit(unit, part, testResults, mutantResults, mutantError) {
         if (isMutationTestUnit(unit)) {
             if (!mutantResults) {
@@ -203677,7 +203686,8 @@ class OverlayGrader extends Grader {
                     score = unit.breakPoints.find((bp) => bp.minimumMutantsDetected <= mutantsDetected)?.pointsToAward;
                 }
                 else {
-                    score = (mutantsDetected / maxMutantsToDetect) * maxScore;
+                    score =
+                        Math.round((mutantsDetected / maxMutantsToDetect) * maxScore * 100) / 100;
                 }
                 return [
                     {

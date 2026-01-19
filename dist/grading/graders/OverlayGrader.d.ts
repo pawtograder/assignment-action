@@ -11,6 +11,15 @@ export declare class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     copyFallbackFiles(): Promise<void>;
     private copyArtifactToTemp;
     resetSolutionFiles(): Promise<void>;
+    /**
+     * Main code for grading a single unit as specified in pawtograder.yml
+     * @param unit
+     * @param part
+     * @param testResults
+     * @param mutantResults
+     * @param mutantError
+     * @returns
+     */
     private gradeGradedUnit;
     /**
      * Check if dependencies are satisfied based on part and unit scores.

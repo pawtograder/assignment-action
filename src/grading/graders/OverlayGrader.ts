@@ -226,6 +226,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     }
   }
 
+  /**
+   * Main code for grading a single unit as specified in pawtograder.yml
+   * @param unit
+   * @param part
+   * @param testResults
+   * @param mutantResults
+   * @param mutantError
+   * @returns
+   */
   private gradeGradedUnit(
     unit: GradedUnit,
     part: GradedPart,
@@ -388,7 +397,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             (bp) => bp.minimumMutantsDetected <= mutantsDetected
           )?.pointsToAward
         } else {
-          score = (mutantsDetected / maxMutantsToDetect) * maxScore
+          score =
+            Math.round(
+              (mutantsDetected / maxMutantsToDetect) * maxScore * 100
+            ) / 100
         }
 
         return [
