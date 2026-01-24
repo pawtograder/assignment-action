@@ -42,8 +42,8 @@ export type GradeResponse = {
     token: string
     path: string
   }[]
-  supabase_url: string
-  supabase_anon_key: string
+  supabase_url?: string
+  supabase_anon_key?: string
   error?: {
     message: string
     recoverable: boolean

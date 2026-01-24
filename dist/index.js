@@ -204619,31 +204619,36 @@ async function run() {
             }, token, queryParams);
             //If there are artifacts, we need to upload them.
             if (results.artifacts && !regressionTestJob) {
-                const supabase = createClient(gradeResponse.supabase_url, gradeResponse.supabase_anon_key);
-                await Promise.all(results.artifacts.map(async (artifact) => {
-                    const artifactRemote = gradeResponse.artifacts?.find((ra) => ra.name === artifact.name);
-                    if (artifactRemote) {
-                        //Check to see if it is a directory or a file
-                        const stats = await stat(artifact.path);
-                        let fileToUpload;
-                        if (stats.isDirectory()) {
-                            // Create a zip file for the directory using JSZip
-                            fileToUpload = await zipDirectory(artifact.path);
+                if (!gradeResponse.supabase_url || !gradeResponse.supabase_anon_key) {
+                    coreExports.warning('Cannot upload artifacts: supabase_url or supabase_anon_key is missing from gradeResponse');
+                }
+                else {
+                    const supabase = createClient(gradeResponse.supabase_url, gradeResponse.supabase_anon_key);
+                    await Promise.all(results.artifacts.map(async (artifact) => {
+                        const artifactRemote = gradeResponse.artifacts?.find((ra) => ra.name === artifact.name);
+                        if (artifactRemote) {
+                            //Check to see if it is a directory or a file
+                            const stats = await stat(artifact.path);
+                            let fileToUpload;
+                            if (stats.isDirectory()) {
+                                // Create a zip file for the directory using JSZip
+                                fileToUpload = await zipDirectory(artifact.path);
+                            }
+                            else {
+                                fileToUpload = readFileSync(artifact.path);
+                            }
+                            const { error } = await supabase.storage
+                                .from('submission-artifacts')
+                                .uploadToSignedUrl(artifactRemote.path, artifactRemote.token, fileToUpload);
+                            if (error) {
+                                console.error(error);
+                            }
                         }
                         else {
-                            fileToUpload = readFileSync(artifact.path);
+                            console.error(`Artifact ${artifact.name} not found in gradeResponse`);
                         }
-                        const { error } = await supabase.storage
-                            .from('submission-artifacts')
-                            .uploadToSignedUrl(artifactRemote.path, artifactRemote.token, fileToUpload);
-                        if (error) {
-                            console.error(error);
-                        }
-                    }
-                    else {
-                        console.error(`Artifact ${artifact.name} not found in gradeResponse`);
-                    }
-                }));
+                    }));
+                }
             }
             await generateSummaryReport(results, gradeResponse, regressionTestJob);
             if (results.score === 0 && results.max_score) {
