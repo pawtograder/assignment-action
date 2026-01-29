@@ -1,4 +1,10 @@
 import { Builder, BuildStepOptions, LintResult, MutantResult, TestResult } from './Builder.js';
+import { JavacError } from './javacErrorParser.js';
+export declare class GradleBuildError extends Error {
+    readonly rawOutput: string;
+    readonly parsedErrors: JavacError[];
+    constructor(message: string, rawOutput: string, parsedErrors: JavacError[]);
+}
 export default class GradleBuilder extends Builder {
     setupVenv(): Promise<void>;
     lint(): Promise<LintResult>;

@@ -5,8 +5,9 @@ import { tmpdir } from 'os'
 import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
-import GradleBuilder from '../builders/GradleBuilder.js'
+import GradleBuilder, { GradleBuildError } from '../builders/GradleBuilder.js'
 import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
+import { generateStudentFriendlyError } from '../builders/javacErrorParser.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -877,16 +878,32 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         })
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error'
-        mutantError = {
-          reason: 'Your tests failed to compile',
-          details:
-            'Please see overall output for more details. Pay attention to the error messages: they likely indicate an assumption that your tests make about the implementation that is not true.'
+
+        // Check if this is a GradleBuildError with parsed errors
+        if (err instanceof GradleBuildError && err.parsedErrors.length > 0) {
+          mutantError = {
+            reason: 'Your tests failed to compile',
+            details: generateStudentFriendlyError(err.parsedErrors)
+          }
+          this.logger.log(
+            'visible',
+            'Your tests failed to compile. Here is the output from building your tests with our solution:'
+          )
+          // Still log the raw output for debugging, but the friendly message is in mutantError.details
+          this.logger.log('hidden', err.rawOutput)
+        } else {
+          // Fallback to generic error message
+          mutantError = {
+            reason: 'Your tests failed to compile',
+            details:
+              'Please see overall output for more details. Pay attention to the error messages: they likely indicate an assumption that your tests make about the implementation that is not true.'
+          }
+          this.logger.log(
+            'visible',
+            'Your tests failed to compile. Here is the output from building your tests with our solution:'
+          )
+          this.logger.log('visible', msg)
         }
-        this.logger.log(
-          'visible',
-          'Your tests failed to compile. Here is the output from building your tests with our solution:'
-        )
-        this.logger.log('visible', msg)
       }
       try {
         studentTestResults = await this.builder.test({

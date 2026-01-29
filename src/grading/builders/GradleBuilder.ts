@@ -9,6 +9,18 @@ import { parseLintingReports } from './checkstyle.js'
 import { getCoverageSummary, parseJacocoCsv } from './jacoco.js'
 import { parsePitestXml } from './pitest.js'
 import { processXMLResults } from './surefire.js'
+import { parseJavacErrors, JavacError } from './javacErrorParser.js'
+
+export class GradleBuildError extends Error {
+  constructor(
+    message: string,
+    public readonly rawOutput: string,
+    public readonly parsedErrors: JavacError[]
+  ) {
+    super(message)
+    this.name = 'GradleBuildError'
+  }
+}
 
 export default class GradleBuilder extends Builder {
   async setupVenv(): Promise<void> {}
@@ -139,9 +151,21 @@ export default class GradleBuilder extends Builder {
       true
     )
     if (returnCode !== 0) {
-      throw new Error(
-        `Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`
-      )
+      // Try to parse Java compiler errors from the output
+      const parsedErrors = parseJavacErrors(output, this.gradingDir)
+
+      if (parsedErrors.length > 0) {
+        throw new GradleBuildError(
+          `Gradle build failed with compilation errors. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting.`,
+          output,
+          parsedErrors
+        )
+      } else {
+        // Fallback to generic error if parsing fails
+        throw new Error(
+          `Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`
+        )
+      }
     }
   }
 }

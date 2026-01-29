@@ -158981,6 +158981,195 @@ async function processXMLResults(path_glob, logger) {
     return ret;
 }
 
+/**
+ * Parser for Java compiler errors from Gradle/javac output
+ * Extracts structured error information and generates student-friendly messages
+ */
+/**
+ * Parse Java compiler errors from Gradle build output
+ * @param output Raw Gradle/javac output string
+ * @param gradingDir Base directory for resolving relative paths
+ * @returns Array of parsed error objects
+ */
+function parseJavacErrors(output, gradingDir) {
+    const errors = [];
+    const lines = output.split('\n');
+    let i = 0;
+    while (i < lines.length) {
+        // Look for error line pattern: /path/to/file.java:LINE: error: MESSAGE
+        const errorLineMatch = lines[i].match(/^(.+?):(\d+):\s*error:\s*(.+)$/);
+        if (errorLineMatch) {
+            let filePath = errorLineMatch[1].trim();
+            const lineNum = parseInt(errorLineMatch[2], 10);
+            const errorMsg = errorLineMatch[3];
+            // Trim all absolute path components - extract relative path starting from src/ or test/
+            let relativePath = filePath;
+            // Find the last occurrence of /src/ or /test/ and take everything from there
+            // Prefer src/ over test/ to preserve src/test/ paths correctly
+            const srcMatch = relativePath.match(/.*[\/\\](src[\/\\].+)$/);
+            const testMatch = relativePath.match(/.*[\/\\](test[\/\\].+)$/);
+            if (srcMatch) {
+                relativePath = srcMatch[1].replace(/\\/g, '/');
+            }
+            else if (testMatch) {
+                relativePath = testMatch[1].replace(/\\/g, '/');
+            }
+            else if (filePath.startsWith(gradingDir)) {
+                // Fallback: if it starts with gradingDir, trim that
+                relativePath = filePath.substring(gradingDir.length + 1);
+            }
+            // Look ahead for symbol and location information
+            let symbolType;
+            let symbolName;
+            let symbolSignature;
+            let locationClass;
+            // Check next few lines for symbol information
+            for (let j = i + 1; j < Math.min(i + 10, lines.length); j++) {
+                const symbolMatch = lines[j].match(/^\s*symbol:\s*(method|class|variable|field)\s+(.+)$/);
+                if (symbolMatch) {
+                    symbolType = symbolMatch[1];
+                    symbolSignature = symbolMatch[2].trim();
+                    // Extract method/class name from signature
+                    if (symbolType === 'method') {
+                        // Format: "methodName(ParamType1, ParamType2)" or "methodName()"
+                        const methodMatch = symbolSignature.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/);
+                        if (methodMatch) {
+                            symbolName = methodMatch[1];
+                        }
+                    }
+                    else if (symbolType === 'class') {
+                        symbolName = symbolSignature;
+                    }
+                    else if (symbolType === 'variable' || symbolType === 'field') {
+                        // Format: "variableName" or "variableName of type Type"
+                        const varMatch = symbolSignature.match(/^([a-zA-Z_][a-zA-Z0-9_]*)/);
+                        if (varMatch) {
+                            symbolName = varMatch[1];
+                        }
+                    }
+                    continue;
+                }
+                const locationMatch = lines[j].match(/^\s*location:\s*(?:class\s+|variable\s+target\s+of\s+type\s+)(.+)$/);
+                if (locationMatch) {
+                    locationClass = locationMatch[1].trim();
+                    break;
+                }
+            }
+            // Determine error type
+            let errorType = 'other';
+            if (errorMsg.includes('cannot find symbol')) {
+                errorType = 'cannot_find_symbol';
+            }
+            else if (errorMsg.includes('incompatible types')) {
+                errorType = 'incompatible_types';
+            }
+            else if (errorMsg.includes('cannot be applied')) {
+                errorType = 'method_cannot_be_applied';
+            }
+            errors.push({
+                type: errorType,
+                file: relativePath,
+                line: lineNum,
+                symbolType,
+                symbolName,
+                symbolSignature,
+                locationClass,
+                errorMessage: errorMsg
+            });
+        }
+        i++;
+    }
+    return errors;
+}
+/**
+ * Generate a student-friendly error message from parsed Java compiler errors
+ * @param errors Array of parsed JavacError objects
+ * @returns Formatted markdown message
+ */
+function generateStudentFriendlyError(errors) {
+    if (errors.length === 0) {
+        return 'Your tests failed to compile. Please check the build output for details.';
+    }
+    // Group errors by type for better organization
+    const cannotFindSymbolErrors = errors.filter((e) => e.type === 'cannot_find_symbol');
+    const otherErrors = errors.filter((e) => e.type !== 'cannot_find_symbol');
+    let message = '**Compilation Error in Your Tests**\n\n';
+    // Handle "cannot find symbol" errors (most common and most actionable)
+    if (cannotFindSymbolErrors.length > 0) {
+        // Group by symbol to avoid repetition
+        const symbolGroups = new Map();
+        for (const error of cannotFindSymbolErrors) {
+            const key = `${error.symbolType}:${error.symbolSignature || error.symbolName}:${error.locationClass}`;
+            if (!symbolGroups.has(key)) {
+                symbolGroups.set(key, []);
+            }
+            symbolGroups.get(key).push(error);
+        }
+        for (const [, groupErrors] of symbolGroups.entries()) {
+            const error = groupErrors[0]; // Use first error as representative
+            const locations = groupErrors
+                .map((e) => `\`${e.file}:${e.line}\``)
+                .join(', ');
+            if (error.symbolType === 'method' &&
+                error.symbolName &&
+                error.locationClass) {
+                message += `Your test${groupErrors.length > 1 ? 's' : ''} at ${locations} assume${groupErrors.length > 1 ? '' : 's'} that class \`${error.locationClass}\` has the method \`${error.symbolSignature || error.symbolName}\`.\n\n`;
+                message += `Your implementation might have this method, but it is **not part of the shared specification** that we asked you to implement and test. Our solution does not include this method, so your tests cannot compile against it.\n\n`;
+                message += `**How to Fix:**\n`;
+                message += `- Remove tests that call \`${error.symbolSignature || error.symbolName}\` on \`${error.locationClass}\` objects\n`;
+                message += `- Only test the public API defined in the assignment specification\n`;
+                message += `- See the assignment specification for a reminder of the public API\n\n`;
+            }
+            else if (error.symbolType === 'class' && error.symbolName) {
+                message += `Your test${groupErrors.length > 1 ? 's' : ''} at ${locations} reference${groupErrors.length > 1 ? '' : 's'} the class \`${error.symbolName}\`, which is not part of the shared specification.\n\n`;
+                message += `**How to Fix:**\n`;
+                message += `- Remove tests that use \`${error.symbolName}\`\n`;
+                message += `- Only use classes defined in the assignment specification\n\n`;
+            }
+            else if ((error.symbolType === 'variable' || error.symbolType === 'field') &&
+                error.symbolName &&
+                error.locationClass) {
+                message += `Your test${groupErrors.length > 1 ? 's' : ''} at ${locations} assume${groupErrors.length > 1 ? '' : 's'} that class \`${error.locationClass}\` has the ${error.symbolType} \`${error.symbolName}\`.\n\n`;
+                message += `This ${error.symbolType} is not part of the shared specification.\n\n`;
+                message += `**How to Fix:**\n`;
+                message += `- Remove tests that access \`${error.symbolName}\` on \`${error.locationClass}\` objects\n`;
+                message += `- Only test the public API defined in the assignment specification\n\n`;
+            }
+            else {
+                // Fallback for other symbol types
+                message += `Your test${groupErrors.length > 1 ? 's' : ''} at ${locations} reference${groupErrors.length > 1 ? '' : 's'} a symbol that is not available: \`${error.symbolSignature || error.symbolName || 'unknown'}\`\n\n`;
+                message += `This symbol is not part of the shared specification.\n\n`;
+                message += `**How to Fix:**\n`;
+                message += `- Remove tests that use this symbol\n`;
+                message += `- Only test the public API defined in the assignment specification\n\n`;
+            }
+        }
+    }
+    // Handle other error types
+    if (otherErrors.length > 0) {
+        message += `**Additional Compilation Errors:**\n\n`;
+        for (const error of otherErrors) {
+            message += `- \`${error.file}:${error.line}\`: ${error.errorMessage || 'Compilation error'}\n`;
+        }
+        message += `\nPlease review these errors and ensure your tests only use the public API defined in the assignment specification.\n\n`;
+    }
+    // Add general guidance
+    message += `---\n\n`;
+    message += `**General Guidance:**\n\n`;
+    message += `When writing tests, make sure they only test the public API that was specified in the assignment. Your tests will be compiled against our solution, which implements only the specified interface. If your tests rely on implementation details or methods not in the specification, they will fail to compile.\n`;
+    return message;
+}
+
+class GradleBuildError extends Error {
+    rawOutput;
+    parsedErrors;
+    constructor(message, rawOutput, parsedErrors) {
+        super(message);
+        this.rawOutput = rawOutput;
+        this.parsedErrors = parsedErrors;
+        this.name = 'GradleBuildError';
+    }
+}
 class GradleBuilder extends Builder$1 {
     async setupVenv() { }
     async lint() {
@@ -159071,7 +159260,15 @@ class GradleBuilder extends Builder$1 {
             'build'
         ], this.logger, timeoutSeconds, true);
         if (returnCode !== 0) {
-            throw new Error(`Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`);
+            // Try to parse Java compiler errors from the output
+            const parsedErrors = parseJavacErrors(output, this.gradingDir);
+            if (parsedErrors.length > 0) {
+                throw new GradleBuildError(`Gradle build failed with compilation errors. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting.`, output, parsedErrors);
+            }
+            else {
+                // Fallback to generic error if parsing fails
+                throw new Error(`Gradle build failed. Please check that running the command 'gradle clean build' completes without compilation errors before resubmitting. Here is the output that gradle produced on the grading server: ${output}`);
+            }
         }
     }
 }
@@ -204071,12 +204268,25 @@ class OverlayGrader extends Grader {
             }
             catch (err) {
                 const msg = err instanceof Error ? err.message : 'Unknown error';
-                mutantError = {
-                    reason: 'Your tests failed to compile',
-                    details: 'Please see overall output for more details. Pay attention to the error messages: they likely indicate an assumption that your tests make about the implementation that is not true.'
-                };
-                this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
-                this.logger.log('visible', msg);
+                // Check if this is a GradleBuildError with parsed errors
+                if (err instanceof GradleBuildError && err.parsedErrors.length > 0) {
+                    mutantError = {
+                        reason: 'Your tests failed to compile',
+                        details: generateStudentFriendlyError(err.parsedErrors)
+                    };
+                    this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
+                    // Still log the raw output for debugging, but the friendly message is in mutantError.details
+                    this.logger.log('hidden', err.rawOutput);
+                }
+                else {
+                    // Fallback to generic error message
+                    mutantError = {
+                        reason: 'Your tests failed to compile',
+                        details: 'Please see overall output for more details. Pay attention to the error messages: they likely indicate an assumption that your tests make about the implementation that is not true.'
+                    };
+                    this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
+                    this.logger.log('visible', msg);
+                }
             }
             try {
                 studentTestResults = await this.builder.test({
