@@ -756,7 +756,18 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         'visible',
         `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`
       )
-      this.logger.log('visible', msg)
+
+      // Check if this is a GradleBuildError with parsed errors - show friendly message
+      if (err instanceof GradleBuildError && err.parsedErrors.length > 0) {
+        // ALWAYS show the raw output to students
+        this.logger.log('visible', err.rawOutput)
+        // Also include the friendly message
+        const friendlyMessage = generateStudentFriendlyError(err.parsedErrors)
+        this.logger.log('visible', '\n---\n\n' + friendlyMessage)
+      } else {
+        // Fallback to generic error message
+        this.logger.log('visible', msg)
+      }
       const gradedParts = this.config.gradedParts || []
       const allTests: AutograderTestFeedback[] = gradedParts
         .filter((part) => !part.hide_until_released)
@@ -881,16 +892,19 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
 
         // Check if this is a GradleBuildError with parsed errors
         if (err instanceof GradleBuildError && err.parsedErrors.length > 0) {
+          const friendlyMessage = generateStudentFriendlyError(err.parsedErrors)
           mutantError = {
             reason: 'Your tests failed to compile',
-            details: generateStudentFriendlyError(err.parsedErrors)
+            details: friendlyMessage
           }
+          this.logger.log('visible', 'Your tests failed to compile.')
+          // Also include the friendly message in the visible output
+          this.logger.log('visible', '\n---\n\n' + friendlyMessage)
           this.logger.log(
             'visible',
-            'Your tests failed to compile. Here is the output from building your tests with our solution:'
+            'Here is the raw, debug output from building your tests with our solution:'
           )
-          // Still log the raw output for debugging, but the friendly message is in mutantError.details
-          this.logger.log('hidden', err.rawOutput)
+          this.logger.log('visible', err.rawOutput)
         } else {
           // Fallback to generic error message
           mutantError = {

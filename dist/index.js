@@ -158999,15 +158999,15 @@ function parseJavacErrors(output, gradingDir) {
         // Look for error line pattern: /path/to/file.java:LINE: error: MESSAGE
         const errorLineMatch = lines[i].match(/^(.+?):(\d+):\s*error:\s*(.+)$/);
         if (errorLineMatch) {
-            let filePath = errorLineMatch[1].trim();
+            const filePath = errorLineMatch[1].trim();
             const lineNum = parseInt(errorLineMatch[2], 10);
             const errorMsg = errorLineMatch[3];
             // Trim all absolute path components - extract relative path starting from src/ or test/
             let relativePath = filePath;
             // Find the last occurrence of /src/ or /test/ and take everything from there
             // Prefer src/ over test/ to preserve src/test/ paths correctly
-            const srcMatch = relativePath.match(/.*[\/\\](src[\/\\].+)$/);
-            const testMatch = relativePath.match(/.*[\/\\](test[\/\\].+)$/);
+            const srcMatch = relativePath.match(/.*[/\\](src[/\\].+)$/);
+            const testMatch = relativePath.match(/.*[/\\](test[/\\].+)$/);
             if (srcMatch) {
                 relativePath = srcMatch[1].replace(/\\/g, '/');
             }
@@ -159055,8 +159055,9 @@ function parseJavacErrors(output, gradingDir) {
                     break;
                 }
             }
-            // Determine error type
+            // Determine error type and extract additional information
             let errorType = 'other';
+            let exceptionName;
             if (errorMsg.includes('cannot find symbol')) {
                 errorType = 'cannot_find_symbol';
             }
@@ -159066,6 +159067,14 @@ function parseJavacErrors(output, gradingDir) {
             else if (errorMsg.includes('cannot be applied')) {
                 errorType = 'method_cannot_be_applied';
             }
+            else if (errorMsg.includes('unreported exception')) {
+                errorType = 'unreported_exception';
+                // Extract exception name from: "unreported exception ExceptionName; must be caught..."
+                const exceptionMatch = errorMsg.match(/unreported exception\s+([A-Za-z][A-Za-z0-9_]*)/);
+                if (exceptionMatch) {
+                    exceptionName = exceptionMatch[1];
+                }
+            }
             errors.push({
                 type: errorType,
                 file: relativePath,
@@ -159074,6 +159083,7 @@ function parseJavacErrors(output, gradingDir) {
                 symbolName,
                 symbolSignature,
                 locationClass,
+                exceptionName,
                 errorMessage: errorMsg
             });
         }
@@ -159092,7 +159102,8 @@ function generateStudentFriendlyError(errors) {
     }
     // Group errors by type for better organization
     const cannotFindSymbolErrors = errors.filter((e) => e.type === 'cannot_find_symbol');
-    const otherErrors = errors.filter((e) => e.type !== 'cannot_find_symbol');
+    const unreportedExceptionErrors = errors.filter((e) => e.type === 'unreported_exception');
+    const otherErrors = errors.filter((e) => e.type !== 'cannot_find_symbol' && e.type !== 'unreported_exception');
     let message = '**Compilation Error in Your Tests**\n\n';
     // Handle "cannot find symbol" errors (most common and most actionable)
     if (cannotFindSymbolErrors.length > 0) {
@@ -159143,6 +159154,31 @@ function generateStudentFriendlyError(errors) {
                 message += `- Remove tests that use this symbol\n`;
                 message += `- Only test the public API defined in the assignment specification\n\n`;
             }
+        }
+    }
+    // Handle unreported exception errors
+    if (unreportedExceptionErrors.length > 0) {
+        // Group by exception type
+        const exceptionGroups = new Map();
+        for (const error of unreportedExceptionErrors) {
+            const key = error.exceptionName || 'unknown';
+            if (!exceptionGroups.has(key)) {
+                exceptionGroups.set(key, []);
+            }
+            exceptionGroups.get(key).push(error);
+        }
+        for (const [, groupErrors] of exceptionGroups.entries()) {
+            const error = groupErrors[0];
+            const locations = groupErrors
+                .map((e) => `\`${e.file}:${e.line}\``)
+                .join(', ');
+            const exceptionName = error.exceptionName || 'an exception';
+            message += `Your test${groupErrors.length > 1 ? 's' : ''} at ${locations} call${groupErrors.length > 1 ? '' : 's'} a method that throws \`${exceptionName}\`, but your test does not handle this exception.\n\n`;
+            message += `Methods in the specification may throw checked exceptions that must be handled. Your tests need to either:\n\n`;
+            message += `**How to Fix:**\n`;
+            message += `- Wrap the method call in a \`try-catch\` block to handle \`${exceptionName}\`\n`;
+            message += `- Add \`throws ${exceptionName}\` to your test method signature\n`;
+            message += `- Check the assignment specification to understand when this exception is thrown\n\n`;
         }
     }
     // Handle other error types
@@ -204164,7 +204200,18 @@ class OverlayGrader extends Grader {
         catch (err) {
             const msg = err instanceof Error ? err.message : 'Unknown error';
             this.logger.log('visible', `Build failed, submission can not be graded. Please fix the above errors below and resubmit. This submission will not count towards any submisison limits (if applicable for this assignment).`);
-            this.logger.log('visible', msg);
+            // Check if this is a GradleBuildError with parsed errors - show friendly message
+            if (err instanceof GradleBuildError && err.parsedErrors.length > 0) {
+                // ALWAYS show the raw output to students
+                this.logger.log('visible', err.rawOutput);
+                // Also include the friendly message
+                const friendlyMessage = generateStudentFriendlyError(err.parsedErrors);
+                this.logger.log('visible', '\n---\n\n' + friendlyMessage);
+            }
+            else {
+                // Fallback to generic error message
+                this.logger.log('visible', msg);
+            }
             const gradedParts = this.config.gradedParts || [];
             const allTests = gradedParts
                 .filter((part) => !part.hide_until_released)
@@ -204270,13 +204317,16 @@ class OverlayGrader extends Grader {
                 const msg = err instanceof Error ? err.message : 'Unknown error';
                 // Check if this is a GradleBuildError with parsed errors
                 if (err instanceof GradleBuildError && err.parsedErrors.length > 0) {
+                    const friendlyMessage = generateStudentFriendlyError(err.parsedErrors);
                     mutantError = {
                         reason: 'Your tests failed to compile',
-                        details: generateStudentFriendlyError(err.parsedErrors)
+                        details: friendlyMessage
                     };
-                    this.logger.log('visible', 'Your tests failed to compile. Here is the output from building your tests with our solution:');
-                    // Still log the raw output for debugging, but the friendly message is in mutantError.details
-                    this.logger.log('hidden', err.rawOutput);
+                    this.logger.log('visible', 'Your tests failed to compile.');
+                    // Also include the friendly message in the visible output
+                    this.logger.log('visible', '\n---\n\n' + friendlyMessage);
+                    this.logger.log('visible', 'Here is the raw, debug output from building your tests with our solution:');
+                    this.logger.log('visible', err.rawOutput);
                 }
                 else {
                     // Fallback to generic error message

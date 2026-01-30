@@ -8,6 +8,7 @@ export interface JavacError {
     | 'cannot_find_symbol'
     | 'incompatible_types'
     | 'method_cannot_be_applied'
+    | 'unreported_exception'
     | 'other'
   file: string // Relative path to the test file
   line: number
@@ -15,6 +16,7 @@ export interface JavacError {
   symbolName?: string // e.g., "toBaseAmount"
   symbolSignature?: string // e.g., "toBaseAmount(ConversionRegistry)"
   locationClass?: string // e.g., "Quantity"
+  exceptionName?: string // e.g., "UnsupportedConversionException"
   errorMessage?: string // Original error message for other types
 }
 
@@ -36,7 +38,7 @@ export function parseJavacErrors(
     // Look for error line pattern: /path/to/file.java:LINE: error: MESSAGE
     const errorLineMatch = lines[i].match(/^(.+?):(\d+):\s*error:\s*(.+)$/)
     if (errorLineMatch) {
-      let filePath = errorLineMatch[1].trim()
+      const filePath = errorLineMatch[1].trim()
       const lineNum = parseInt(errorLineMatch[2], 10)
       const errorMsg = errorLineMatch[3]
 
@@ -45,8 +47,8 @@ export function parseJavacErrors(
 
       // Find the last occurrence of /src/ or /test/ and take everything from there
       // Prefer src/ over test/ to preserve src/test/ paths correctly
-      const srcMatch = relativePath.match(/.*[\/\\](src[\/\\].+)$/)
-      const testMatch = relativePath.match(/.*[\/\\](test[\/\\].+)$/)
+      const srcMatch = relativePath.match(/.*[/\\](src[/\\].+)$/)
+      const testMatch = relativePath.match(/.*[/\\](test[/\\].+)$/)
 
       if (srcMatch) {
         relativePath = srcMatch[1].replace(/\\/g, '/')
@@ -106,14 +108,25 @@ export function parseJavacErrors(
         }
       }
 
-      // Determine error type
+      // Determine error type and extract additional information
       let errorType: JavacError['type'] = 'other'
+      let exceptionName: string | undefined
+
       if (errorMsg.includes('cannot find symbol')) {
         errorType = 'cannot_find_symbol'
       } else if (errorMsg.includes('incompatible types')) {
         errorType = 'incompatible_types'
       } else if (errorMsg.includes('cannot be applied')) {
         errorType = 'method_cannot_be_applied'
+      } else if (errorMsg.includes('unreported exception')) {
+        errorType = 'unreported_exception'
+        // Extract exception name from: "unreported exception ExceptionName; must be caught..."
+        const exceptionMatch = errorMsg.match(
+          /unreported exception\s+([A-Za-z][A-Za-z0-9_]*)/
+        )
+        if (exceptionMatch) {
+          exceptionName = exceptionMatch[1]
+        }
       }
 
       errors.push({
@@ -124,6 +137,7 @@ export function parseJavacErrors(
         symbolName,
         symbolSignature,
         locationClass,
+        exceptionName,
         errorMessage: errorMsg
       })
     }
@@ -147,7 +161,12 @@ export function generateStudentFriendlyError(errors: JavacError[]): string {
   const cannotFindSymbolErrors = errors.filter(
     (e) => e.type === 'cannot_find_symbol'
   )
-  const otherErrors = errors.filter((e) => e.type !== 'cannot_find_symbol')
+  const unreportedExceptionErrors = errors.filter(
+    (e) => e.type === 'unreported_exception'
+  )
+  const otherErrors = errors.filter(
+    (e) => e.type !== 'cannot_find_symbol' && e.type !== 'unreported_exception'
+  )
 
   let message = '**Compilation Error in Your Tests**\n\n'
 
@@ -203,6 +222,34 @@ export function generateStudentFriendlyError(errors: JavacError[]): string {
         message += `- Remove tests that use this symbol\n`
         message += `- Only test the public API defined in the assignment specification\n\n`
       }
+    }
+  }
+
+  // Handle unreported exception errors
+  if (unreportedExceptionErrors.length > 0) {
+    // Group by exception type
+    const exceptionGroups = new Map<string, JavacError[]>()
+    for (const error of unreportedExceptionErrors) {
+      const key = error.exceptionName || 'unknown'
+      if (!exceptionGroups.has(key)) {
+        exceptionGroups.set(key, [])
+      }
+      exceptionGroups.get(key)!.push(error)
+    }
+
+    for (const [, groupErrors] of exceptionGroups.entries()) {
+      const error = groupErrors[0]
+      const locations = groupErrors
+        .map((e) => `\`${e.file}:${e.line}\``)
+        .join(', ')
+      const exceptionName = error.exceptionName || 'an exception'
+
+      message += `Your test${groupErrors.length > 1 ? 's' : ''} at ${locations} call${groupErrors.length > 1 ? '' : 's'} a method that throws \`${exceptionName}\`, but your test does not handle this exception.\n\n`
+      message += `Methods in the specification may throw checked exceptions that must be handled. Your tests need to either:\n\n`
+      message += `**How to Fix:**\n`
+      message += `- Wrap the method call in a \`try-catch\` block to handle \`${exceptionName}\`\n`
+      message += `- Add \`throws ${exceptionName}\` to your test method signature\n`
+      message += `- Check the assignment specification to understand when this exception is thrown\n\n`
     }
   }
 

@@ -3,13 +3,14 @@
  * Extracts structured error information and generates student-friendly messages
  */
 export interface JavacError {
-    type: 'cannot_find_symbol' | 'incompatible_types' | 'method_cannot_be_applied' | 'other';
+    type: 'cannot_find_symbol' | 'incompatible_types' | 'method_cannot_be_applied' | 'unreported_exception' | 'other';
     file: string;
     line: number;
     symbolType?: 'method' | 'class' | 'variable' | 'field';
     symbolName?: string;
     symbolSignature?: string;
     locationClass?: string;
+    exceptionName?: string;
     errorMessage?: string;
 }
 /**
