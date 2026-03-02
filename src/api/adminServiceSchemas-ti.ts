@@ -118,11 +118,7 @@ export const OutputVisibility = t.union(
 export const AutograderFeedback = t.iface([], {
   tests: t.array(
     t.iface([], {
-      extra_data: t.opt(
-        t.iface([], {
-          [t.indexKey]: 'string'
-        })
-      ),
+      extra_data: t.opt('any'),
       visibility: t.opt('OutputVisibility'),
       tags: t.opt(t.array('string')),
       output_format: t.opt('OutputFormat'),

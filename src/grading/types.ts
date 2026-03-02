@@ -143,6 +143,17 @@ export interface MutantAdvice {
   targetClass: string
 }
 
+export type LLMProvider = 'openai' | 'azure' | 'anthropic' | 'openrouter'
+
+export interface LLMConfig {
+  model: string
+  provider: LLMProvider
+  assignment_spec_path?: string
+  temperature?: number
+  max_tokens?: number
+  rate_limit?: object
+}
+
 // Main configuration type
 export interface OverlayPawtograderConfig {
   grader: 'overlay'
@@ -156,6 +167,7 @@ export interface OverlayPawtograderConfig {
   mutantAdvice?: MutantAdvice[]
   maxMutantHints?: number // Maximum number of mutant hints to show across all units. If undefined, shows all.
   maxImplementationHints?: number // Maximum number of failing test details to show across all units. If set, only shows failing tests (not passing). If undefined, shows all test results.
+  llm?: LLMConfig
 }
 
 export type PawtograderConfig = OverlayPawtograderConfig
