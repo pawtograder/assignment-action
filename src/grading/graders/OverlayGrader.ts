@@ -411,8 +411,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             icon: 'FaLightbulb',
             llm: {
               prompt: llmPrompt,
-              model: 'gpt-4o-mini',
-              provider: 'openai',
+              model: 'gpt-5-mini',
+              provider: 'azure',
               type: 'v1'
             }
           }
