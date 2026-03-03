@@ -148,7 +148,6 @@ export type LLMProvider = 'openai' | 'azure' | 'anthropic' | 'openrouter'
 export interface LLMConfig {
   model: string
   provider: LLMProvider
-  assignment_spec_path?: string
   temperature?: number
   max_tokens?: number
   rate_limit?: object
