@@ -28,6 +28,12 @@ import {
 import { buildFeedBotPrompt } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
 
+/** Set to true to temporarily skip adding extra_data.llm (for testing platform without LLM payload). */
+const SKIP_EXTRA_DATA = true
+
+/** Log to stdout so it appears in the GitHub Actions run log. */
+const actionLog = (msg: string) => console.log(`[assignment-action] ${msg}`)
+
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
@@ -405,7 +411,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           | import('../../api/adminServiceSchemas.js').GraderResultTestExtraData
           | undefined
 
-        if (mutantsDetected < relevantMutantResults.length) {
+        if (!SKIP_EXTRA_DATA && mutantsDetected < relevantMutantResults.length) {
+          actionLog(`Adding extra_data.llm for mutation unit: ${unit.name}`)
           const llmPrompt = buildFeedBotPrompt(unitOutput)
           extraData = {
             icon: 'FaLightbulb',
@@ -511,7 +518,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         | import('../../api/adminServiceSchemas.js').GraderResultTestExtraData
         | undefined
 
-      if (failingTests.length > 0) {
+      if (!SKIP_EXTRA_DATA && failingTests.length > 0) {
+        actionLog(`Adding extra_data.llm for regular unit: ${unit.name}`)
         const llmPrompt = buildFeedBotPrompt(output)
         extraData = {
           icon: 'FaLightbulb',
@@ -1128,6 +1136,11 @@ The following tests expect incorrect output:
       }
     }
     this.logger.log('visible', 'Wrapping up')
+    actionLog(
+      SKIP_EXTRA_DATA
+        ? 'SKIP_EXTRA_DATA is true: not adding extra_data.llm to any test'
+        : 'SKIP_EXTRA_DATA is false: will add extra_data.llm for failures'
+    )
 
     // First pass: grade all units (without dependency checks) to calculate scores
     const unitScores = new Map<string, { score: number; maxScore: number }>()
