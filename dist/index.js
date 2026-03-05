@@ -208624,9 +208624,7 @@ function isRegularTestUnit(unit) {
 }
 
 const __filename = fileURLToPath$1(import.meta.url);
-const __dirname = dirname(__filename);
-const filePath = join(__dirname, 'README.md');
-const README_CONTENT = require$$1$2.readFileSync(filePath, 'utf8');
+dirname(__filename);
 const BASE_PROMPT = `You are FeedBot, an automated feedback assistant for a programming course.
 Your goal is to help students understand why their submission failed and how to make progress, without giving them the solution.
 
@@ -208652,8 +208650,7 @@ Output format:
 Failure handling:
 - If you cannot produce a complete compliant response, output exactly: RETRY
 
-Assignment Spec (README):
-${README_CONTENT}`;
+`;
 const CHECKLIST_STRATEGY_PROMPT = `
 Strategy instructions (checklist-strategy):
 Before writing your response, silently decide which ONE of the three focuses below is most useful given the error, then write your hint based on that focus. Do not name or reveal your choice in the output.
@@ -208668,7 +208665,10 @@ Use exactly one focus to shape the 3–4 sentence hint. The output must read as 
  * Build the full LLM prompt: BASE_PROMPT (with readme) + strategy + error output.
  */
 function buildFeedBotPrompt(errorOutput) {
-    return `${BASE_PROMPT}\n\n${CHECKLIST_STRATEGY_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}`;
+    return escapeForLangChain(`${BASE_PROMPT}\n\n${CHECKLIST_STRATEGY_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}`);
+}
+function escapeForLangChain(text) {
+    return text.replace(/\{/g, '{{').replace(/\}/g, '}}');
 }
 
 class Logger {

@@ -53,5 +53,11 @@ Use exactly one focus to shape the 3–4 sentence hint. The output must read as 
  * Build the full LLM prompt: BASE_PROMPT (with readme) + strategy + error output.
  */
 export function buildFeedBotPrompt(errorOutput: string): string {
-  return `${BASE_PROMPT}\n\n${CHECKLIST_STRATEGY_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}`
+  return escapeForLangChain(
+    `${BASE_PROMPT}\n\n${CHECKLIST_STRATEGY_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}`
+  )
+}
+
+function escapeForLangChain(text: string): string {
+  return text.replace(/\{/g, '{{').replace(/\}/g, '}}')
 }
