@@ -28,8 +28,6 @@ import {
 import { buildFeedBotPrompt } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
 
-const FEEDBOT_PROMPT = "Only say 'Hello world.' and nothing else."
-
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
