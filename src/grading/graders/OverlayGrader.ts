@@ -25,6 +25,7 @@ import {
   OutputFormat,
   PawtograderConfig
 } from '../types.js'
+import { buildFeedBotPrompt } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
 
 const FEEDBOT_PROMPT = "Only say 'Hello world.' and nothing else."
@@ -406,16 +407,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             ) / 100
         }
 
+        const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`,
+            output: errorOutput,
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore,
             extra_data: {
               llm: {
-                prompt: FEEDBOT_PROMPT,
+                prompt: buildFeedBotPrompt(errorOutput),
                 type: 'v1' as const,
                 provider: 'openrouter',
                 model: 'openai/gpt-4o-mini',
@@ -515,7 +517,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           max_score: unit.points,
           extra_data: {
             llm: {
-              prompt: FEEDBOT_PROMPT,
+              prompt: buildFeedBotPrompt(output),
               type: 'v1' as const,
               provider: 'openrouter',
               model: 'openai/gpt-4o-mini',
