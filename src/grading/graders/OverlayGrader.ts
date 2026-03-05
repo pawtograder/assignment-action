@@ -25,14 +25,7 @@ import {
   OutputFormat,
   PawtograderConfig
 } from '../types.js'
-import { buildFeedBotPrompt } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
-
-/** Set to true to temporarily skip adding extra_data.llm (for testing platform without LLM payload). */
-const SKIP_EXTRA_DATA = true
-
-/** Log to stdout so it appears in the GitHub Actions run log. */
-const actionLog = (msg: string) => console.log(`[assignment-action] ${msg}`)
 
 function icon(result: TestResult) {
   if (result.status === 'pass') {
@@ -236,6 +229,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
 
   /**
    * Main code for grading a single unit as specified in pawtograder.yml
+   * @param unit
+   * @param part
+   * @param testResults
+   * @param mutantResults
+   * @param mutantError
+   * @returns
    */
   private gradeGradedUnit(
     unit: GradedUnit,
@@ -405,34 +404,19 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             ) / 100
         }
 
-        const unitOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
-
-        let extraData:
-          | import('../../api/adminServiceSchemas.js').GraderResultTestExtraData
-          | undefined
-
-        if (!SKIP_EXTRA_DATA && mutantsDetected < relevantMutantResults.length) {
-          actionLog(`Adding extra_data.llm for mutation unit: ${unit.name}`)
-          const llmPrompt = buildFeedBotPrompt(unitOutput)
-          extraData = {
-            icon: 'FaLightbulb',
-            llm: {
-              prompt: llmPrompt,
-              model: 'gpt-5-mini',
-              provider: 'azure',
-              type: 'v1'
-            }
-          }
-        }
-
         return [
           {
             name: unit.name,
-            output: unitOutput,
+            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`,
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore,
-            extra_data: extraData
+            extra_data: {
+              llm: {
+                prompt: 'placeholder',
+                type: 'v1' as const
+              }
+            }
           }
         ]
       }
@@ -514,24 +498,6 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           .join('\n')}`
       }
 
-      let extraData:
-        | import('../../api/adminServiceSchemas.js').GraderResultTestExtraData
-        | undefined
-
-      if (!SKIP_EXTRA_DATA && failingTests.length > 0) {
-        actionLog(`Adding extra_data.llm for regular unit: ${unit.name}`)
-        const llmPrompt = buildFeedBotPrompt(output)
-        extraData = {
-          icon: 'FaLightbulb',
-          llm: {
-            prompt: llmPrompt,
-            model: 'gpt-4o-mini',
-            provider: 'openai',
-            type: 'v1'
-          }
-        }
-      }
-
       return [
         {
           name: unit.name,
@@ -542,7 +508,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           score,
           hide_until_released: part.hide_until_released,
           max_score: unit.points,
-          extra_data: extraData
+          extra_data: {
+            llm: {
+              prompt: 'placeholder',
+              type: 'v1' as const
+            }
+          }
         }
       ]
     }
@@ -1136,11 +1107,6 @@ The following tests expect incorrect output:
       }
     }
     this.logger.log('visible', 'Wrapping up')
-    actionLog(
-      SKIP_EXTRA_DATA
-        ? 'SKIP_EXTRA_DATA is true: not adding extra_data.llm to any test'
-        : 'SKIP_EXTRA_DATA is false: will add extra_data.llm for failures'
-    )
 
     // First pass: grade all units (without dependency checks) to calculate scores
     const unitScores = new Map<string, { score: number; maxScore: number }>()
