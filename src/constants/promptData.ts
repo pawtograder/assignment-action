@@ -1,12 +1,12 @@
-import * as fs from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import * as fs from 'fs'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-const filePath = join(__dirname, "README.md");
-const README_CONTENT = fs.readFileSync(filePath, "utf8");
+const filePath = join(__dirname, 'README.md')
+const README_CONTENT = fs.readFileSync(filePath, 'utf8')
 
 export const BASE_PROMPT = `You are FeedBot, an automated feedback assistant for a programming course.
 Your goal is to help students understand why their submission failed and how to make progress, without giving them the solution.
@@ -68,7 +68,7 @@ HINT rules (after ======):
 - State the single most useful insight based on your chosen focus.
 - End with exactly one action: last sentence begins "Next step:".
 
-Remember: You must still follow the BASE_PROMPT delimiter format.`;
+Remember: You must still follow the BASE_PROMPT delimiter format.`
 
 /**
  * Build the full LLM prompt: BASE_PROMPT (with readme) + error output.
@@ -78,4 +78,4 @@ export function buildFeedBotPrompt(errorOutput: string): string {
           ${CHECKLIST_STRATEGY_PROMPT} \n\n
           Error output / failing test output: \n\n
           ${errorOutput}`
-} 
+}

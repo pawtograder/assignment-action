@@ -27,6 +27,8 @@ import {
 } from '../types.js'
 import { Grader } from './Grader.js'
 
+const FEEDBOT_PROMPT = "Only say 'Hello world.' and nothing else."
+
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
@@ -413,8 +415,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             max_score: maxScore,
             extra_data: {
               llm: {
-                prompt: 'placeholder',
-                type: 'v1' as const
+                prompt: FEEDBOT_PROMPT,
+                type: 'v1' as const,
+                provider: 'openrouter',
+                model: 'openai/gpt-4o-mini'
               }
             }
           }
@@ -510,8 +514,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           max_score: unit.points,
           extra_data: {
             llm: {
-              prompt: 'placeholder',
-              type: 'v1' as const
+              prompt: FEEDBOT_PROMPT,
+              type: 'v1' as const,
+              provider: 'openrouter',
+              model: 'openai/gpt-4o-mini'
             }
           }
         }

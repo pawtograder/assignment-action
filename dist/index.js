@@ -208707,6 +208707,7 @@ class Grader {
     }
 }
 
+const FEEDBOT_PROMPT = "Only say 'Hello world.' and nothing else.";
 function icon(result) {
     if (result.status === 'pass') {
         return '✅';
@@ -208986,8 +208987,10 @@ class OverlayGrader extends Grader {
                         max_score: maxScore,
                         extra_data: {
                             llm: {
-                                prompt: 'placeholder',
-                                type: 'v1'
+                                prompt: FEEDBOT_PROMPT,
+                                type: 'v1',
+                                provider: 'openrouter',
+                                model: 'openai/gpt-4o-mini'
                             }
                         }
                     }
@@ -209067,8 +209070,10 @@ class OverlayGrader extends Grader {
                     max_score: unit.points,
                     extra_data: {
                         llm: {
-                            prompt: 'placeholder',
-                            type: 'v1'
+                            prompt: FEEDBOT_PROMPT,
+                            type: 'v1',
+                            provider: 'openrouter',
+                            model: 'openai/gpt-4o-mini'
                         }
                     }
                 }
