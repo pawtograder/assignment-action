@@ -34,7 +34,9 @@ Failure handling:
 - If you cannot produce a complete compliant response, output exactly: RETRY
 
 Assignment Spec (README):
-${README_CONTENT}`
+
+
+`
 
 export const CHECKLIST_STRATEGY_PROMPT = `
 Strategy instructions (checklist-strategy):
