@@ -1,0 +1,6 @@
+export declare const BASE_PROMPT: string;
+export declare const CHECKLIST_STRATEGY_PROMPT = "\nStrategy instructions (checklist-strategy):\n- In ANALYSIS, you MUST pick EXACTLY ONE of the three focuses below and write it on the FIRST LINE as:\n  CHOICE: WHERE\n  OR\n  CHOICE: WHAT\n  OR\n  CHOICE: DIFFERENT\n- After that first line, include 2\u20135 more sentences of reasoning ONLY about the chosen focus. Do NOT address the other two.\n\nDefinitions:\n- WHERE: Which class, method, or test type is this error coming from? (No line numbers.)\n- WHAT: What is the correct behavior per the spec? Include a 1\u20132 sentence direct quote from the spec in your analysis (do not reveal the exact fix/value).\n- DIFFERENT: What specific condition/input might cause actual behavior to diverge from expected?\n\nHINT rules (after ======):\n- 3\u20134 sentences max, no bullets/headers.\n- State the single most useful insight based on your chosen focus.\n- End with exactly one action: last sentence begins \"Next step:\".\n\nRemember: You must still follow the BASE_PROMPT delimiter format.";
+/**
+ * Build the full LLM prompt: BASE_PROMPT (with readme) + error output.
+ */
+export declare function buildFeedBotPrompt(errorOutput: string): string;

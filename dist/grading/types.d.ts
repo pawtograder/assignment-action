@@ -103,6 +103,14 @@ export interface MutantAdvice {
     sourceClass: string;
     targetClass: string;
 }
+export type LLMProvider = 'openai' | 'azure' | 'anthropic' | 'openrouter';
+export interface LLMConfig {
+    model: string;
+    provider: LLMProvider;
+    temperature?: number;
+    max_tokens?: number;
+    rate_limit?: object;
+}
 export interface OverlayPawtograderConfig {
     grader: 'overlay';
     build: BuildConfig;
@@ -115,6 +123,7 @@ export interface OverlayPawtograderConfig {
     mutantAdvice?: MutantAdvice[];
     maxMutantHints?: number;
     maxImplementationHints?: number;
+    llm?: LLMConfig;
 }
 export type PawtograderConfig = OverlayPawtograderConfig;
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;
