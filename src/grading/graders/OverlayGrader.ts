@@ -418,7 +418,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 prompt: FEEDBOT_PROMPT,
                 type: 'v1' as const,
                 provider: 'openrouter',
-                model: 'openai/gpt-4o-mini'
+                model: 'openai/gpt-4o-mini',
+                account: 'rebecca'
               }
             }
           }
@@ -517,7 +518,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               prompt: FEEDBOT_PROMPT,
               type: 'v1' as const,
               provider: 'openrouter',
-              model: 'openai/gpt-4o-mini'
+              model: 'openai/gpt-4o-mini',
+              account: 'rebecca'
             }
           }
         }

@@ -208990,7 +208990,8 @@ class OverlayGrader extends Grader {
                                 prompt: FEEDBOT_PROMPT,
                                 type: 'v1',
                                 provider: 'openrouter',
-                                model: 'openai/gpt-4o-mini'
+                                model: 'openai/gpt-4o-mini',
+                                account: 'rebecca'
                             }
                         }
                     }
@@ -209073,7 +209074,8 @@ class OverlayGrader extends Grader {
                             prompt: FEEDBOT_PROMPT,
                             type: 'v1',
                             provider: 'openrouter',
-                            model: 'openai/gpt-4o-mini'
+                            model: 'openai/gpt-4o-mini',
+                            account: 'rebecca'
                         }
                     }
                 }
