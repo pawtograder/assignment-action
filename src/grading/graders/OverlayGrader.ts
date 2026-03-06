@@ -28,6 +28,10 @@ import {
 import { buildFeedBotPrompt } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
 
+const PROMPT_MODEL = 'anthropic/claude-sonnet-4.6'
+const PROMPT_ACCOUNT = 'rebecca'
+const PROVIDER = 'openrouter'
+
 function icon(result: TestResult) {
   if (result.status === 'pass') {
     return '✅'
@@ -417,9 +421,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               llm: {
                 prompt: buildFeedBotPrompt(errorOutput, unit.name),
                 type: 'v1' as const,
-                provider: 'openrouter',
-                model: 'openai/gpt-4o-mini',
-                account: 'rebecca'
+                provider: PROVIDER,
+                model: PROMPT_MODEL,
+                account: PROMPT_ACCOUNT
               }
             }
           }
@@ -517,9 +521,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             llm: {
               prompt: buildFeedBotPrompt(output, unit.name),
               type: 'v1' as const,
-              provider: 'openrouter',
-              model: 'openai/gpt-4o-mini',
-              account: 'rebecca'
+              provider: PROVIDER,
+              model: PROMPT_MODEL,
+              account: PROMPT_ACCOUNT
             }
           }
         }
