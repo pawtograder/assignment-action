@@ -208624,7 +208624,9 @@ function isRegularTestUnit(unit) {
 }
 
 const __filename = fileURLToPath$1(import.meta.url);
-dirname(__filename);
+const __dirname = dirname(__filename);
+const filePath = join(__dirname, 'README.md');
+require$$1$2.readFileSync(filePath, 'utf8');
 const BASE_PROMPT = `You are FeedBot, an automated feedback assistant for a programming course.
 Your goal is to help students understand why their submission failed and how to make progress, without giving them the solution.
 
@@ -208650,6 +208652,9 @@ Output format:
 Failure handling:
 - If you cannot produce a complete compliant response, output exactly: RETRY
 
+Assignment Spec (README):
+
+
 `;
 const CHECKLIST_STRATEGY_PROMPT = `
 Strategy instructions (checklist-strategy):
@@ -208664,8 +208669,8 @@ Use exactly one focus to shape the 3–4 sentence hint. The output must read as 
 /**
  * Build the full LLM prompt: BASE_PROMPT (with readme) + strategy + error output.
  */
-function buildFeedBotPrompt(errorOutput) {
-    return escapeForLangChain(`${BASE_PROMPT}\n\n${CHECKLIST_STRATEGY_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}`);
+function buildFeedBotPrompt(errorOutput, unitName) {
+    return escapeForLangChain(`${BASE_PROMPT}\n\n${CHECKLIST_STRATEGY_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`);
 }
 function escapeForLangChain(text) {
     return text.replace(/\{/g, '{{').replace(/\}/g, '}}');
@@ -209035,7 +209040,7 @@ class OverlayGrader extends Grader {
                         max_score: maxScore,
                         extra_data: {
                             llm: {
-                                prompt: buildFeedBotPrompt(errorOutput),
+                                prompt: buildFeedBotPrompt(errorOutput, unit.name),
                                 type: 'v1',
                                 provider: 'openrouter',
                                 model: 'openai/gpt-4o-mini',
@@ -209119,7 +209124,7 @@ class OverlayGrader extends Grader {
                     max_score: unit.points,
                     extra_data: {
                         llm: {
-                            prompt: buildFeedBotPrompt(output),
+                            prompt: buildFeedBotPrompt(output, unit.name),
                             type: 'v1',
                             provider: 'openrouter',
                             model: 'openai/gpt-4o-mini',

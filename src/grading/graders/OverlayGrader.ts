@@ -415,7 +415,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             max_score: maxScore,
             extra_data: {
               llm: {
-                prompt: buildFeedBotPrompt(errorOutput),
+                prompt: buildFeedBotPrompt(errorOutput, unit.name),
                 type: 'v1' as const,
                 provider: 'openrouter',
                 model: 'openai/gpt-4o-mini',
@@ -515,7 +515,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           max_score: unit.points,
           extra_data: {
             llm: {
-              prompt: buildFeedBotPrompt(output),
+              prompt: buildFeedBotPrompt(output, unit.name),
               type: 'v1' as const,
               provider: 'openrouter',
               model: 'openai/gpt-4o-mini',
