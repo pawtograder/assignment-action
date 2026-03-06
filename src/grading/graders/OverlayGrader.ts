@@ -410,6 +410,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         }
 
         const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
+        const hasUndetectedFaults =
+          mutantsDetected < relevantMutantResults.length
         return [
           {
             name: unit.name,
@@ -417,15 +419,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore,
-            extra_data: {
-              llm: {
-                prompt: buildFeedBotPrompt(errorOutput, unit.name),
-                type: 'v1' as const,
-                provider: PROVIDER,
-                model: PROMPT_MODEL,
-                account: PROMPT_ACCOUNT
+            ...(hasUndetectedFaults && {
+              extra_data: {
+                llm: {
+                  prompt: buildFeedBotPrompt(errorOutput, unit.name),
+                  type: 'v1' as const,
+                  provider: PROVIDER,
+                  model: PROMPT_MODEL,
+                  account: PROMPT_ACCOUNT
+                }
               }
-            }
+            })
           }
         ]
       }
@@ -507,6 +511,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           .join('\n')}`
       }
 
+      const hasFailingTests = failingTests.length > 0
       return [
         {
           name: unit.name,
@@ -517,15 +522,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           score,
           hide_until_released: part.hide_until_released,
           max_score: unit.points,
-          extra_data: {
-            llm: {
-              prompt: buildFeedBotPrompt(output, unit.name),
-              type: 'v1' as const,
-              provider: PROVIDER,
-              model: PROMPT_MODEL,
-              account: PROMPT_ACCOUNT
+          ...(hasFailingTests && {
+            extra_data: {
+              llm: {
+                prompt: buildFeedBotPrompt(output, unit.name),
+                type: 'v1' as const,
+                provider: PROVIDER,
+                model: PROMPT_MODEL,
+                account: PROMPT_ACCOUNT
+              }
             }
-          }
+          })
         }
       ]
     }
