@@ -12,7 +12,10 @@
           "type": "number"
         }
       },
-      "required": ["minimumMutantsDetected", "pointsToAward"],
+      "required": [
+        "minimumMutantsDetected",
+        "pointsToAward"
+      ],
       "type": "object"
     },
     "BuildConfig": {
@@ -31,7 +34,10 @@
           "additionalProperties": false,
           "properties": {
             "policy": {
-              "enum": ["fail", "ignore"],
+              "enum": [
+                "fail",
+                "ignore"
+              ],
               "type": "string"
             },
             "preset": {
@@ -39,11 +45,18 @@
               "type": "string"
             }
           },
-          "required": ["preset", "policy"],
+          "required": [
+            "preset",
+            "policy"
+          ],
           "type": "object"
         },
         "preset": {
-          "enum": ["java-gradle", "python-script", "none"],
+          "enum": [
+            "java-gradle",
+            "python-script",
+            "none"
+          ],
           "type": "string"
         },
         "script_info": {
@@ -110,7 +123,9 @@
           "$ref": "#/definitions/VenvInfo"
         }
       },
-      "required": ["preset"],
+      "required": [
+        "preset"
+      ],
       "type": "object"
     },
     "Dependency": {
@@ -126,6 +141,30 @@
         }
       ]
     },
+    "FeedBotConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/definitions/LLMProvider"
+        },
+        "spec_url": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GradedPart": {
       "additionalProperties": false,
       "properties": {
@@ -134,6 +173,9 @@
             "$ref": "#/definitions/Dependency"
           },
           "type": "array"
+        },
+        "feedbot": {
+          "type": "boolean"
         },
         "gradedUnits": {
           "items": {
@@ -148,7 +190,10 @@
           "type": "string"
         }
       },
-      "required": ["name", "gradedUnits"],
+      "required": [
+        "name",
+        "gradedUnits"
+      ],
       "type": "object"
     },
     "GradedUnit": {
@@ -168,6 +213,9 @@
               },
               "type": "array"
             },
+            "feedbot": {
+              "type": "boolean"
+            },
             "linearScoring": {
               "additionalProperties": false,
               "properties": {
@@ -178,7 +226,10 @@
                   "type": "number"
                 }
               },
-              "required": ["total_faults", "points"],
+              "required": [
+                "total_faults",
+                "points"
+              ],
               "type": "object"
             },
             "locations": {
@@ -191,7 +242,10 @@
               "type": "string"
             }
           },
-          "required": ["locations", "name"],
+          "required": [
+            "locations",
+            "name"
+          ],
           "type": "object"
         },
         {
@@ -205,6 +259,9 @@
                 "$ref": "#/definitions/Dependency"
               },
               "type": "array"
+            },
+            "feedbot": {
+              "type": "boolean"
             },
             "hide_output": {
               "type": "boolean"
@@ -232,7 +289,12 @@
               ]
             }
           },
-          "required": ["name", "points", "testCount", "tests"],
+          "required": [
+            "name",
+            "points",
+            "testCount",
+            "tests"
+          ],
           "type": "object"
         }
       ]
@@ -250,8 +312,45 @@
           "type": "string"
         }
       },
-      "required": ["name", "path"],
+      "required": [
+        "name",
+        "path"
+      ],
       "type": "object"
+    },
+    "LLMConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "max_tokens": {
+          "type": "number"
+        },
+        "model": {
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/definitions/LLMProvider"
+        },
+        "rate_limit": {
+          "type": "object"
+        },
+        "temperature": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "provider"
+      ],
+      "type": "object"
+    },
+    "LLMProvider": {
+      "enum": [
+        "openai",
+        "azure",
+        "anthropic",
+        "openrouter"
+      ],
+      "type": "string"
     },
     "MutantAdvice": {
       "additionalProperties": false,
@@ -269,7 +368,12 @@
           "type": "string"
         }
       },
-      "required": ["name", "prompt", "sourceClass", "targetClass"],
+      "required": [
+        "name",
+        "prompt",
+        "sourceClass",
+        "targetClass"
+      ],
       "type": "object"
     },
     "OverlayPawtograderConfig": {
@@ -281,6 +385,9 @@
         "fallbackFiles": {
           "type": "string"
         },
+        "feedbot": {
+          "$ref": "#/definitions/FeedBotConfig"
+        },
         "gradedParts": {
           "items": {
             "$ref": "#/definitions/GradedPart"
@@ -290,6 +397,9 @@
         "grader": {
           "const": "overlay",
           "type": "string"
+        },
+        "llm": {
+          "$ref": "#/definitions/LLMConfig"
         },
         "maxImplementationHints": {
           "type": "number"
@@ -319,11 +429,18 @@
               "type": "array"
             }
           },
-          "required": ["files", "testFiles"],
+          "required": [
+            "files",
+            "testFiles"
+          ],
           "type": "object"
         }
       },
-      "required": ["grader", "build", "submissionFiles"],
+      "required": [
+        "grader",
+        "build",
+        "submissionFiles"
+      ],
       "type": "object"
     },
     "PartDependencyRef": {
@@ -336,7 +453,9 @@
           "type": "string"
         }
       },
-      "required": ["part"],
+      "required": [
+        "part"
+      ],
       "type": "object"
     },
     "PawtograderConfig": {
@@ -392,7 +511,9 @@
           "type": "string"
         }
       },
-      "required": ["unit"],
+      "required": [
+        "unit"
+      ],
       "type": "object"
     },
     "VenvInfo": {
@@ -405,7 +526,10 @@
           "type": "string"
         }
       },
-      "required": ["cache_key", "dir_name"],
+      "required": [
+        "cache_key",
+        "dir_name"
+      ],
       "type": "object"
     }
   }

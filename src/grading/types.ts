@@ -122,9 +122,10 @@ export function isSimpleDependency(dep: Dependency): dep is string {
   return typeof dep === 'string'
 }
 
-// GradedUnit with optional dependencies
+// GradedUnit with optional dependencies and optional FeedBot override
 export type GradedUnit = GradedUnitBase & {
   dependencies?: Dependency[]
+  feedbot?: boolean
 }
 
 // Graded part type
@@ -133,6 +134,7 @@ export interface GradedPart {
   gradedUnits: GradedUnit[]
   hide_until_released?: boolean
   dependencies?: Dependency[]
+  feedbot?: boolean
 }
 
 // Mutant advice configuration
@@ -153,6 +155,16 @@ export interface LLMConfig {
   rate_limit?: object
 }
 
+// FeedBot configuration - assignment-level
+export interface FeedBotConfig {
+  enabled?: boolean
+  spec_url?: string
+  prompt?: 'chain_of_thought' | 'checklist' | string
+  provider?: LLMProvider
+  model?: string
+  account?: string
+}
+
 // Main configuration type
 export interface OverlayPawtograderConfig {
   grader: 'overlay'
@@ -167,6 +179,7 @@ export interface OverlayPawtograderConfig {
   maxMutantHints?: number // Maximum number of mutant hints to show across all units. If undefined, shows all.
   maxImplementationHints?: number // Maximum number of failing test details to show across all units. If set, only shows failing tests (not passing). If undefined, shows all test results.
   llm?: LLMConfig
+  feedbot?: FeedBotConfig
 }
 
 export type PawtograderConfig = OverlayPawtograderConfig
