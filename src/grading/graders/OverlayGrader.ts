@@ -12,6 +12,7 @@ import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
   Dependency,
+  FeedBotConfig,
   GradedPart,
   GradedUnit,
   GraderArtifact,
@@ -31,6 +32,10 @@ import { Grader } from './Grader.js'
 const PROMPT_MODEL = 'anthropic/claude-sonnet-4.6'
 const PROMPT_ACCOUNT = 'rebecca'
 const PROVIDER = 'openrouter'
+
+function isFeedbotEnabled(cfg: FeedBotConfig | undefined): boolean {
+  return Boolean(cfg?.enabled)
+}
 
 function icon(result: TestResult) {
   if (result.status === 'pass') {
@@ -253,6 +258,30 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const errorMessage = mutantError
           ? `**${mutantError.reason}**\n\n${mutantError.details}`
           : 'No results from grading tests. Please check overall output for more details.'
+        const showFeedbotMutantError =
+          isFeedbotEnabled(this.config.feedbot) &&
+          !part.hideFeedbot &&
+          !unit.hideFeedbot
+        const feedbotCfg = this.config.feedbot
+        const extra_data =
+          mutantError || showFeedbotMutantError
+            ? {
+                ...(mutantError
+                  ? { icon: 'FaExclamationTriangle' as const }
+                  : {}),
+                ...(showFeedbotMutantError
+                  ? {
+                      llm: {
+                        prompt: buildFeedBotPrompt(errorMessage, unit.name),
+                        type: 'v1' as const,
+                        provider: feedbotCfg?.provider ?? PROVIDER,
+                        model: feedbotCfg?.model ?? PROMPT_MODEL,
+                        account: feedbotCfg?.account ?? PROMPT_ACCOUNT
+                      }
+                    }
+                  : {})
+              }
+            : undefined
         return [
           {
             name: unit.name,
@@ -261,9 +290,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             score: 0,
             max_score:
               unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points,
-            extra_data: mutantError
-              ? { icon: 'FaExclamationTriangle' }
-              : undefined
+            extra_data
           }
         ]
       } else {
@@ -415,7 +442,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const feedbotConfig = this.config.feedbot
         const showFeedbotMutation =
           (hintsToShow.length > 0 || hasUndetectedFaults === true) &&
-          feedbotConfig?.enabled === true &&
+          isFeedbotEnabled(feedbotConfig) &&
           !part.hideFeedbot &&
           !unit.hideFeedbot
         return [
@@ -521,7 +548,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const hasFailingTests = failingTests.length > 0
       const feedbotConfigRegular = this.config.feedbot
       const showFeedbotRegular =
-        feedbotConfigRegular?.enabled &&
+        isFeedbotEnabled(feedbotConfigRegular) &&
         (hasFailingTests ||
           maxImplHints === undefined ||
           failingTestsToShow.length > 0) &&

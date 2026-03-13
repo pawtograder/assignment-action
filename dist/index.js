@@ -207735,6 +207735,9 @@ class Grader {
 const PROMPT_MODEL = 'anthropic/claude-sonnet-4.6';
 const PROMPT_ACCOUNT = 'rebecca';
 const PROVIDER = 'openrouter';
+function isFeedbotEnabled(cfg) {
+    return Boolean(cfg?.enabled);
+}
 function icon(result) {
     if (result.status === 'pass') {
         return '✅';
@@ -207892,6 +207895,28 @@ class OverlayGrader extends Grader {
                 const errorMessage = mutantError
                     ? `**${mutantError.reason}**\n\n${mutantError.details}`
                     : 'No results from grading tests. Please check overall output for more details.';
+                const showFeedbotMutantError = isFeedbotEnabled(this.config.feedbot) &&
+                    !part.hideFeedbot &&
+                    !unit.hideFeedbot;
+                const feedbotCfg = this.config.feedbot;
+                const extra_data = mutantError || showFeedbotMutantError
+                    ? {
+                        ...(mutantError
+                            ? { icon: 'FaExclamationTriangle' }
+                            : {}),
+                        ...(showFeedbotMutantError
+                            ? {
+                                llm: {
+                                    prompt: buildFeedBotPrompt(errorMessage, unit.name),
+                                    type: 'v1',
+                                    provider: feedbotCfg?.provider ?? PROVIDER,
+                                    model: feedbotCfg?.model ?? PROMPT_MODEL,
+                                    account: feedbotCfg?.account ?? PROMPT_ACCOUNT
+                                }
+                            }
+                            : {})
+                    }
+                    : undefined;
                 return [
                     {
                         name: unit.name,
@@ -207899,9 +207924,7 @@ class OverlayGrader extends Grader {
                         output_format: 'markdown',
                         score: 0,
                         max_score: unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points,
-                        extra_data: mutantError
-                            ? { icon: 'FaExclamationTriangle' }
-                            : undefined
+                        extra_data
                     }
                 ];
             }
@@ -208009,7 +208032,7 @@ class OverlayGrader extends Grader {
                 const hasUndetectedFaults = mutantsDetected < relevantMutantResults.length;
                 const feedbotConfig = this.config.feedbot;
                 const showFeedbotMutation = (hintsToShow.length > 0 || hasUndetectedFaults === true) &&
-                    feedbotConfig?.enabled === true &&
+                    isFeedbotEnabled(feedbotConfig) &&
                     !part.hideFeedbot &&
                     !unit.hideFeedbot;
                 return [
@@ -208098,7 +208121,7 @@ class OverlayGrader extends Grader {
             }
             const hasFailingTests = failingTests.length > 0;
             const feedbotConfigRegular = this.config.feedbot;
-            const showFeedbotRegular = feedbotConfigRegular?.enabled &&
+            const showFeedbotRegular = isFeedbotEnabled(feedbotConfigRegular) &&
                 (hasFailingTests ||
                     maxImplHints === undefined ||
                     failingTestsToShow.length > 0) &&
@@ -208815,6 +208838,7 @@ async function makeGrader(config, solutionDir, submissionDir, regressionTestJob)
     }
 }
 async function grade(solutionDir, submissionDir, regressionTestJob) {
+    // Config (including feedbot) is read from the grader/solution repo's pawtograder.yml
     const _config = await readFile(path$1.join(solutionDir, 'pawtograder.yml'), 'utf8');
     const config = YAML.parse(_config);
     const grader = await makeGrader(config, solutionDir, submissionDir, regressionTestJob);
