@@ -412,6 +412,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
         const hasUndetectedFaults =
           mutantsDetected < relevantMutantResults.length
+        const feedbotConfig = this.config.feedbot
+        const showFeedbotMutation =
+          (hintsToShow.length > 0 || hasUndetectedFaults === true) &&
+          feedbotConfig?.enabled === true &&
+          !part.hideFeedbot &&
+          !unit.hideFeedbot
         return [
           {
             name: unit.name,
@@ -419,14 +425,14 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             output_format: 'markdown',
             score: score ?? 0,
             max_score: maxScore,
-            ...(hasUndetectedFaults && {
+            ...(showFeedbotMutation && {
               extra_data: {
                 llm: {
                   prompt: buildFeedBotPrompt(errorOutput, unit.name),
                   type: 'v1' as const,
-                  provider: PROVIDER,
-                  model: PROMPT_MODEL,
-                  account: PROMPT_ACCOUNT
+                  provider: feedbotConfig?.provider ?? PROVIDER,
+                  model: feedbotConfig?.model ?? PROMPT_MODEL,
+                  account: feedbotConfig?.account ?? PROMPT_ACCOUNT
                 }
               }
             })
@@ -461,6 +467,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const maxImplHints = this.config.maxImplementationHints
       let output: string
       let hiddenOutput: string | undefined
+      let failingTestsToShow: typeof failingTests = failingTests
 
       if (unit.hide_output) {
         output = 'Output for this test is intentionally hidden.'
@@ -474,7 +481,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       } else if (maxImplHints !== undefined) {
         // Limited mode: only show failing tests, up to the limit
         const remainingHints = maxImplHints - this.implementationHintsShown
-        const failingTestsToShow = failingTests
+        failingTestsToShow = failingTests
           .sort((a, b) => a.name.localeCompare(b.name))
           .slice(0, Math.max(0, remainingHints))
 
@@ -512,6 +519,14 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       }
 
       const hasFailingTests = failingTests.length > 0
+      const feedbotConfigRegular = this.config.feedbot
+      const showFeedbotRegular =
+        feedbotConfigRegular?.enabled &&
+        (hasFailingTests ||
+          maxImplHints === undefined ||
+          failingTestsToShow.length > 0) &&
+        !part.hideFeedbot &&
+        !unit.hideFeedbot
       return [
         {
           name: unit.name,
@@ -522,14 +537,14 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           score,
           hide_until_released: part.hide_until_released,
           max_score: unit.points,
-          ...(hasFailingTests && {
+          ...(showFeedbotRegular && {
             extra_data: {
               llm: {
                 prompt: buildFeedBotPrompt(output, unit.name),
                 type: 'v1' as const,
-                provider: PROVIDER,
-                model: PROMPT_MODEL,
-                account: PROMPT_ACCOUNT
+                provider: feedbotConfigRegular?.provider ?? PROVIDER,
+                model: feedbotConfigRegular?.model ?? PROMPT_MODEL,
+                account: feedbotConfigRegular?.account ?? PROMPT_ACCOUNT
               }
             }
           })

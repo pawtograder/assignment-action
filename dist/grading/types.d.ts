@@ -90,12 +90,14 @@ export declare function isUnitDependency(dep: Dependency): dep is UnitDependency
 export declare function isSimpleDependency(dep: Dependency): dep is string;
 export type GradedUnit = GradedUnitBase & {
     dependencies?: Dependency[];
+    hideFeedbot?: boolean;
 };
 export interface GradedPart {
     name: string;
     gradedUnits: GradedUnit[];
     hide_until_released?: boolean;
     dependencies?: Dependency[];
+    hideFeedbot?: boolean;
 }
 export interface MutantAdvice {
     name: string;
@@ -111,6 +113,14 @@ export interface LLMConfig {
     max_tokens?: number;
     rate_limit?: object;
 }
+export interface FeedBotConfig {
+    enabled?: boolean;
+    spec_url?: string;
+    prompt?: 'chain_of_thought' | 'checklist' | string;
+    provider?: LLMProvider;
+    model?: string;
+    account?: string;
+}
 export interface OverlayPawtograderConfig {
     grader: 'overlay';
     build: BuildConfig;
@@ -124,6 +134,7 @@ export interface OverlayPawtograderConfig {
     maxMutantHints?: number;
     maxImplementationHints?: number;
     llm?: LLMConfig;
+    feedbot?: FeedBotConfig;
 }
 export type PawtograderConfig = OverlayPawtograderConfig;
 export declare function isMutationTestUnit(unit: GradedUnit): unit is MutationTestUnit;

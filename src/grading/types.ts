@@ -122,10 +122,10 @@ export function isSimpleDependency(dep: Dependency): dep is string {
   return typeof dep === 'string'
 }
 
-// GradedUnit with optional dependencies and optional FeedBot override
+// GradedUnit with optional dependencies and optional FeedBot hide override (default false)
 export type GradedUnit = GradedUnitBase & {
   dependencies?: Dependency[]
-  feedbot?: boolean
+  hideFeedbot?: boolean
 }
 
 // Graded part type
@@ -134,7 +134,7 @@ export interface GradedPart {
   gradedUnits: GradedUnit[]
   hide_until_released?: boolean
   dependencies?: Dependency[]
-  feedbot?: boolean
+  hideFeedbot?: boolean
 }
 
 // Mutant advice configuration

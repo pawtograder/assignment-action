@@ -157194,7 +157194,7 @@ var cacheHttpClient = {};
 
 var uploadUtils = {};
 
-var commonjs$e = {};
+var commonjs$c = {};
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -157633,23 +157633,23 @@ var tslib_es6$1 = /*#__PURE__*/Object.freeze({
 
 var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(tslib_es6$1);
 
-var commonjs$d = {};
+var commonjs$b = {};
 
 var pipeline$2 = {};
 
-var commonjs$c = {};
+var commonjs$a = {};
 
-var AbortError$4 = {};
+var AbortError$2 = {};
 
-var hasRequiredAbortError$3;
+var hasRequiredAbortError$1;
 
-function requireAbortError$3 () {
-	if (hasRequiredAbortError$3) return AbortError$4;
-	hasRequiredAbortError$3 = 1;
+function requireAbortError$1 () {
+	if (hasRequiredAbortError$1) return AbortError$2;
+	hasRequiredAbortError$1 = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	Object.defineProperty(AbortError$4, "__esModule", { value: true });
-	AbortError$4.AbortError = void 0;
+	Object.defineProperty(AbortError$2, "__esModule", { value: true });
+	AbortError$2.AbortError = void 0;
 	/**
 	 * This error is thrown when an asynchronous operation has been aborted.
 	 * Check for this error by testing the `name` that the name property of the
@@ -157685,9 +157685,9 @@ function requireAbortError$3 () {
 	        this.name = "AbortError";
 	    }
 	}
-	AbortError$4.AbortError = AbortError;
+	AbortError$2.AbortError = AbortError;
 	
-	return AbortError$4;
+	return AbortError$2;
 }
 
 var logger$1 = {};
@@ -158811,7 +158811,7 @@ function requireNodeHttpClient () {
 	const https = tslib_1.__importStar(require$$2$4);
 	const zlib = tslib_1.__importStar(require$$3$1);
 	const node_stream_1 = require$$0$c;
-	const AbortError_js_1 = requireAbortError$3();
+	const AbortError_js_1 = requireAbortError$1();
 	const httpHeaders_js_1 = requireHttpHeaders$1();
 	const restError_js_1 = requireRestError$2();
 	const log_js_1 = requireLog$4();
@@ -159556,7 +159556,7 @@ function requireHelpers$1 () {
 	Object.defineProperty(helpers$1, "__esModule", { value: true });
 	helpers$1.delay = delay;
 	helpers$1.parseHeaderValueAsNumber = parseHeaderValueAsNumber;
-	const AbortError_js_1 = requireAbortError$3();
+	const AbortError_js_1 = requireAbortError$1();
 	const StandardAbortMessage = "The operation was aborted.";
 	/**
 	 * A wrapper for setTimeout that resolves a promise after delayInMs milliseconds.
@@ -159788,7 +159788,7 @@ function requireRetryPolicy$1 () {
 	Object.defineProperty(retryPolicy$1, "__esModule", { value: true });
 	retryPolicy$1.retryPolicy = retryPolicy;
 	const helpers_js_1 = requireHelpers$1();
-	const AbortError_js_1 = requireAbortError$3();
+	const AbortError_js_1 = requireAbortError$1();
 	const logger_js_1 = requireLogger$1();
 	const constants_js_1 = requireConstants$4();
 	const retryPolicyLogger = (0, logger_js_1.createClientLogger)("ts-http-runtime retryPolicy");
@@ -163676,18 +163676,18 @@ function requireRestError$1 () {
 	return restError$1;
 }
 
-var hasRequiredCommonjs$e;
+var hasRequiredCommonjs$c;
 
-function requireCommonjs$e () {
-	if (hasRequiredCommonjs$e) return commonjs$c;
-	hasRequiredCommonjs$e = 1;
+function requireCommonjs$c () {
+	if (hasRequiredCommonjs$c) return commonjs$a;
+	hasRequiredCommonjs$c = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createRestError = exports.operationOptionsToRequestParameters = exports.getClient = exports.createDefaultHttpClient = exports.uint8ArrayToString = exports.stringToUint8Array = exports.isRestError = exports.RestError = exports.createEmptyPipeline = exports.createPipelineRequest = exports.createHttpHeaders = exports.TypeSpecRuntimeLogger = exports.setLogLevel = exports.getLogLevel = exports.createClientLogger = exports.AbortError = void 0;
 		const tslib_1 = require$$0$2;
-		var AbortError_js_1 = requireAbortError$3();
+		var AbortError_js_1 = requireAbortError$1();
 		Object.defineProperty(exports, "AbortError", { enumerable: true, get: function () { return AbortError_js_1.AbortError; } });
 		var logger_js_1 = requireLogger$1();
 		Object.defineProperty(exports, "createClientLogger", { enumerable: true, get: function () { return logger_js_1.createClientLogger; } });
@@ -163717,8 +163717,8 @@ function requireCommonjs$e () {
 		var restError_js_2 = requireRestError$1();
 		Object.defineProperty(exports, "createRestError", { enumerable: true, get: function () { return restError_js_2.createRestError; } });
 		
-	} (commonjs$c));
-	return commonjs$c;
+	} (commonjs$a));
+	return commonjs$a;
 }
 
 var hasRequiredPipeline$2;
@@ -163730,7 +163730,7 @@ function requirePipeline$2 () {
 	// Licensed under the MIT License.
 	Object.defineProperty(pipeline$2, "__esModule", { value: true });
 	pipeline$2.createEmptyPipeline = createEmptyPipeline;
-	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$e();
+	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$c();
 	/**
 	 * Creates a totally empty pipeline.
 	 * Useful for testing or creating a custom one.
@@ -163748,7 +163748,7 @@ var logPolicy = {};
 
 var log$3 = {};
 
-var commonjs$b = {};
+var commonjs$9 = {};
 
 var internal$2 = {};
 
@@ -163769,18 +163769,18 @@ function requireInternal$2 () {
 	return internal$2;
 }
 
-var hasRequiredCommonjs$d;
+var hasRequiredCommonjs$b;
 
-function requireCommonjs$d () {
-	if (hasRequiredCommonjs$d) return commonjs$b;
-	hasRequiredCommonjs$d = 1;
+function requireCommonjs$b () {
+	if (hasRequiredCommonjs$b) return commonjs$9;
+	hasRequiredCommonjs$b = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	Object.defineProperty(commonjs$b, "__esModule", { value: true });
-	commonjs$b.AzureLogger = void 0;
-	commonjs$b.setLogLevel = setLogLevel;
-	commonjs$b.getLogLevel = getLogLevel;
-	commonjs$b.createClientLogger = createClientLogger;
+	Object.defineProperty(commonjs$9, "__esModule", { value: true });
+	commonjs$9.AzureLogger = void 0;
+	commonjs$9.setLogLevel = setLogLevel;
+	commonjs$9.getLogLevel = getLogLevel;
+	commonjs$9.createClientLogger = createClientLogger;
 	const logger_1 = /*@__PURE__*/ requireInternal$2();
 	const context = (0, logger_1.createLoggerContext)({
 	    logLevelEnvVarName: "AZURE_LOG_LEVEL",
@@ -163791,7 +163791,7 @@ function requireCommonjs$d () {
 	 * By default, logs are sent to stderr.
 	 * Override the `log` method to redirect logs to another location.
 	 */
-	commonjs$b.AzureLogger = context.logger;
+	commonjs$9.AzureLogger = context.logger;
 	/**
 	 * Immediately enables logging at the specified log level. If no level is specified, logging is disabled.
 	 * @param level - The log level to enable for logging.
@@ -163819,7 +163819,7 @@ function requireCommonjs$d () {
 	    return context.createClientLogger(namespace);
 	}
 	
-	return commonjs$b;
+	return commonjs$9;
 }
 
 var hasRequiredLog$3;
@@ -163831,7 +163831,7 @@ function requireLog$3 () {
 	// Licensed under the MIT License.
 	Object.defineProperty(log$3, "__esModule", { value: true });
 	log$3.logger = void 0;
-	const logger_1 = /*@__PURE__*/ requireCommonjs$d();
+	const logger_1 = /*@__PURE__*/ requireCommonjs$b();
 	log$3.logger = (0, logger_1.createClientLogger)("core-rest-pipeline");
 	
 	return log$3;
@@ -164222,7 +164222,7 @@ var multipartPolicy = {};
 
 var file = {};
 
-var commonjs$a = {};
+var commonjs$8 = {};
 
 var internal = {};
 
@@ -164337,19 +164337,19 @@ function requireAborterUtils () {
 
 var createAbortablePromise = {};
 
-var commonjs$9 = {};
+var commonjs$7 = {};
 
-var AbortError$3 = {};
+var AbortError$1 = {};
 
-var hasRequiredAbortError$2;
+var hasRequiredAbortError;
 
-function requireAbortError$2 () {
-	if (hasRequiredAbortError$2) return AbortError$3;
-	hasRequiredAbortError$2 = 1;
+function requireAbortError () {
+	if (hasRequiredAbortError) return AbortError$1;
+	hasRequiredAbortError = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT license.
-	Object.defineProperty(AbortError$3, "__esModule", { value: true });
-	AbortError$3.AbortError = void 0;
+	Object.defineProperty(AbortError$1, "__esModule", { value: true });
+	AbortError$1.AbortError = void 0;
 	/**
 	 * This error is thrown when an asynchronous operation has been aborted.
 	 * Check for this error by testing the `name` that the name property of the
@@ -164374,26 +164374,26 @@ function requireAbortError$2 () {
 	        this.name = "AbortError";
 	    }
 	}
-	AbortError$3.AbortError = AbortError;
+	AbortError$1.AbortError = AbortError;
 	
-	return AbortError$3;
+	return AbortError$1;
 }
 
-var hasRequiredCommonjs$c;
+var hasRequiredCommonjs$a;
 
-function requireCommonjs$c () {
-	if (hasRequiredCommonjs$c) return commonjs$9;
-	hasRequiredCommonjs$c = 1;
+function requireCommonjs$a () {
+	if (hasRequiredCommonjs$a) return commonjs$7;
+	hasRequiredCommonjs$a = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT license.
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbortError = void 0;
-		var AbortError_js_1 = requireAbortError$2();
+		var AbortError_js_1 = requireAbortError();
 		Object.defineProperty(exports, "AbortError", { enumerable: true, get: function () { return AbortError_js_1.AbortError; } });
 		
-	} (commonjs$9));
-	return commonjs$9;
+	} (commonjs$7));
+	return commonjs$7;
 }
 
 var hasRequiredCreateAbortablePromise;
@@ -164405,7 +164405,7 @@ function requireCreateAbortablePromise () {
 	// Licensed under the MIT License.
 	Object.defineProperty(createAbortablePromise, "__esModule", { value: true });
 	createAbortablePromise.createAbortablePromise = createAbortablePromise$1;
-	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$c();
+	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$a();
 	/**
 	 * Creates an abortable promise.
 	 * @param buildPromise - A function that takes the resolve and reject functions as parameters.
@@ -164590,11 +164590,11 @@ function requireTypeGuards () {
 	return typeGuards;
 }
 
-var hasRequiredCommonjs$b;
+var hasRequiredCommonjs$9;
 
-function requireCommonjs$b () {
-	if (hasRequiredCommonjs$b) return commonjs$a;
-	hasRequiredCommonjs$b = 1;
+function requireCommonjs$9 () {
+	if (hasRequiredCommonjs$9) return commonjs$8;
+	hasRequiredCommonjs$9 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
@@ -164746,8 +164746,8 @@ function requireCommonjs$b () {
 		    return tspRuntime.stringToUint8Array(value, format);
 		}
 		
-	} (commonjs$a));
-	return commonjs$a;
+	} (commonjs$8));
+	return commonjs$8;
 }
 
 var hasRequiredFile;
@@ -164762,7 +164762,7 @@ function requireFile () {
 	file.getRawContent = getRawContent;
 	file.createFileFromStream = createFileFromStream;
 	file.createFile = createFile;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	function isNodeReadableStream(x) {
 	    return Boolean(x && typeof x["pipe"] === "function");
 	}
@@ -165130,7 +165130,7 @@ function requireTlsPolicy () {
 
 var tracingPolicy = {};
 
-var commonjs$8 = {};
+var commonjs$6 = {};
 
 var instrumenter = {};
 
@@ -165382,11 +165382,11 @@ function requireTracingClient () {
 	return tracingClient;
 }
 
-var hasRequiredCommonjs$a;
+var hasRequiredCommonjs$8;
 
-function requireCommonjs$a () {
-	if (hasRequiredCommonjs$a) return commonjs$8;
-	hasRequiredCommonjs$a = 1;
+function requireCommonjs$8 () {
+	if (hasRequiredCommonjs$8) return commonjs$6;
+	hasRequiredCommonjs$8 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
@@ -165397,8 +165397,8 @@ function requireCommonjs$a () {
 		var tracingClient_js_1 = requireTracingClient();
 		Object.defineProperty(exports, "createTracingClient", { enumerable: true, get: function () { return tracingClient_js_1.createTracingClient; } });
 		
-	} (commonjs$8));
-	return commonjs$8;
+	} (commonjs$6));
+	return commonjs$6;
 }
 
 var restError = {};
@@ -165413,7 +165413,7 @@ function requireRestError () {
 	Object.defineProperty(restError, "__esModule", { value: true });
 	restError.RestError = void 0;
 	restError.isRestError = isRestError;
-	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$e();
+	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$c();
 	/**
 	 * A custom error type for failed pipeline requests.
 	 */
@@ -165441,11 +165441,11 @@ function requireTracingPolicy () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.tracingPolicyName = void 0;
 		exports.tracingPolicy = tracingPolicy;
-		const core_tracing_1 = /*@__PURE__*/ requireCommonjs$a();
+		const core_tracing_1 = /*@__PURE__*/ requireCommonjs$8();
 		const constants_js_1 = requireConstants$3();
 		const userAgent_js_1 = requireUserAgent$1();
 		const log_js_1 = requireLog$3();
-		const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+		const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 		const restError_js_1 = requireRestError();
 		const util_1 = /*@__PURE__*/ requireInternal();
 		/**
@@ -165680,7 +165680,7 @@ function requireCreatePipelineFromOptions () {
 	const decompressResponsePolicy_js_1 = requireDecompressResponsePolicy();
 	const defaultRetryPolicy_js_1 = requireDefaultRetryPolicy();
 	const formDataPolicy_js_1 = requireFormDataPolicy();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	const proxyPolicy_js_1 = requireProxyPolicy();
 	const setClientRequestIdPolicy_js_1 = requireSetClientRequestIdPolicy();
 	const agentPolicy_js_1 = requireAgentPolicy();
@@ -165739,7 +165739,7 @@ function requireDefaultHttpClient () {
 	// Licensed under the MIT License.
 	Object.defineProperty(defaultHttpClient, "__esModule", { value: true });
 	defaultHttpClient.createDefaultHttpClient = createDefaultHttpClient;
-	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$e();
+	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$c();
 	const wrapAbortSignal_js_1 = requireWrapAbortSignal();
 	/**
 	 * Create the correct HttpClient for the current environment.
@@ -165779,7 +165779,7 @@ function requireHttpHeaders () {
 	// Licensed under the MIT License.
 	Object.defineProperty(httpHeaders, "__esModule", { value: true });
 	httpHeaders.createHttpHeaders = createHttpHeaders;
-	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$e();
+	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$c();
 	/**
 	 * Creates an object that satisfies the `HttpHeaders` interface.
 	 * @param rawHeaders - A simple object representing initial headers
@@ -165802,7 +165802,7 @@ function requirePipelineRequest () {
 	// Licensed under the MIT License.
 	Object.defineProperty(pipelineRequest, "__esModule", { value: true });
 	pipelineRequest.createPipelineRequest = createPipelineRequest;
-	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$e();
+	const ts_http_runtime_1 = /*@__PURE__*/ requireCommonjs$c();
 	/**
 	 * Creates a new pipeline request with the given options.
 	 * This method is to allow for the easy setting of default values and not required.
@@ -165921,7 +165921,7 @@ function requireRetryPolicy () {
 	// Licensed under the MIT License.
 	Object.defineProperty(retryPolicy, "__esModule", { value: true });
 	retryPolicy.retryPolicy = retryPolicy$1;
-	const logger_1 = /*@__PURE__*/ requireCommonjs$d();
+	const logger_1 = /*@__PURE__*/ requireCommonjs$b();
 	const constants_js_1 = requireConstants$3();
 	const policies_1 = /*@__PURE__*/ requireInternal$1();
 	const retryPolicyLogger = (0, logger_1.createClientLogger)("core-rest-pipeline retryPolicy");
@@ -165953,7 +165953,7 @@ function requireTokenCycler () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DEFAULT_CYCLER_OPTIONS = void 0;
 		exports.createTokenCycler = createTokenCycler;
-		const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+		const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 		// Default options for the cycler if none are provided
 		exports.DEFAULT_CYCLER_OPTIONS = {
 		    forcedRefreshWindowInMs: 1000, // Force waiting for a refresh 1s before the token expires
@@ -166485,11 +166485,11 @@ function requireAuxiliaryAuthenticationHeaderPolicy () {
 	return auxiliaryAuthenticationHeaderPolicy;
 }
 
-var hasRequiredCommonjs$9;
+var hasRequiredCommonjs$7;
 
-function requireCommonjs$9 () {
-	if (hasRequiredCommonjs$9) return commonjs$d;
-	hasRequiredCommonjs$9 = 1;
+function requireCommonjs$7 () {
+	if (hasRequiredCommonjs$7) return commonjs$b;
+	hasRequiredCommonjs$7 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
@@ -166568,13 +166568,13 @@ function requireCommonjs$9 () {
 		Object.defineProperty(exports, "createFile", { enumerable: true, get: function () { return file_js_1.createFile; } });
 		Object.defineProperty(exports, "createFileFromStream", { enumerable: true, get: function () { return file_js_1.createFileFromStream; } });
 		
-	} (commonjs$d));
-	return commonjs$d;
+	} (commonjs$b));
+	return commonjs$b;
 }
 
 var BlobServiceClient = {};
 
-var commonjs$7 = {};
+var commonjs$5 = {};
 
 var azureKeyCredential = {};
 
@@ -166638,7 +166638,7 @@ function requireKeyCredential () {
 	// Licensed under the MIT License.
 	Object.defineProperty(keyCredential, "__esModule", { value: true });
 	keyCredential.isKeyCredential = isKeyCredential;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	/**
 	 * Tests an object to determine whether it implements KeyCredential.
 	 *
@@ -166663,7 +166663,7 @@ function requireAzureNamedKeyCredential () {
 	Object.defineProperty(azureNamedKeyCredential, "__esModule", { value: true });
 	azureNamedKeyCredential.AzureNamedKeyCredential = void 0;
 	azureNamedKeyCredential.isNamedKeyCredential = isNamedKeyCredential;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	/**
 	 * A static name/key-based credential that supports updating
 	 * the underlying name and key values.
@@ -166739,7 +166739,7 @@ function requireAzureSASCredential () {
 	Object.defineProperty(azureSASCredential, "__esModule", { value: true });
 	azureSASCredential.AzureSASCredential = void 0;
 	azureSASCredential.isSASCredential = isSASCredential;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	/**
 	 * A static-signature-based credential that supports updating
 	 * the underlying signature value.
@@ -166840,11 +166840,11 @@ function requireTokenCredential () {
 	return tokenCredential;
 }
 
-var hasRequiredCommonjs$8;
+var hasRequiredCommonjs$6;
 
-function requireCommonjs$8 () {
-	if (hasRequiredCommonjs$8) return commonjs$7;
-	hasRequiredCommonjs$8 = 1;
+function requireCommonjs$6 () {
+	if (hasRequiredCommonjs$6) return commonjs$5;
+	hasRequiredCommonjs$6 = 1;
 	(function (exports) {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.isTokenCredential = exports.isSASCredential = exports.AzureSASCredential = exports.isNamedKeyCredential = exports.AzureNamedKeyCredential = exports.isKeyCredential = exports.AzureKeyCredential = void 0;
@@ -166861,13 +166861,13 @@ function requireCommonjs$8 () {
 		var tokenCredential_js_1 = requireTokenCredential();
 		Object.defineProperty(exports, "isTokenCredential", { enumerable: true, get: function () { return tokenCredential_js_1.isTokenCredential; } });
 		
-	} (commonjs$7));
-	return commonjs$7;
+	} (commonjs$5));
+	return commonjs$5;
 }
 
 var Pipeline = {};
 
-var commonjs$6 = {};
+var commonjs$4 = {};
 
 var extendedClient = {};
 
@@ -166906,7 +166906,7 @@ function requireDisableKeepAlivePolicy () {
 	return disableKeepAlivePolicy;
 }
 
-var commonjs$5 = {};
+var commonjs$3 = {};
 
 var serializer = {};
 
@@ -166961,27 +166961,27 @@ function requireBase64 () {
 	return base64;
 }
 
-var interfaces = {};
+var interfaces$1 = {};
 
-var hasRequiredInterfaces;
+var hasRequiredInterfaces$1;
 
-function requireInterfaces () {
-	if (hasRequiredInterfaces) return interfaces;
-	hasRequiredInterfaces = 1;
+function requireInterfaces$1 () {
+	if (hasRequiredInterfaces$1) return interfaces$1;
+	hasRequiredInterfaces$1 = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	Object.defineProperty(interfaces, "__esModule", { value: true });
-	interfaces.XML_CHARKEY = interfaces.XML_ATTRKEY = void 0;
+	Object.defineProperty(interfaces$1, "__esModule", { value: true });
+	interfaces$1.XML_CHARKEY = interfaces$1.XML_ATTRKEY = void 0;
 	/**
 	 * Default key used to access the XML attributes.
 	 */
-	interfaces.XML_ATTRKEY = "$";
+	interfaces$1.XML_ATTRKEY = "$";
 	/**
 	 * Default key used to access the XML value content.
 	 */
-	interfaces.XML_CHARKEY = "_";
+	interfaces$1.XML_CHARKEY = "_";
 	
-	return interfaces;
+	return interfaces$1;
 }
 
 var utils$1 = {};
@@ -167010,7 +167010,7 @@ function requireUtils$1 () {
 	        (typeof value === "string" ||
 	            typeof value === "number" ||
 	            typeof value === "boolean" ||
-	            (mapperTypeName === null || mapperTypeName === void 0 ? void 0 : mapperTypeName.match(/^(Date|DateTime|DateTimeRfc1123|UnixTime|ByteArray|Base64Url)$/i)) !==
+	            mapperTypeName?.match(/^(Date|DateTime|DateTimeRfc1123|UnixTime|ByteArray|Base64Url)$/i) !==
 	                null ||
 	            value === undefined ||
 	            value === null));
@@ -167047,14 +167047,21 @@ function requireUtils$1 () {
 	 * @internal
 	 */
 	function handleNullableResponseAndWrappableBody(responseObject) {
-	    const combinedHeadersAndBody = Object.assign(Object.assign({}, responseObject.headers), responseObject.body);
+	    const combinedHeadersAndBody = {
+	        ...responseObject.headers,
+	        ...responseObject.body,
+	    };
 	    if (responseObject.hasNullableType &&
 	        Object.getOwnPropertyNames(combinedHeadersAndBody).length === 0) {
 	        return responseObject.shouldWrapBody ? { body: null } : null;
 	    }
 	    else {
 	        return responseObject.shouldWrapBody
-	            ? Object.assign(Object.assign({}, responseObject.headers), { body: responseObject.body }) : combinedHeadersAndBody;
+	            ? {
+	                ...responseObject.headers,
+	                body: responseObject.body,
+	            }
+	            : combinedHeadersAndBody;
 	    }
 	}
 	/**
@@ -167066,29 +167073,35 @@ function requireUtils$1 () {
 	 * @internal
 	 */
 	function flattenResponse(fullResponse, responseSpec) {
-	    var _a, _b;
 	    const parsedHeaders = fullResponse.parsedHeaders;
 	    // head methods never have a body, but we return a boolean set to body property
 	    // to indicate presence/absence of the resource
 	    if (fullResponse.request.method === "HEAD") {
-	        return Object.assign(Object.assign({}, parsedHeaders), { body: fullResponse.parsedBody });
+	        return {
+	            ...parsedHeaders,
+	            body: fullResponse.parsedBody,
+	        };
 	    }
 	    const bodyMapper = responseSpec && responseSpec.bodyMapper;
-	    const isNullable = Boolean(bodyMapper === null || bodyMapper === void 0 ? void 0 : bodyMapper.nullable);
-	    const expectedBodyTypeName = bodyMapper === null || bodyMapper === void 0 ? void 0 : bodyMapper.type.name;
+	    const isNullable = Boolean(bodyMapper?.nullable);
+	    const expectedBodyTypeName = bodyMapper?.type.name;
 	    /** If the body is asked for, we look at the expected body type to handle it */
 	    if (expectedBodyTypeName === "Stream") {
-	        return Object.assign(Object.assign({}, parsedHeaders), { blobBody: fullResponse.blobBody, readableStreamBody: fullResponse.readableStreamBody });
+	        return {
+	            ...parsedHeaders,
+	            blobBody: fullResponse.blobBody,
+	            readableStreamBody: fullResponse.readableStreamBody,
+	        };
 	    }
 	    const modelProperties = (expectedBodyTypeName === "Composite" &&
 	        bodyMapper.type.modelProperties) ||
 	        {};
 	    const isPageableResponse = Object.keys(modelProperties).some((k) => modelProperties[k].serializedName === "");
 	    if (expectedBodyTypeName === "Sequence" || isPageableResponse) {
-	        const arrayResponse = (_a = fullResponse.parsedBody) !== null && _a !== void 0 ? _a : [];
+	        const arrayResponse = fullResponse.parsedBody ?? [];
 	        for (const key of Object.keys(modelProperties)) {
 	            if (modelProperties[key].serializedName) {
-	                arrayResponse[key] = (_b = fullResponse.parsedBody) === null || _b === void 0 ? void 0 : _b[key];
+	                arrayResponse[key] = fullResponse.parsedBody?.[key];
 	            }
 	        }
 	        if (parsedHeaders) {
@@ -167126,9 +167139,11 @@ function requireSerializer () {
 	serializer.createSerializer = createSerializer;
 	const tslib_1 = require$$0$2;
 	const base64 = tslib_1.__importStar(requireBase64());
-	const interfaces_js_1 = requireInterfaces();
+	const interfaces_js_1 = requireInterfaces$1();
 	const utils_js_1 = requireUtils$1();
 	class SerializerImpl {
+	    modelMappers;
+	    isXML;
 	    constructor(modelMappers = {}, isXML = false) {
 	        this.modelMappers = modelMappers;
 	        this.isXML = isXML;
@@ -167195,12 +167210,11 @@ function requireSerializer () {
 	     * @returns A valid serialized Javascript object
 	     */
 	    serialize(mapper, object, objectName, options = { xml: {} }) {
-	        var _a, _b, _c;
 	        const updatedOptions = {
 	            xml: {
-	                rootName: (_a = options.xml.rootName) !== null && _a !== void 0 ? _a : "",
-	                includeRoot: (_b = options.xml.includeRoot) !== null && _b !== void 0 ? _b : false,
-	                xmlCharKey: (_c = options.xml.xmlCharKey) !== null && _c !== void 0 ? _c : interfaces_js_1.XML_CHARKEY,
+	                rootName: options.xml.rootName ?? "",
+	                includeRoot: options.xml.includeRoot ?? false,
+	                xmlCharKey: options.xml.xmlCharKey ?? interfaces_js_1.XML_CHARKEY,
 	            },
 	        };
 	        let payload = {};
@@ -167282,14 +167296,13 @@ function requireSerializer () {
 	     * @returns A valid deserialized Javascript object
 	     */
 	    deserialize(mapper, responseBody, objectName, options = { xml: {} }) {
-	        var _a, _b, _c, _d;
 	        const updatedOptions = {
 	            xml: {
-	                rootName: (_a = options.xml.rootName) !== null && _a !== void 0 ? _a : "",
-	                includeRoot: (_b = options.xml.includeRoot) !== null && _b !== void 0 ? _b : false,
-	                xmlCharKey: (_c = options.xml.xmlCharKey) !== null && _c !== void 0 ? _c : interfaces_js_1.XML_CHARKEY,
+	                rootName: options.xml.rootName ?? "",
+	                includeRoot: options.xml.includeRoot ?? false,
+	                xmlCharKey: options.xml.xmlCharKey ?? interfaces_js_1.XML_CHARKEY,
 	            },
-	            ignoreUnknownProperties: (_d = options.ignoreUnknownProperties) !== null && _d !== void 0 ? _d : false,
+	            ignoreUnknownProperties: options.ignoreUnknownProperties ?? false,
 	        };
 	        if (responseBody === undefined || responseBody === null) {
 	            if (this.isXML && mapper.type.name === "Sequence" && !mapper.xmlIsWrapped) {
@@ -167555,7 +167568,6 @@ function requireSerializer () {
 	    return value;
 	}
 	function serializeSequenceType(serializer, mapper, object, objectName, isXml, options) {
-	    var _a;
 	    if (!Array.isArray(object)) {
 	        throw new Error(`${objectName} must be of type Array.`);
 	    }
@@ -167568,7 +167580,7 @@ function requireSerializer () {
 	    // not have *all* properties declared (like uberParent),
 	    // so let's try to look up the full definition by name.
 	    if (elementType.type.name === "Composite" && elementType.type.className) {
-	        elementType = (_a = serializer.modelMappers[elementType.type.className]) !== null && _a !== void 0 ? _a : elementType;
+	        elementType = serializer.modelMappers[elementType.type.className] ?? elementType;
 	    }
 	    const tempArray = [];
 	    for (let i = 0; i < object.length; i++) {
@@ -167578,7 +167590,7 @@ function requireSerializer () {
 	                ? `xmlns:${elementType.xmlNamespacePrefix}`
 	                : "xmlns";
 	            if (elementType.type.name === "Composite") {
-	                tempArray[i] = Object.assign({}, serializedValue);
+	                tempArray[i] = { ...serializedValue };
 	                tempArray[i][interfaces_js_1.XML_ATTRKEY] = { [xmlnsKey]: elementType.xmlNamespace };
 	            }
 	            else {
@@ -167627,7 +167639,7 @@ function requireSerializer () {
 	    const additionalProperties = mapper.type.additionalProperties;
 	    if (!additionalProperties && mapper.type.className) {
 	        const modelMapper = resolveReferencedMapper(serializer, mapper, objectName);
-	        return modelMapper === null || modelMapper === void 0 ? void 0 : modelMapper.type.additionalProperties;
+	        return modelMapper?.type.additionalProperties;
 	    }
 	    return additionalProperties;
 	}
@@ -167656,7 +167668,7 @@ function requireSerializer () {
 	        if (!modelMapper) {
 	            throw new Error(`mapper() cannot be null or undefined for model "${mapper.type.className}".`);
 	        }
-	        modelProps = modelMapper === null || modelMapper === void 0 ? void 0 : modelMapper.type.modelProperties;
+	        modelProps = modelMapper?.type.modelProperties;
 	        if (!modelProps) {
 	            throw new Error(`modelProperties cannot be null or undefined in the ` +
 	                `mapper "${JSON.stringify(modelMapper)}" of type "${mapper.type.className}" for object "${objectName}".`);
@@ -167704,7 +167716,10 @@ function requireSerializer () {
 	                    const xmlnsKey = mapper.xmlNamespacePrefix
 	                        ? `xmlns:${mapper.xmlNamespacePrefix}`
 	                        : "xmlns";
-	                    parentObject[interfaces_js_1.XML_ATTRKEY] = Object.assign(Object.assign({}, parentObject[interfaces_js_1.XML_ATTRKEY]), { [xmlnsKey]: mapper.xmlNamespace });
+	                    parentObject[interfaces_js_1.XML_ATTRKEY] = {
+	                        ...parentObject[interfaces_js_1.XML_ATTRKEY],
+	                        [xmlnsKey]: mapper.xmlNamespace,
+	                    };
 	                }
 	                const propertyObjectName = propertyMapper.serializedName !== ""
 	                    ? objectName + "." + propertyMapper.serializedName
@@ -167762,7 +167777,7 @@ function requireSerializer () {
 	            return serializedValue;
 	        }
 	        else {
-	            const result = Object.assign({}, serializedValue);
+	            const result = { ...serializedValue };
 	            result[interfaces_js_1.XML_ATTRKEY] = xmlNamespace;
 	            return result;
 	        }
@@ -167776,8 +167791,7 @@ function requireSerializer () {
 	    return [interfaces_js_1.XML_ATTRKEY, options.xml.xmlCharKey].includes(propertyName);
 	}
 	function deserializeCompositeType(serializer, mapper, responseBody, objectName, options) {
-	    var _a, _b;
-	    const xmlCharKey = (_a = options.xml.xmlCharKey) !== null && _a !== void 0 ? _a : interfaces_js_1.XML_CHARKEY;
+	    const xmlCharKey = options.xml.xmlCharKey ?? interfaces_js_1.XML_CHARKEY;
 	    if (getPolymorphicDiscriminatorRecursively(serializer, mapper)) {
 	        mapper = getPolymorphicMapper(serializer, mapper, responseBody, "serializedName");
 	    }
@@ -167836,7 +167850,7 @@ function requireSerializer () {
 	                      xmlName is "Cors" and xmlElementName is"CorsRule".
 	                    */
 	                    const wrapped = responseBody[xmlName];
-	                    const elementList = (_b = wrapped === null || wrapped === void 0 ? void 0 : wrapped[xmlElementName]) !== null && _b !== void 0 ? _b : [];
+	                    const elementList = wrapped?.[xmlElementName] ?? [];
 	                    instance[key] = serializer.deserialize(propertyMapper, elementList, propertyObjectName, options);
 	                    handledPropertyNames.push(xmlName);
 	                }
@@ -167944,7 +167958,6 @@ function requireSerializer () {
 	    return responseBody;
 	}
 	function deserializeSequenceType(serializer, mapper, responseBody, objectName, options) {
-	    var _a;
 	    let element = mapper.type.element;
 	    if (!element || typeof element !== "object") {
 	        throw new Error(`element" metadata for an Array must be defined in the ` +
@@ -167959,7 +167972,7 @@ function requireSerializer () {
 	        // not have *all* properties declared (like uberParent),
 	        // so let's try to look up the full definition by name.
 	        if (element.type.name === "Composite" && element.type.className) {
-	            element = (_a = serializer.modelMappers[element.type.className]) !== null && _a !== void 0 ? _a : element;
+	            element = serializer.modelMappers[element.type.className] ?? element;
 	        }
 	        const tempArray = [];
 	        for (let i = 0; i < responseBody.length; i++) {
@@ -167992,7 +168005,6 @@ function requireSerializer () {
 	    return undefined;
 	}
 	function getPolymorphicMapper(serializer, mapper, object, polymorphicPropertyName) {
-	    var _a;
 	    const polymorphicDiscriminator = getPolymorphicDiscriminatorRecursively(serializer, mapper);
 	    if (polymorphicDiscriminator) {
 	        let discriminatorName = polymorphicDiscriminator[polymorphicPropertyName];
@@ -168002,7 +168014,7 @@ function requireSerializer () {
 	                discriminatorName = discriminatorName.replace(/\\/gi, "");
 	            }
 	            const discriminatorValue = object[discriminatorName];
-	            const typeName = (_a = mapper.type.uberParent) !== null && _a !== void 0 ? _a : mapper.type.className;
+	            const typeName = mapper.type.uberParent ?? mapper.type.className;
 	            if (typeof discriminatorValue === "string" && typeName) {
 	                const polymorphicMapper = getIndexDiscriminator(serializer.modelMappers.discriminators, discriminatorValue, typeName);
 	                if (polymorphicMapper) {
@@ -168193,8 +168205,8 @@ function requireDeserializationPolicy () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.deserializationPolicyName = void 0;
 		exports.deserializationPolicy = deserializationPolicy;
-		const interfaces_js_1 = requireInterfaces();
-		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+		const interfaces_js_1 = requireInterfaces$1();
+		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 		const serializer_js_1 = requireSerializer();
 		const operationHelpers_js_1 = requireOperationHelpers();
 		const defaultJsonContentTypes = ["application/json", "text/json"];
@@ -168207,16 +168219,15 @@ function requireDeserializationPolicy () {
 		 * This policy handles parsing out responses according to OperationSpecs on the request.
 		 */
 		function deserializationPolicy(options = {}) {
-		    var _a, _b, _c, _d, _e, _f, _g;
-		    const jsonContentTypes = (_b = (_a = options.expectedContentTypes) === null || _a === void 0 ? void 0 : _a.json) !== null && _b !== void 0 ? _b : defaultJsonContentTypes;
-		    const xmlContentTypes = (_d = (_c = options.expectedContentTypes) === null || _c === void 0 ? void 0 : _c.xml) !== null && _d !== void 0 ? _d : defaultXmlContentTypes;
+		    const jsonContentTypes = options.expectedContentTypes?.json ?? defaultJsonContentTypes;
+		    const xmlContentTypes = options.expectedContentTypes?.xml ?? defaultXmlContentTypes;
 		    const parseXML = options.parseXML;
 		    const serializerOptions = options.serializerOptions;
 		    const updatedOptions = {
 		        xml: {
-		            rootName: (_e = serializerOptions === null || serializerOptions === void 0 ? void 0 : serializerOptions.xml.rootName) !== null && _e !== void 0 ? _e : "",
-		            includeRoot: (_f = serializerOptions === null || serializerOptions === void 0 ? void 0 : serializerOptions.xml.includeRoot) !== null && _f !== void 0 ? _f : false,
-		            xmlCharKey: (_g = serializerOptions === null || serializerOptions === void 0 ? void 0 : serializerOptions.xml.xmlCharKey) !== null && _g !== void 0 ? _g : interfaces_js_1.XML_CHARKEY,
+		            rootName: serializerOptions?.xml.rootName ?? "",
+		            includeRoot: serializerOptions?.xml.includeRoot ?? false,
+		            xmlCharKey: serializerOptions?.xml.xmlCharKey ?? interfaces_js_1.XML_CHARKEY,
 		        },
 		    };
 		    return {
@@ -168231,13 +168242,13 @@ function requireDeserializationPolicy () {
 		    let result;
 		    const request = parsedResponse.request;
 		    const operationInfo = (0, operationHelpers_js_1.getOperationRequestInfo)(request);
-		    const operationSpec = operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.operationSpec;
+		    const operationSpec = operationInfo?.operationSpec;
 		    if (operationSpec) {
-		        if (!(operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.operationResponseGetter)) {
+		        if (!operationInfo?.operationResponseGetter) {
 		            result = operationSpec.responses[parsedResponse.status];
 		        }
 		        else {
-		            result = operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.operationResponseGetter(operationSpec, parsedResponse);
+		            result = operationInfo?.operationResponseGetter(operationSpec, parsedResponse);
 		        }
 		    }
 		    return result;
@@ -168245,7 +168256,7 @@ function requireDeserializationPolicy () {
 		function shouldDeserializeResponse(parsedResponse) {
 		    const request = parsedResponse.request;
 		    const operationInfo = (0, operationHelpers_js_1.getOperationRequestInfo)(request);
-		    const shouldDeserialize = operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.shouldDeserialize;
+		    const shouldDeserialize = operationInfo?.shouldDeserialize;
 		    let result;
 		    if (shouldDeserialize === undefined) {
 		        result = true;
@@ -168264,7 +168275,7 @@ function requireDeserializationPolicy () {
 		        return parsedResponse;
 		    }
 		    const operationInfo = (0, operationHelpers_js_1.getOperationRequestInfo)(parsedResponse.request);
-		    const operationSpec = operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.operationSpec;
+		    const operationSpec = operationInfo?.operationSpec;
 		    if (!operationSpec || !operationSpec.responses) {
 		        return parsedResponse;
 		    }
@@ -168315,7 +168326,6 @@ function requireDeserializationPolicy () {
 		        (expectedStatusCodes.length === 1 && expectedStatusCodes[0] === "default"));
 		}
 		function handleErrorResponse(parsedResponse, operationSpec, responseSpec, options) {
-		    var _a, _b, _c, _d, _e;
 		    const isSuccessByStatus = 200 <= parsedResponse.status && parsedResponse.status < 300;
 		    const isExpectedStatusCode = isOperationSpecEmpty(operationSpec)
 		        ? isSuccessByStatus
@@ -168330,8 +168340,8 @@ function requireDeserializationPolicy () {
 		            return { error: null, shouldReturnResponse: false };
 		        }
 		    }
-		    const errorResponseSpec = responseSpec !== null && responseSpec !== void 0 ? responseSpec : operationSpec.responses.default;
-		    const initialErrorMessage = ((_a = parsedResponse.request.streamResponseStatusCodes) === null || _a === void 0 ? void 0 : _a.has(parsedResponse.status))
+		    const errorResponseSpec = responseSpec ?? operationSpec.responses.default;
+		    const initialErrorMessage = parsedResponse.request.streamResponseStatusCodes?.has(parsedResponse.status)
 		        ? `Unexpected status code: ${parsedResponse.status}`
 		        : parsedResponse.bodyAsText;
 		    const error = new core_rest_pipeline_1.RestError(initialErrorMessage, {
@@ -168343,11 +168353,11 @@ function requireDeserializationPolicy () {
 		    // and the parsed body doesn't look like an error object,
 		    // we should fail so we just throw the parsed response
 		    if (!errorResponseSpec &&
-		        !(((_c = (_b = parsedResponse.parsedBody) === null || _b === void 0 ? void 0 : _b.error) === null || _c === void 0 ? void 0 : _c.code) && ((_e = (_d = parsedResponse.parsedBody) === null || _d === void 0 ? void 0 : _d.error) === null || _e === void 0 ? void 0 : _e.message))) {
+		        !(parsedResponse.parsedBody?.error?.code && parsedResponse.parsedBody?.error?.message)) {
 		        throw error;
 		    }
-		    const defaultBodyMapper = errorResponseSpec === null || errorResponseSpec === void 0 ? void 0 : errorResponseSpec.bodyMapper;
-		    const defaultHeadersMapper = errorResponseSpec === null || errorResponseSpec === void 0 ? void 0 : errorResponseSpec.headersMapper;
+		    const defaultBodyMapper = errorResponseSpec?.bodyMapper;
+		    const defaultHeadersMapper = errorResponseSpec?.headersMapper;
 		    try {
 		        // If error response has a body, try to deserialize it using default body mapper.
 		        // Then try to extract error code & message from it
@@ -168386,8 +168396,7 @@ function requireDeserializationPolicy () {
 		    return { error, shouldReturnResponse: false };
 		}
 		async function parse(jsonContentTypes, xmlContentTypes, operationResponse, opts, parseXML) {
-		    var _a;
-		    if (!((_a = operationResponse.request.streamResponseStatusCodes) === null || _a === void 0 ? void 0 : _a.has(operationResponse.status)) &&
+		    if (!operationResponse.request.streamResponseStatusCodes?.has(operationResponse.status) &&
 		        operationResponse.bodyAsText) {
 		        const text = operationResponse.bodyAsText;
 		        const contentType = operationResponse.headers.get("Content-Type") || "";
@@ -168495,7 +168504,7 @@ function requireSerializationPolicy () {
 		exports.serializationPolicy = serializationPolicy;
 		exports.serializeHeaders = serializeHeaders;
 		exports.serializeRequestBody = serializeRequestBody;
-		const interfaces_js_1 = requireInterfaces();
+		const interfaces_js_1 = requireInterfaces$1();
 		const operationHelpers_js_1 = requireOperationHelpers();
 		const serializer_js_1 = requireSerializer();
 		const interfaceHelpers_js_1 = requireInterfaceHelpers();
@@ -168513,8 +168522,8 @@ function requireSerializationPolicy () {
 		        name: exports.serializationPolicyName,
 		        async sendRequest(request, next) {
 		            const operationInfo = (0, operationHelpers_js_1.getOperationRequestInfo)(request);
-		            const operationSpec = operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.operationSpec;
-		            const operationArguments = operationInfo === null || operationInfo === void 0 ? void 0 : operationInfo.operationArguments;
+		            const operationSpec = operationInfo?.operationSpec;
+		            const operationArguments = operationInfo?.operationArguments;
 		            if (operationSpec && operationArguments) {
 		                serializeHeaders(request, operationArguments, operationSpec);
 		                serializeRequestBody(request, operationArguments, operationSpec, stringifyXML);
@@ -168527,7 +168536,6 @@ function requireSerializationPolicy () {
 		 * @internal
 		 */
 		function serializeHeaders(request, operationArguments, operationSpec) {
-		    var _a, _b;
 		    if (operationSpec.headerParameters) {
 		        for (const headerParameter of operationSpec.headerParameters) {
 		            let headerValue = (0, operationHelpers_js_1.getOperationArgumentValueFromParameter)(operationArguments, headerParameter);
@@ -168546,7 +168554,7 @@ function requireSerializationPolicy () {
 		            }
 		        }
 		    }
-		    const customHeaders = (_b = (_a = operationArguments.options) === null || _a === void 0 ? void 0 : _a.requestOptions) === null || _b === void 0 ? void 0 : _b.customHeaders;
+		    const customHeaders = operationArguments.options?.requestOptions?.customHeaders;
 		    if (customHeaders) {
 		        for (const customHeaderName of Object.keys(customHeaders)) {
 		            request.headers.set(customHeaderName, customHeaders[customHeaderName]);
@@ -168559,13 +168567,12 @@ function requireSerializationPolicy () {
 		function serializeRequestBody(request, operationArguments, operationSpec, stringifyXML = function () {
 		    throw new Error("XML serialization unsupported!");
 		}) {
-		    var _a, _b, _c, _d, _e;
-		    const serializerOptions = (_a = operationArguments.options) === null || _a === void 0 ? void 0 : _a.serializerOptions;
+		    const serializerOptions = operationArguments.options?.serializerOptions;
 		    const updatedOptions = {
 		        xml: {
-		            rootName: (_b = serializerOptions === null || serializerOptions === void 0 ? void 0 : serializerOptions.xml.rootName) !== null && _b !== void 0 ? _b : "",
-		            includeRoot: (_c = serializerOptions === null || serializerOptions === void 0 ? void 0 : serializerOptions.xml.includeRoot) !== null && _c !== void 0 ? _c : false,
-		            xmlCharKey: (_d = serializerOptions === null || serializerOptions === void 0 ? void 0 : serializerOptions.xml.xmlCharKey) !== null && _d !== void 0 ? _d : interfaces_js_1.XML_CHARKEY,
+		            rootName: serializerOptions?.xml.rootName ?? "",
+		            includeRoot: serializerOptions?.xml.includeRoot ?? false,
+		            xmlCharKey: serializerOptions?.xml.xmlCharKey ?? interfaces_js_1.XML_CHARKEY,
 		        },
 		    };
 		    const xmlCharKey = updatedOptions.xml.xmlCharKey;
@@ -168595,7 +168602,7 @@ function requireSerializationPolicy () {
 		                    }
 		                }
 		                else if (typeName === serializer_js_1.MapperTypeNames.String &&
-		                    (((_e = operationSpec.contentType) === null || _e === void 0 ? void 0 : _e.match("text/plain")) || operationSpec.mediaType === "text")) {
+		                    (operationSpec.contentType?.match("text/plain") || operationSpec.mediaType === "text")) {
 		                    // the String serializer has validated that request body is a string
 		                    // so just send the string.
 		                    return;
@@ -168660,7 +168667,7 @@ function requirePipeline$1 () {
 	Object.defineProperty(pipeline, "__esModule", { value: true });
 	pipeline.createClientPipeline = createClientPipeline;
 	const deserializationPolicy_js_1 = requireDeserializationPolicy();
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 	const serializationPolicy_js_1 = requireSerializationPolicy();
 	/**
 	 * Creates a new Pipeline for use with a Service Client.
@@ -168669,7 +168676,7 @@ function requirePipeline$1 () {
 	 * @param options - Options to customize the created pipeline.
 	 */
 	function createClientPipeline(options = {}) {
-	    const pipeline = (0, core_rest_pipeline_1.createPipelineFromOptions)(options !== null && options !== void 0 ? options : {});
+	    const pipeline = (0, core_rest_pipeline_1.createPipelineFromOptions)(options ?? {});
 	    if (options.credentialOptions) {
 	        pipeline.addPolicy((0, core_rest_pipeline_1.bearerTokenAuthenticationPolicy)({
 	            credential: options.credentialOptions.credential,
@@ -168697,7 +168704,7 @@ function requireHttpClientCache () {
 	// Licensed under the MIT License.
 	Object.defineProperty(httpClientCache, "__esModule", { value: true });
 	httpClientCache.getCachedDefaultHttpClient = getCachedDefaultHttpClient;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 	let cachedHttpClient;
 	function getCachedDefaultHttpClient() {
 	    if (!cachedHttpClient) {
@@ -168771,9 +168778,8 @@ function requireUrlHelpers () {
 	    return result;
 	}
 	function calculateUrlReplacements(operationSpec, operationArguments, fallbackObject) {
-	    var _a;
 	    const result = new Map();
-	    if ((_a = operationSpec.urlParameters) === null || _a === void 0 ? void 0 : _a.length) {
+	    if (operationSpec.urlParameters?.length) {
 	        for (const urlParameter of operationSpec.urlParameters) {
 	            let urlParameterValue = (0, operationHelpers_js_1.getOperationArgumentValueFromParameter)(operationArguments, urlParameter, fallbackObject);
 	            const parameterPathString = (0, interfaceHelpers_js_1.getPathStringFromParameter)(urlParameter);
@@ -168817,10 +168823,9 @@ function requireUrlHelpers () {
 	    return parsedUrl.toString();
 	}
 	function calculateQueryParameters(operationSpec, operationArguments, fallbackObject) {
-	    var _a;
 	    const result = new Map();
 	    const sequenceParams = new Set();
-	    if ((_a = operationSpec.queryParameters) === null || _a === void 0 ? void 0 : _a.length) {
+	    if (operationSpec.queryParameters?.length) {
 	        for (const queryParameter of operationSpec.queryParameters) {
 	            if (queryParameter.mapper.type.name === "Sequence" && queryParameter.mapper.serializedName) {
 	                sequenceParams.add(queryParameter.mapper.serializedName);
@@ -168968,7 +168973,7 @@ function requireLog$2 () {
 	// Licensed under the MIT License.
 	Object.defineProperty(log$2, "__esModule", { value: true });
 	log$2.logger = void 0;
-	const logger_1 = /*@__PURE__*/ requireCommonjs$d();
+	const logger_1 = /*@__PURE__*/ requireCommonjs$b();
 	log$2.logger = (0, logger_1.createClientLogger)("core-client");
 	
 	return log$2;
@@ -168983,7 +168988,7 @@ function requireServiceClient () {
 	// Licensed under the MIT License.
 	Object.defineProperty(serviceClient, "__esModule", { value: true });
 	serviceClient.ServiceClient = void 0;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 	const pipeline_js_1 = requirePipeline$1();
 	const utils_js_1 = requireUtils$1();
 	const httpClientCache_js_1 = requireHttpClientCache();
@@ -168996,20 +169001,41 @@ function requireServiceClient () {
 	 */
 	class ServiceClient {
 	    /**
+	     * If specified, this is the base URI that requests will be made against for this ServiceClient.
+	     * If it is not specified, then all OperationSpecs must contain a baseUrl property.
+	     */
+	    _endpoint;
+	    /**
+	     * The default request content type for the service.
+	     * Used if no requestContentType is present on an OperationSpec.
+	     */
+	    _requestContentType;
+	    /**
+	     * Set to true if the request is sent over HTTP instead of HTTPS
+	     */
+	    _allowInsecureConnection;
+	    /**
+	     * The HTTP client that will be used to send requests.
+	     */
+	    _httpClient;
+	    /**
+	     * The pipeline used by this client to make requests
+	     */
+	    pipeline;
+	    /**
 	     * The ServiceClient constructor
 	     * @param options - The service client options that govern the behavior of the client.
 	     */
 	    constructor(options = {}) {
-	        var _a, _b;
 	        this._requestContentType = options.requestContentType;
-	        this._endpoint = (_a = options.endpoint) !== null && _a !== void 0 ? _a : options.baseUri;
+	        this._endpoint = options.endpoint ?? options.baseUri;
 	        if (options.baseUri) {
 	            log_js_1.logger.warning("The baseUri option for SDK Clients has been deprecated, please use endpoint instead.");
 	        }
 	        this._allowInsecureConnection = options.allowInsecureConnection;
 	        this._httpClient = options.httpClient || (0, httpClientCache_js_1.getCachedDefaultHttpClient)();
 	        this.pipeline = options.pipeline || createDefaultPipeline(options);
-	        if ((_b = options.additionalPolicies) === null || _b === void 0 ? void 0 : _b.length) {
+	        if (options.additionalPolicies?.length) {
 	            for (const { policy, position } of options.additionalPolicies) {
 	                // Sign happens after Retry and is commonly needed to occur
 	                // before policies that intercept post-retry.
@@ -169088,17 +169114,17 @@ function requireServiceClient () {
 	        try {
 	            const rawResponse = await this.sendRequest(request);
 	            const flatResponse = (0, utils_js_1.flattenResponse)(rawResponse, operationSpec.responses[rawResponse.status]);
-	            if (options === null || options === void 0 ? void 0 : options.onResponse) {
+	            if (options?.onResponse) {
 	                options.onResponse(rawResponse, flatResponse);
 	            }
 	            return flatResponse;
 	        }
 	        catch (error) {
-	            if (typeof error === "object" && (error === null || error === void 0 ? void 0 : error.response)) {
+	            if (typeof error === "object" && error?.response) {
 	                const rawResponse = error.response;
 	                const flatResponse = (0, utils_js_1.flattenResponse)(rawResponse, operationSpec.responses[error.statusCode] || operationSpec.responses["default"]);
 	                error.details = flatResponse;
-	                if (options === null || options === void 0 ? void 0 : options.onResponse) {
+	                if (options?.onResponse) {
 	                    options.onResponse(rawResponse, flatResponse, error);
 	                }
 	            }
@@ -169112,7 +169138,10 @@ function requireServiceClient () {
 	    const credentialOptions = options.credential && credentialScopes
 	        ? { credentialScopes, credential: options.credential }
 	        : undefined;
-	    return (0, pipeline_js_1.createClientPipeline)(Object.assign(Object.assign({}, options), { credentialOptions }));
+	    return (0, pipeline_js_1.createClientPipeline)({
+	        ...options,
+	        credentialOptions,
+	    });
 	}
 	function getCredentialScopes(options) {
 	    if (options.credentialScopes) {
@@ -169159,7 +169188,7 @@ function requireAuthorizeRequestOnClaimChallenge () {
 	        const challengeParts = `${challenge.trim()}, `.split('", ').filter((x) => x);
 	        const keyValuePairs = challengeParts.map((keyValue) => (([key, value]) => ({ [key]: value }))(keyValue.trim().split('="')));
 	        // Key-value pairs to plain object:
-	        return keyValuePairs.reduce((a, b) => (Object.assign(Object.assign({}, a), b)), {});
+	        return keyValuePairs.reduce((a, b) => ({ ...a, ...b }), {});
 	    });
 	}
 	/**
@@ -169192,7 +169221,6 @@ function requireAuthorizeRequestOnClaimChallenge () {
 	 * ```
 	 */
 	async function authorizeRequestOnClaimChallenge$1(onChallengeOptions) {
-	    var _a;
 	    const { scopes, response } = onChallengeOptions;
 	    const logger = onChallengeOptions.logger || log_js_1.logger;
 	    const challenge = response.headers.get("WWW-Authenticate");
@@ -169212,7 +169240,7 @@ function requireAuthorizeRequestOnClaimChallenge () {
 	    if (!accessToken) {
 	        return false;
 	    }
-	    onChallengeOptions.request.headers.set("Authorization", `${(_a = accessToken.tokenType) !== null && _a !== void 0 ? _a : "Bearer"} ${accessToken.token}`);
+	    onChallengeOptions.request.headers.set("Authorization", `${accessToken.tokenType ?? "Bearer"} ${accessToken.token}`);
 	    return true;
 	}
 	
@@ -169254,7 +169282,6 @@ function requireAuthorizeRequestOnTenantChallenge () {
 	 * Handling has specific features for storage that departs to the general AAD challenge docs.
 	 **/
 	const authorizeRequestOnTenantChallenge$1 = async (challengeOptions) => {
-	    var _a;
 	    const requestOptions = requestToOptions(challengeOptions.request);
 	    const challenge = getChallenge(challengeOptions.response);
 	    if (challenge) {
@@ -169264,11 +169291,14 @@ function requireAuthorizeRequestOnTenantChallenge () {
 	        if (!tenantId) {
 	            return false;
 	        }
-	        const accessToken = await challengeOptions.getAccessToken(challengeScopes, Object.assign(Object.assign({}, requestOptions), { tenantId }));
+	        const accessToken = await challengeOptions.getAccessToken(challengeScopes, {
+	            ...requestOptions,
+	            tenantId,
+	        });
 	        if (!accessToken) {
 	            return false;
 	        }
-	        challengeOptions.request.headers.set(Constants.HeaderConstants.AUTHORIZATION, `${(_a = accessToken.tokenType) !== null && _a !== void 0 ? _a : "Bearer"} ${accessToken.token}`);
+	        challengeOptions.request.headers.set(Constants.HeaderConstants.AUTHORIZATION, `${accessToken.tokenType ?? "Bearer"} ${accessToken.token}`);
 	        return true;
 	    }
 	    return false;
@@ -169328,7 +169358,7 @@ function requireAuthorizeRequestOnTenantChallenge () {
 	    const challengeParts = `${bearerChallenge.trim()} `.split(" ").filter((x) => x);
 	    const keyValuePairs = challengeParts.map((keyValue) => (([key, value]) => ({ [key]: value }))(keyValue.trim().split("=")));
 	    // Key-value pairs to plain object:
-	    return keyValuePairs.reduce((a, b) => (Object.assign(Object.assign({}, a), b)), {});
+	    return keyValuePairs.reduce((a, b) => ({ ...a, ...b }), {});
 	}
 	/**
 	 * Extracts the options form a Pipeline Request for later re-use
@@ -169346,11 +169376,11 @@ function requireAuthorizeRequestOnTenantChallenge () {
 	return authorizeRequestOnTenantChallenge;
 }
 
-var hasRequiredCommonjs$7;
+var hasRequiredCommonjs$5;
 
-function requireCommonjs$7 () {
-	if (hasRequiredCommonjs$7) return commonjs$5;
-	hasRequiredCommonjs$7 = 1;
+function requireCommonjs$5 () {
+	if (hasRequiredCommonjs$5) return commonjs$3;
+	hasRequiredCommonjs$5 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
@@ -169363,7 +169393,7 @@ function requireCommonjs$7 () {
 		Object.defineProperty(exports, "ServiceClient", { enumerable: true, get: function () { return serviceClient_js_1.ServiceClient; } });
 		var pipeline_js_1 = requirePipeline$1();
 		Object.defineProperty(exports, "createClientPipeline", { enumerable: true, get: function () { return pipeline_js_1.createClientPipeline; } });
-		var interfaces_js_1 = requireInterfaces();
+		var interfaces_js_1 = requireInterfaces$1();
 		Object.defineProperty(exports, "XML_ATTRKEY", { enumerable: true, get: function () { return interfaces_js_1.XML_ATTRKEY; } });
 		Object.defineProperty(exports, "XML_CHARKEY", { enumerable: true, get: function () { return interfaces_js_1.XML_CHARKEY; } });
 		var deserializationPolicy_js_1 = requireDeserializationPolicy();
@@ -169377,8 +169407,8 @@ function requireCommonjs$7 () {
 		var authorizeRequestOnTenantChallenge_js_1 = requireAuthorizeRequestOnTenantChallenge();
 		Object.defineProperty(exports, "authorizeRequestOnTenantChallenge", { enumerable: true, get: function () { return authorizeRequestOnTenantChallenge_js_1.authorizeRequestOnTenantChallenge; } });
 		
-	} (commonjs$5));
-	return commonjs$5;
+	} (commonjs$3));
+	return commonjs$3;
 }
 
 var response = {};
@@ -169397,7 +169427,7 @@ function requireUtil$1 () {
 	util$1.toPipelineRequest = toPipelineRequest;
 	util$1.toWebResourceLike = toWebResourceLike;
 	util$1.toHttpHeadersLike = toHttpHeadersLike;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 	// We use a custom symbol to cache a reference to the original request without
 	// exposing it on the public interface.
 	const originalRequestSymbol = Symbol("Original PipelineRequest");
@@ -169441,8 +169471,7 @@ function requireUtil$1 () {
 	    }
 	}
 	function toWebResourceLike(request, options) {
-	    var _a;
-	    const originalRequest = (_a = options === null || options === void 0 ? void 0 : options.originalRequest) !== null && _a !== void 0 ? _a : request;
+	    const originalRequest = options?.originalRequest ?? request;
 	    const webResource = {
 	        url: request.url,
 	        method: request.method,
@@ -169470,7 +169499,7 @@ function requireUtil$1 () {
 	            /** do nothing */
 	        },
 	    };
-	    if (options === null || options === void 0 ? void 0 : options.createProxy) {
+	    if (options?.createProxy) {
 	        return new Proxy(webResource, {
 	            get(target, prop, receiver) {
 	                if (prop === originalRequestSymbol) {
@@ -169536,6 +169565,7 @@ function requireUtil$1 () {
 	 * A collection of HTTP header key/value pairs.
 	 */
 	class HttpHeaders {
+	    _headersMap;
 	    constructor(rawHeaders) {
 	        this._headersMap = {};
 	        if (rawHeaders) {
@@ -169671,7 +169701,7 @@ function requireResponse () {
 	Object.defineProperty(response, "__esModule", { value: true });
 	response.toCompatResponse = toCompatResponse;
 	response.toPipelineResponse = toPipelineResponse;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 	const util_js_1 = requireUtil$1();
 	const originalResponse = Symbol("Original FullOperationResponse");
 	/**
@@ -169682,7 +169712,7 @@ function requireResponse () {
 	function toCompatResponse(response, options) {
 	    let request = (0, util_js_1.toWebResourceLike)(response.request);
 	    let headers = (0, util_js_1.toHttpHeadersLike)(response.headers);
-	    if (options === null || options === void 0 ? void 0 : options.createProxy) {
+	    if (options?.createProxy) {
 	        return new Proxy(response, {
 	            get(target, prop, receiver) {
 	                if (prop === "headers") {
@@ -169708,8 +169738,11 @@ function requireResponse () {
 	        });
 	    }
 	    else {
-	        return Object.assign(Object.assign({}, response), { request,
-	            headers });
+	        return {
+	            ...response,
+	            request,
+	            headers,
+	        };
 	    }
 	}
 	/**
@@ -169725,7 +169758,11 @@ function requireResponse () {
 	        return response;
 	    }
 	    else {
-	        return Object.assign(Object.assign({}, compatResponse), { headers, request: (0, util_js_1.toPipelineRequest)(compatResponse.request) });
+	        return {
+	            ...compatResponse,
+	            headers,
+	            request: (0, util_js_1.toPipelineRequest)(compatResponse.request),
+	        };
 	    }
 	}
 	
@@ -169742,21 +169779,20 @@ function requireExtendedClient () {
 	Object.defineProperty(extendedClient, "__esModule", { value: true });
 	extendedClient.ExtendedServiceClient = void 0;
 	const disableKeepAlivePolicy_js_1 = requireDisableKeepAlivePolicy();
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_client_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_client_1 = /*@__PURE__*/ requireCommonjs$5();
 	const response_js_1 = requireResponse();
 	/**
 	 * Client to provide compatability between core V1 & V2.
 	 */
 	class ExtendedServiceClient extends core_client_1.ServiceClient {
 	    constructor(options) {
-	        var _a, _b;
 	        super(options);
-	        if (((_a = options.keepAliveOptions) === null || _a === void 0 ? void 0 : _a.enable) === false &&
+	        if (options.keepAliveOptions?.enable === false &&
 	            !(0, disableKeepAlivePolicy_js_1.pipelineContainsDisableKeepAlivePolicy)(this.pipeline)) {
 	            this.pipeline.addPolicy((0, disableKeepAlivePolicy_js_1.createDisableKeepAlivePolicy)());
 	        }
-	        if (((_b = options.redirectOptions) === null || _b === void 0 ? void 0 : _b.handleRedirects) === false) {
+	        if (options.redirectOptions?.handleRedirects === false) {
 	            this.pipeline.removePolicy({
 	                name: core_rest_pipeline_1.redirectPolicyName,
 	            });
@@ -169770,8 +169806,7 @@ function requireExtendedClient () {
 	     * @returns
 	     */
 	    async sendOperationRequest(operationArguments, operationSpec) {
-	        var _a;
-	        const userProvidedCallBack = (_a = operationArguments === null || operationArguments === void 0 ? void 0 : operationArguments.options) === null || _a === void 0 ? void 0 : _a.onResponse;
+	        const userProvidedCallBack = operationArguments?.options?.onResponse;
 	        let lastResponse;
 	        function onResponse(rawResponse, flatResponse, error) {
 	            lastResponse = rawResponse;
@@ -169779,7 +169814,10 @@ function requireExtendedClient () {
 	                userProvidedCallBack(rawResponse, flatResponse, error);
 	            }
 	        }
-	        operationArguments.options = Object.assign(Object.assign({}, operationArguments.options), { onResponse });
+	        operationArguments.options = {
+	            ...operationArguments.options,
+	            onResponse,
+	        };
 	        const result = await super.sendOperationRequest(operationArguments, operationSpec);
 	        if (lastResponse) {
 	            Object.defineProperty(result, "_response", {
@@ -169890,11 +169928,11 @@ function requireHttpClientAdapter () {
 	return httpClientAdapter;
 }
 
-var hasRequiredCommonjs$6;
+var hasRequiredCommonjs$4;
 
-function requireCommonjs$6 () {
-	if (hasRequiredCommonjs$6) return commonjs$6;
-	hasRequiredCommonjs$6 = 1;
+function requireCommonjs$4 () {
+	if (hasRequiredCommonjs$4) return commonjs$4;
+	hasRequiredCommonjs$4 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
@@ -169918,11 +169956,11 @@ function requireCommonjs$6 () {
 		var util_js_1 = requireUtil$1();
 		Object.defineProperty(exports, "toHttpHeadersLike", { enumerable: true, get: function () { return util_js_1.toHttpHeadersLike; } });
 		
-	} (commonjs$6));
-	return commonjs$6;
+	} (commonjs$4));
+	return commonjs$4;
 }
 
-var commonjs$4 = {};
+var commonjs$2 = {};
 
 var xml = {};
 
@@ -170034,11 +170072,11 @@ function requireXml () {
 	return xml;
 }
 
-var hasRequiredCommonjs$5;
+var hasRequiredCommonjs$3;
 
-function requireCommonjs$5 () {
-	if (hasRequiredCommonjs$5) return commonjs$4;
-	hasRequiredCommonjs$5 = 1;
+function requireCommonjs$3 () {
+	if (hasRequiredCommonjs$3) return commonjs$2;
+	hasRequiredCommonjs$3 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
@@ -170051,8 +170089,8 @@ function requireCommonjs$5 () {
 		Object.defineProperty(exports, "XML_ATTRKEY", { enumerable: true, get: function () { return xml_common_js_1.XML_ATTRKEY; } });
 		Object.defineProperty(exports, "XML_CHARKEY", { enumerable: true, get: function () { return xml_common_js_1.XML_CHARKEY; } });
 		
-	} (commonjs$4));
-	return commonjs$4;
+	} (commonjs$2));
+	return commonjs$2;
 }
 
 var log$1 = {};
@@ -170066,7 +170104,7 @@ function requireLog$1 () {
 	// Licensed under the MIT License.
 	Object.defineProperty(log$1, "__esModule", { value: true });
 	log$1.logger = void 0;
-	const logger_1 = /*@__PURE__*/ requireCommonjs$d();
+	const logger_1 = /*@__PURE__*/ requireCommonjs$b();
 	/**
 	 * The `@azure/logger` configuration for this package.
 	 */
@@ -170075,1929 +170113,7 @@ function requireLog$1 () {
 	return log$1;
 }
 
-var StorageRetryPolicyFactory$1 = {};
-
-var StorageRetryPolicy$1 = {};
-
-var commonjs$3 = {};
-
-var AbortError$2 = {};
-
-var hasRequiredAbortError$1;
-
-function requireAbortError$1 () {
-	if (hasRequiredAbortError$1) return AbortError$2;
-	hasRequiredAbortError$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT license.
-	Object.defineProperty(AbortError$2, "__esModule", { value: true });
-	AbortError$2.AbortError = void 0;
-	/**
-	 * This error is thrown when an asynchronous operation has been aborted.
-	 * Check for this error by testing the `name` that the name property of the
-	 * error matches `"AbortError"`.
-	 *
-	 * @example
-	 * ```ts
-	 * const controller = new AbortController();
-	 * controller.abort();
-	 * try {
-	 *   doAsyncWork(controller.signal)
-	 * } catch (e) {
-	 *   if (e.name === 'AbortError') {
-	 *     // handle abort error here.
-	 *   }
-	 * }
-	 * ```
-	 */
-	class AbortError extends Error {
-	    constructor(message) {
-	        super(message);
-	        this.name = "AbortError";
-	    }
-	}
-	AbortError$2.AbortError = AbortError;
-	
-	return AbortError$2;
-}
-
-var hasRequiredCommonjs$4;
-
-function requireCommonjs$4 () {
-	if (hasRequiredCommonjs$4) return commonjs$3;
-	hasRequiredCommonjs$4 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT license.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.AbortError = void 0;
-		var AbortError_js_1 = requireAbortError$1();
-		Object.defineProperty(exports, "AbortError", { enumerable: true, get: function () { return AbortError_js_1.AbortError; } });
-		
-	} (commonjs$3));
-	return commonjs$3;
-}
-
-var RequestPolicy$1 = {};
-
-var hasRequiredRequestPolicy$1;
-
-function requireRequestPolicy$1 () {
-	if (hasRequiredRequestPolicy$1) return RequestPolicy$1;
-	hasRequiredRequestPolicy$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(RequestPolicy$1, "__esModule", { value: true });
-	RequestPolicy$1.BaseRequestPolicy = void 0;
-	/**
-	 * The base class from which all request policies derive.
-	 */
-	class BaseRequestPolicy {
-	    _nextPolicy;
-	    _options;
-	    /**
-	     * The main method to implement that manipulates a request/response.
-	     */
-	    constructor(
-	    /**
-	     * The next policy in the pipeline. Each policy is responsible for executing the next one if the request is to continue through the pipeline.
-	     */
-	    _nextPolicy, 
-	    /**
-	     * The options that can be passed to a given request policy.
-	     */
-	    _options) {
-	        this._nextPolicy = _nextPolicy;
-	        this._options = _options;
-	    }
-	    /**
-	     * Get whether or not a log with the provided log level should be logged.
-	     * @param logLevel - The log level of the log that will be logged.
-	     * @returns Whether or not a log with the provided log level should be logged.
-	     */
-	    shouldLog(logLevel) {
-	        return this._options.shouldLog(logLevel);
-	    }
-	    /**
-	     * Attempt to log the provided message to the provided logger. If no logger was provided or if
-	     * the log level does not meat the logger's threshold, then nothing will be logged.
-	     * @param logLevel - The log level of this log.
-	     * @param message - The message of this log.
-	     */
-	    log(logLevel, message) {
-	        this._options.log(logLevel, message);
-	    }
-	}
-	RequestPolicy$1.BaseRequestPolicy = BaseRequestPolicy;
-	
-	return RequestPolicy$1;
-}
-
-var constants$2 = {};
-
-var hasRequiredConstants$2;
-
-function requireConstants$2 () {
-	if (hasRequiredConstants$2) return constants$2;
-	hasRequiredConstants$2 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.PathStylePorts = exports.BlobDoesNotUseCustomerSpecifiedEncryption = exports.BlobUsesCustomerSpecifiedEncryptionMsg = exports.StorageBlobLoggingAllowedQueryParameters = exports.StorageBlobLoggingAllowedHeaderNames = exports.DevelopmentConnectionString = exports.EncryptionAlgorithmAES25 = exports.HTTP_VERSION_1_1 = exports.HTTP_LINE_ENDING = exports.BATCH_MAX_PAYLOAD_IN_BYTES = exports.BATCH_MAX_REQUEST = exports.SIZE_1_MB = exports.ETagAny = exports.ETagNone = exports.HeaderConstants = exports.HTTPURLConnection = exports.URLConstants = exports.StorageOAuthScopes = exports.REQUEST_TIMEOUT = exports.DEFAULT_MAX_DOWNLOAD_RETRY_REQUESTS = exports.DEFAULT_BLOB_DOWNLOAD_BLOCK_BYTES = exports.DEFAULT_BLOCK_BUFFER_SIZE_BYTES = exports.BLOCK_BLOB_MAX_BLOCKS = exports.BLOCK_BLOB_MAX_STAGE_BLOCK_BYTES = exports.BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES = exports.SERVICE_VERSION = exports.SDK_VERSION = void 0;
-		exports.SDK_VERSION = "12.28.0";
-		exports.SERVICE_VERSION = "2025-07-05";
-		exports.BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES = 256 * 1024 * 1024; // 256MB
-		exports.BLOCK_BLOB_MAX_STAGE_BLOCK_BYTES = 4000 * 1024 * 1024; // 4000MB
-		exports.BLOCK_BLOB_MAX_BLOCKS = 50000;
-		exports.DEFAULT_BLOCK_BUFFER_SIZE_BYTES = 8 * 1024 * 1024; // 8MB
-		exports.DEFAULT_BLOB_DOWNLOAD_BLOCK_BYTES = 4 * 1024 * 1024; // 4MB
-		exports.DEFAULT_MAX_DOWNLOAD_RETRY_REQUESTS = 5;
-		exports.REQUEST_TIMEOUT = 100 * 1000; // In ms
-		/**
-		 * The OAuth scope to use with Azure Storage.
-		 */
-		exports.StorageOAuthScopes = "https://storage.azure.com/.default";
-		exports.URLConstants = {
-		    Parameters: {
-		        FORCE_BROWSER_NO_CACHE: "_",
-		        SIGNATURE: "sig",
-		        SNAPSHOT: "snapshot",
-		        VERSIONID: "versionid",
-		        TIMEOUT: "timeout",
-		    },
-		};
-		exports.HTTPURLConnection = {
-		    HTTP_ACCEPTED: 202,
-		    HTTP_CONFLICT: 409,
-		    HTTP_NOT_FOUND: 404,
-		    HTTP_PRECON_FAILED: 412,
-		    HTTP_RANGE_NOT_SATISFIABLE: 416,
-		};
-		exports.HeaderConstants = {
-		    AUTHORIZATION: "Authorization",
-		    AUTHORIZATION_SCHEME: "Bearer",
-		    CONTENT_ENCODING: "Content-Encoding",
-		    CONTENT_ID: "Content-ID",
-		    CONTENT_LANGUAGE: "Content-Language",
-		    CONTENT_LENGTH: "Content-Length",
-		    CONTENT_MD5: "Content-Md5",
-		    CONTENT_TRANSFER_ENCODING: "Content-Transfer-Encoding",
-		    CONTENT_TYPE: "Content-Type",
-		    COOKIE: "Cookie",
-		    DATE: "date",
-		    IF_MATCH: "if-match",
-		    IF_MODIFIED_SINCE: "if-modified-since",
-		    IF_NONE_MATCH: "if-none-match",
-		    IF_UNMODIFIED_SINCE: "if-unmodified-since",
-		    PREFIX_FOR_STORAGE: "x-ms-",
-		    RANGE: "Range",
-		    USER_AGENT: "User-Agent",
-		    X_MS_CLIENT_REQUEST_ID: "x-ms-client-request-id",
-		    X_MS_COPY_SOURCE: "x-ms-copy-source",
-		    X_MS_DATE: "x-ms-date",
-		    X_MS_ERROR_CODE: "x-ms-error-code",
-		    X_MS_VERSION: "x-ms-version",
-		    X_MS_CopySourceErrorCode: "x-ms-copy-source-error-code",
-		};
-		exports.ETagNone = "";
-		exports.ETagAny = "*";
-		exports.SIZE_1_MB = 1 * 1024 * 1024;
-		exports.BATCH_MAX_REQUEST = 256;
-		exports.BATCH_MAX_PAYLOAD_IN_BYTES = 4 * exports.SIZE_1_MB;
-		exports.HTTP_LINE_ENDING = "\r\n";
-		exports.HTTP_VERSION_1_1 = "HTTP/1.1";
-		exports.EncryptionAlgorithmAES25 = "AES256";
-		exports.DevelopmentConnectionString = `DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;`;
-		exports.StorageBlobLoggingAllowedHeaderNames = [
-		    "Access-Control-Allow-Origin",
-		    "Cache-Control",
-		    "Content-Length",
-		    "Content-Type",
-		    "Date",
-		    "Request-Id",
-		    "traceparent",
-		    "Transfer-Encoding",
-		    "User-Agent",
-		    "x-ms-client-request-id",
-		    "x-ms-date",
-		    "x-ms-error-code",
-		    "x-ms-request-id",
-		    "x-ms-return-client-request-id",
-		    "x-ms-version",
-		    "Accept-Ranges",
-		    "Content-Disposition",
-		    "Content-Encoding",
-		    "Content-Language",
-		    "Content-MD5",
-		    "Content-Range",
-		    "ETag",
-		    "Last-Modified",
-		    "Server",
-		    "Vary",
-		    "x-ms-content-crc64",
-		    "x-ms-copy-action",
-		    "x-ms-copy-completion-time",
-		    "x-ms-copy-id",
-		    "x-ms-copy-progress",
-		    "x-ms-copy-status",
-		    "x-ms-has-immutability-policy",
-		    "x-ms-has-legal-hold",
-		    "x-ms-lease-state",
-		    "x-ms-lease-status",
-		    "x-ms-range",
-		    "x-ms-request-server-encrypted",
-		    "x-ms-server-encrypted",
-		    "x-ms-snapshot",
-		    "x-ms-source-range",
-		    "If-Match",
-		    "If-Modified-Since",
-		    "If-None-Match",
-		    "If-Unmodified-Since",
-		    "x-ms-access-tier",
-		    "x-ms-access-tier-change-time",
-		    "x-ms-access-tier-inferred",
-		    "x-ms-account-kind",
-		    "x-ms-archive-status",
-		    "x-ms-blob-append-offset",
-		    "x-ms-blob-cache-control",
-		    "x-ms-blob-committed-block-count",
-		    "x-ms-blob-condition-appendpos",
-		    "x-ms-blob-condition-maxsize",
-		    "x-ms-blob-content-disposition",
-		    "x-ms-blob-content-encoding",
-		    "x-ms-blob-content-language",
-		    "x-ms-blob-content-length",
-		    "x-ms-blob-content-md5",
-		    "x-ms-blob-content-type",
-		    "x-ms-blob-public-access",
-		    "x-ms-blob-sequence-number",
-		    "x-ms-blob-type",
-		    "x-ms-copy-destination-snapshot",
-		    "x-ms-creation-time",
-		    "x-ms-default-encryption-scope",
-		    "x-ms-delete-snapshots",
-		    "x-ms-delete-type-permanent",
-		    "x-ms-deny-encryption-scope-override",
-		    "x-ms-encryption-algorithm",
-		    "x-ms-if-sequence-number-eq",
-		    "x-ms-if-sequence-number-le",
-		    "x-ms-if-sequence-number-lt",
-		    "x-ms-incremental-copy",
-		    "x-ms-lease-action",
-		    "x-ms-lease-break-period",
-		    "x-ms-lease-duration",
-		    "x-ms-lease-id",
-		    "x-ms-lease-time",
-		    "x-ms-page-write",
-		    "x-ms-proposed-lease-id",
-		    "x-ms-range-get-content-md5",
-		    "x-ms-rehydrate-priority",
-		    "x-ms-sequence-number-action",
-		    "x-ms-sku-name",
-		    "x-ms-source-content-md5",
-		    "x-ms-source-if-match",
-		    "x-ms-source-if-modified-since",
-		    "x-ms-source-if-none-match",
-		    "x-ms-source-if-unmodified-since",
-		    "x-ms-tag-count",
-		    "x-ms-encryption-key-sha256",
-		    "x-ms-copy-source-error-code",
-		    "x-ms-copy-source-status-code",
-		    "x-ms-if-tags",
-		    "x-ms-source-if-tags",
-		];
-		exports.StorageBlobLoggingAllowedQueryParameters = [
-		    "comp",
-		    "maxresults",
-		    "rscc",
-		    "rscd",
-		    "rsce",
-		    "rscl",
-		    "rsct",
-		    "se",
-		    "si",
-		    "sip",
-		    "sp",
-		    "spr",
-		    "sr",
-		    "srt",
-		    "ss",
-		    "st",
-		    "sv",
-		    "include",
-		    "marker",
-		    "prefix",
-		    "copyid",
-		    "restype",
-		    "blockid",
-		    "blocklisttype",
-		    "delimiter",
-		    "prevsnapshot",
-		    "ske",
-		    "skoid",
-		    "sks",
-		    "skt",
-		    "sktid",
-		    "skv",
-		    "snapshot",
-		];
-		exports.BlobUsesCustomerSpecifiedEncryptionMsg = "BlobUsesCustomerSpecifiedEncryption";
-		exports.BlobDoesNotUseCustomerSpecifiedEncryption = "BlobDoesNotUseCustomerSpecifiedEncryption";
-		/// List of ports used for path style addressing.
-		/// Path style addressing means that storage account is put in URI's Path segment in instead of in host.
-		exports.PathStylePorts = [
-		    "10000",
-		    "10001",
-		    "10002",
-		    "10003",
-		    "10004",
-		    "10100",
-		    "10101",
-		    "10102",
-		    "10103",
-		    "10104",
-		    "11000",
-		    "11001",
-		    "11002",
-		    "11003",
-		    "11004",
-		    "11100",
-		    "11101",
-		    "11102",
-		    "11103",
-		    "11104",
-		];
-		
-	} (constants$2));
-	return constants$2;
-}
-
-var utils_common$2 = {};
-
-var hasRequiredUtils_common$2;
-
-function requireUtils_common$2 () {
-	if (hasRequiredUtils_common$2) return utils_common$2;
-	hasRequiredUtils_common$2 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(utils_common$2, "__esModule", { value: true });
-	utils_common$2.escapeURLPath = escapeURLPath;
-	utils_common$2.getValueInConnString = getValueInConnString;
-	utils_common$2.extractConnectionStringParts = extractConnectionStringParts;
-	utils_common$2.appendToURLPath = appendToURLPath;
-	utils_common$2.setURLParameter = setURLParameter;
-	utils_common$2.getURLParameter = getURLParameter;
-	utils_common$2.setURLHost = setURLHost;
-	utils_common$2.getURLPath = getURLPath;
-	utils_common$2.getURLScheme = getURLScheme;
-	utils_common$2.getURLPathAndQuery = getURLPathAndQuery;
-	utils_common$2.getURLQueries = getURLQueries;
-	utils_common$2.appendToURLQuery = appendToURLQuery;
-	utils_common$2.truncatedISO8061Date = truncatedISO8061Date;
-	utils_common$2.base64encode = base64encode;
-	utils_common$2.base64decode = base64decode;
-	utils_common$2.generateBlockID = generateBlockID;
-	utils_common$2.delay = delay;
-	utils_common$2.padStart = padStart;
-	utils_common$2.sanitizeURL = sanitizeURL;
-	utils_common$2.sanitizeHeaders = sanitizeHeaders;
-	utils_common$2.iEqual = iEqual;
-	utils_common$2.getAccountNameFromUrl = getAccountNameFromUrl;
-	utils_common$2.isIpEndpointStyle = isIpEndpointStyle;
-	utils_common$2.toBlobTagsString = toBlobTagsString;
-	utils_common$2.toBlobTags = toBlobTags;
-	utils_common$2.toTags = toTags;
-	utils_common$2.toQuerySerialization = toQuerySerialization;
-	utils_common$2.parseObjectReplicationRecord = parseObjectReplicationRecord;
-	utils_common$2.attachCredential = attachCredential;
-	utils_common$2.httpAuthorizationToString = httpAuthorizationToString;
-	utils_common$2.BlobNameToString = BlobNameToString;
-	utils_common$2.ConvertInternalResponseOfListBlobFlat = ConvertInternalResponseOfListBlobFlat;
-	utils_common$2.ConvertInternalResponseOfListBlobHierarchy = ConvertInternalResponseOfListBlobHierarchy;
-	utils_common$2.ExtractPageRangeInfoItems = ExtractPageRangeInfoItems;
-	utils_common$2.EscapePath = EscapePath;
-	utils_common$2.assertResponse = assertResponse;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const constants_js_1 = requireConstants$2();
-	/**
-	 * Reserved URL characters must be properly escaped for Storage services like Blob or File.
-	 *
-	 * ## URL encode and escape strategy for JS SDKs
-	 *
-	 * When customers pass a URL string into XxxClient classes constructor, the URL string may already be URL encoded or not.
-	 * But before sending to Azure Storage server, the URL must be encoded. However, it's hard for a SDK to guess whether the URL
-	 * string has been encoded or not. We have 2 potential strategies, and chose strategy two for the XxxClient constructors.
-	 *
-	 * ### Strategy One: Assume the customer URL string is not encoded, and always encode URL string in SDK.
-	 *
-	 * This is what legacy V2 SDK does, simple and works for most of the cases.
-	 * - When customer URL string is "http://account.blob.core.windows.net/con/b:",
-	 *   SDK will encode it to "http://account.blob.core.windows.net/con/b%3A" and send to server. A blob named "b:" will be created.
-	 * - When customer URL string is "http://account.blob.core.windows.net/con/b%3A",
-	 *   SDK will encode it to "http://account.blob.core.windows.net/con/b%253A" and send to server. A blob named "b%3A" will be created.
-	 *
-	 * But this strategy will make it not possible to create a blob with "?" in it's name. Because when customer URL string is
-	 * "http://account.blob.core.windows.net/con/blob?name", the "?name" will be treated as URL paramter instead of blob name.
-	 * If customer URL string is "http://account.blob.core.windows.net/con/blob%3Fname", a blob named "blob%3Fname" will be created.
-	 * V2 SDK doesn't have this issue because it doesn't allow customer pass in a full URL, it accepts a separate blob name and encodeURIComponent for it.
-	 * We cannot accept a SDK cannot create a blob name with "?". So we implement strategy two:
-	 *
-	 * ### Strategy Two: SDK doesn't assume the URL has been encoded or not. It will just escape the special characters.
-	 *
-	 * This is what V10 Blob Go SDK does. It accepts a URL type in Go, and call url.EscapedPath() to escape the special chars unescaped.
-	 * - When customer URL string is "http://account.blob.core.windows.net/con/b:",
-	 *   SDK will escape ":" like "http://account.blob.core.windows.net/con/b%3A" and send to server. A blob named "b:" will be created.
-	 * - When customer URL string is "http://account.blob.core.windows.net/con/b%3A",
-	 *   There is no special characters, so send "http://account.blob.core.windows.net/con/b%3A" to server. A blob named "b:" will be created.
-	 * - When customer URL string is "http://account.blob.core.windows.net/con/b%253A",
-	 *   There is no special characters, so send "http://account.blob.core.windows.net/con/b%253A" to server. A blob named "b%3A" will be created.
-	 *
-	 * This strategy gives us flexibility to create with any special characters. But "%" will be treated as a special characters, if the URL string
-	 * is not encoded, there shouldn't a "%" in the URL string, otherwise the URL is not a valid URL.
-	 * If customer needs to create a blob with "%" in it's blob name, use "%25" instead of "%". Just like above 3rd sample.
-	 * And following URL strings are invalid:
-	 * - "http://account.blob.core.windows.net/con/b%"
-	 * - "http://account.blob.core.windows.net/con/b%2"
-	 * - "http://account.blob.core.windows.net/con/b%G"
-	 *
-	 * Another special character is "?", use "%2F" to represent a blob name with "?" in a URL string.
-	 *
-	 * ### Strategy for containerName, blobName or other specific XXXName parameters in methods such as `containerClient.getBlobClient(blobName)`
-	 *
-	 * We will apply strategy one, and call encodeURIComponent for these parameters like blobName. Because what customers passes in is a plain name instead of a URL.
-	 *
-	 * @see https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
-	 * @see https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata
-	 *
-	 * @param url -
-	 */
-	function escapeURLPath(url) {
-	    const urlParsed = new URL(url);
-	    let path = urlParsed.pathname;
-	    path = path || "/";
-	    path = escape(path);
-	    urlParsed.pathname = path;
-	    return urlParsed.toString();
-	}
-	function getProxyUriFromDevConnString(connectionString) {
-	    // Development Connection String
-	    // https://learn.microsoft.com/azure/storage/common/storage-configure-connection-string#connect-to-the-emulator-account-using-the-well-known-account-name-and-key
-	    let proxyUri = "";
-	    if (connectionString.search("DevelopmentStorageProxyUri=") !== -1) {
-	        // CONNECTION_STRING=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://myProxyUri
-	        const matchCredentials = connectionString.split(";");
-	        for (const element of matchCredentials) {
-	            if (element.trim().startsWith("DevelopmentStorageProxyUri=")) {
-	                proxyUri = element.trim().match("DevelopmentStorageProxyUri=(.*)")[1];
-	            }
-	        }
-	    }
-	    return proxyUri;
-	}
-	function getValueInConnString(connectionString, argument) {
-	    const elements = connectionString.split(";");
-	    for (const element of elements) {
-	        if (element.trim().startsWith(argument)) {
-	            return element.trim().match(argument + "=(.*)")[1];
-	        }
-	    }
-	    return "";
-	}
-	/**
-	 * Extracts the parts of an Azure Storage account connection string.
-	 *
-	 * @param connectionString - Connection string.
-	 * @returns String key value pairs of the storage account's url and credentials.
-	 */
-	function extractConnectionStringParts(connectionString) {
-	    let proxyUri = "";
-	    if (connectionString.startsWith("UseDevelopmentStorage=true")) {
-	        // Development connection string
-	        proxyUri = getProxyUriFromDevConnString(connectionString);
-	        connectionString = constants_js_1.DevelopmentConnectionString;
-	    }
-	    // Matching BlobEndpoint in the Account connection string
-	    let blobEndpoint = getValueInConnString(connectionString, "BlobEndpoint");
-	    // Slicing off '/' at the end if exists
-	    // (The methods that use `extractConnectionStringParts` expect the url to not have `/` at the end)
-	    blobEndpoint = blobEndpoint.endsWith("/") ? blobEndpoint.slice(0, -1) : blobEndpoint;
-	    if (connectionString.search("DefaultEndpointsProtocol=") !== -1 &&
-	        connectionString.search("AccountKey=") !== -1) {
-	        // Account connection string
-	        let defaultEndpointsProtocol = "";
-	        let accountName = "";
-	        let accountKey = Buffer.from("accountKey", "base64");
-	        let endpointSuffix = "";
-	        // Get account name and key
-	        accountName = getValueInConnString(connectionString, "AccountName");
-	        accountKey = Buffer.from(getValueInConnString(connectionString, "AccountKey"), "base64");
-	        if (!blobEndpoint) {
-	            // BlobEndpoint is not present in the Account connection string
-	            // Can be obtained from `${defaultEndpointsProtocol}://${accountName}.blob.${endpointSuffix}`
-	            defaultEndpointsProtocol = getValueInConnString(connectionString, "DefaultEndpointsProtocol");
-	            const protocol = defaultEndpointsProtocol.toLowerCase();
-	            if (protocol !== "https" && protocol !== "http") {
-	                throw new Error("Invalid DefaultEndpointsProtocol in the provided Connection String. Expecting 'https' or 'http'");
-	            }
-	            endpointSuffix = getValueInConnString(connectionString, "EndpointSuffix");
-	            if (!endpointSuffix) {
-	                throw new Error("Invalid EndpointSuffix in the provided Connection String");
-	            }
-	            blobEndpoint = `${defaultEndpointsProtocol}://${accountName}.blob.${endpointSuffix}`;
-	        }
-	        if (!accountName) {
-	            throw new Error("Invalid AccountName in the provided Connection String");
-	        }
-	        else if (accountKey.length === 0) {
-	            throw new Error("Invalid AccountKey in the provided Connection String");
-	        }
-	        return {
-	            kind: "AccountConnString",
-	            url: blobEndpoint,
-	            accountName,
-	            accountKey,
-	            proxyUri,
-	        };
-	    }
-	    else {
-	        // SAS connection string
-	        let accountSas = getValueInConnString(connectionString, "SharedAccessSignature");
-	        let accountName = getValueInConnString(connectionString, "AccountName");
-	        // if accountName is empty, try to read it from BlobEndpoint
-	        if (!accountName) {
-	            accountName = getAccountNameFromUrl(blobEndpoint);
-	        }
-	        if (!blobEndpoint) {
-	            throw new Error("Invalid BlobEndpoint in the provided SAS Connection String");
-	        }
-	        else if (!accountSas) {
-	            throw new Error("Invalid SharedAccessSignature in the provided SAS Connection String");
-	        }
-	        // client constructors assume accountSas does *not* start with ?
-	        if (accountSas.startsWith("?")) {
-	            accountSas = accountSas.substring(1);
-	        }
-	        return { kind: "SASConnString", url: blobEndpoint, accountName, accountSas };
-	    }
-	}
-	/**
-	 * Internal escape method implemented Strategy Two mentioned in escapeURL() description.
-	 *
-	 * @param text -
-	 */
-	function escape(text) {
-	    return encodeURIComponent(text)
-	        .replace(/%2F/g, "/") // Don't escape for "/"
-	        .replace(/'/g, "%27") // Escape for "'"
-	        .replace(/\+/g, "%20")
-	        .replace(/%25/g, "%"); // Revert encoded "%"
-	}
-	/**
-	 * Append a string to URL path. Will remove duplicated "/" in front of the string
-	 * when URL path ends with a "/".
-	 *
-	 * @param url - Source URL string
-	 * @param name - String to be appended to URL
-	 * @returns An updated URL string
-	 */
-	function appendToURLPath(url, name) {
-	    const urlParsed = new URL(url);
-	    let path = urlParsed.pathname;
-	    path = path ? (path.endsWith("/") ? `${path}${name}` : `${path}/${name}`) : name;
-	    urlParsed.pathname = path;
-	    return urlParsed.toString();
-	}
-	/**
-	 * Set URL parameter name and value. If name exists in URL parameters, old value
-	 * will be replaced by name key. If not provide value, the parameter will be deleted.
-	 *
-	 * @param url - Source URL string
-	 * @param name - Parameter name
-	 * @param value - Parameter value
-	 * @returns An updated URL string
-	 */
-	function setURLParameter(url, name, value) {
-	    const urlParsed = new URL(url);
-	    const encodedName = encodeURIComponent(name);
-	    const encodedValue = value ? encodeURIComponent(value) : undefined;
-	    // mutating searchParams will change the encoding, so we have to do this ourselves
-	    const searchString = urlParsed.search === "" ? "?" : urlParsed.search;
-	    const searchPieces = [];
-	    for (const pair of searchString.slice(1).split("&")) {
-	        if (pair) {
-	            const [key] = pair.split("=", 2);
-	            if (key !== encodedName) {
-	                searchPieces.push(pair);
-	            }
-	        }
-	    }
-	    if (encodedValue) {
-	        searchPieces.push(`${encodedName}=${encodedValue}`);
-	    }
-	    urlParsed.search = searchPieces.length ? `?${searchPieces.join("&")}` : "";
-	    return urlParsed.toString();
-	}
-	/**
-	 * Get URL parameter by name.
-	 *
-	 * @param url -
-	 * @param name -
-	 */
-	function getURLParameter(url, name) {
-	    const urlParsed = new URL(url);
-	    return urlParsed.searchParams.get(name) ?? undefined;
-	}
-	/**
-	 * Set URL host.
-	 *
-	 * @param url - Source URL string
-	 * @param host - New host string
-	 * @returns An updated URL string
-	 */
-	function setURLHost(url, host) {
-	    const urlParsed = new URL(url);
-	    urlParsed.hostname = host;
-	    return urlParsed.toString();
-	}
-	/**
-	 * Get URL path from an URL string.
-	 *
-	 * @param url - Source URL string
-	 */
-	function getURLPath(url) {
-	    try {
-	        const urlParsed = new URL(url);
-	        return urlParsed.pathname;
-	    }
-	    catch (e) {
-	        return undefined;
-	    }
-	}
-	/**
-	 * Get URL scheme from an URL string.
-	 *
-	 * @param url - Source URL string
-	 */
-	function getURLScheme(url) {
-	    try {
-	        const urlParsed = new URL(url);
-	        return urlParsed.protocol.endsWith(":") ? urlParsed.protocol.slice(0, -1) : urlParsed.protocol;
-	    }
-	    catch (e) {
-	        return undefined;
-	    }
-	}
-	/**
-	 * Get URL path and query from an URL string.
-	 *
-	 * @param url - Source URL string
-	 */
-	function getURLPathAndQuery(url) {
-	    const urlParsed = new URL(url);
-	    const pathString = urlParsed.pathname;
-	    if (!pathString) {
-	        throw new RangeError("Invalid url without valid path.");
-	    }
-	    let queryString = urlParsed.search || "";
-	    queryString = queryString.trim();
-	    if (queryString !== "") {
-	        queryString = queryString.startsWith("?") ? queryString : `?${queryString}`; // Ensure query string start with '?'
-	    }
-	    return `${pathString}${queryString}`;
-	}
-	/**
-	 * Get URL query key value pairs from an URL string.
-	 *
-	 * @param url -
-	 */
-	function getURLQueries(url) {
-	    let queryString = new URL(url).search;
-	    if (!queryString) {
-	        return {};
-	    }
-	    queryString = queryString.trim();
-	    queryString = queryString.startsWith("?") ? queryString.substring(1) : queryString;
-	    let querySubStrings = queryString.split("&");
-	    querySubStrings = querySubStrings.filter((value) => {
-	        const indexOfEqual = value.indexOf("=");
-	        const lastIndexOfEqual = value.lastIndexOf("=");
-	        return (indexOfEqual > 0 && indexOfEqual === lastIndexOfEqual && lastIndexOfEqual < value.length - 1);
-	    });
-	    const queries = {};
-	    for (const querySubString of querySubStrings) {
-	        const splitResults = querySubString.split("=");
-	        const key = splitResults[0];
-	        const value = splitResults[1];
-	        queries[key] = value;
-	    }
-	    return queries;
-	}
-	/**
-	 * Append a string to URL query.
-	 *
-	 * @param url - Source URL string.
-	 * @param queryParts - String to be appended to the URL query.
-	 * @returns An updated URL string.
-	 */
-	function appendToURLQuery(url, queryParts) {
-	    const urlParsed = new URL(url);
-	    let query = urlParsed.search;
-	    if (query) {
-	        query += "&" + queryParts;
-	    }
-	    else {
-	        query = queryParts;
-	    }
-	    urlParsed.search = query;
-	    return urlParsed.toString();
-	}
-	/**
-	 * Rounds a date off to seconds.
-	 *
-	 * @param date -
-	 * @param withMilliseconds - If true, YYYY-MM-DDThh:mm:ss.fffffffZ will be returned;
-	 *                                          If false, YYYY-MM-DDThh:mm:ssZ will be returned.
-	 * @returns Date string in ISO8061 format, with or without 7 milliseconds component
-	 */
-	function truncatedISO8061Date(date, withMilliseconds = true) {
-	    // Date.toISOString() will return like "2018-10-29T06:34:36.139Z"
-	    const dateString = date.toISOString();
-	    return withMilliseconds
-	        ? dateString.substring(0, dateString.length - 1) + "0000" + "Z"
-	        : dateString.substring(0, dateString.length - 5) + "Z";
-	}
-	/**
-	 * Base64 encode.
-	 *
-	 * @param content -
-	 */
-	function base64encode(content) {
-	    return !core_util_1.isNodeLike ? btoa(content) : Buffer.from(content).toString("base64");
-	}
-	/**
-	 * Base64 decode.
-	 *
-	 * @param encodedString -
-	 */
-	function base64decode(encodedString) {
-	    return !core_util_1.isNodeLike ? atob(encodedString) : Buffer.from(encodedString, "base64").toString();
-	}
-	/**
-	 * Generate a 64 bytes base64 block ID string.
-	 *
-	 * @param blockIndex -
-	 */
-	function generateBlockID(blockIDPrefix, blockIndex) {
-	    // To generate a 64 bytes base64 string, source string should be 48
-	    const maxSourceStringLength = 48;
-	    // A blob can have a maximum of 100,000 uncommitted blocks at any given time
-	    const maxBlockIndexLength = 6;
-	    const maxAllowedBlockIDPrefixLength = maxSourceStringLength - maxBlockIndexLength;
-	    if (blockIDPrefix.length > maxAllowedBlockIDPrefixLength) {
-	        blockIDPrefix = blockIDPrefix.slice(0, maxAllowedBlockIDPrefixLength);
-	    }
-	    const res = blockIDPrefix +
-	        padStart(blockIndex.toString(), maxSourceStringLength - blockIDPrefix.length, "0");
-	    return base64encode(res);
-	}
-	/**
-	 * Delay specified time interval.
-	 *
-	 * @param timeInMs -
-	 * @param aborter -
-	 * @param abortError -
-	 */
-	async function delay(timeInMs, aborter, abortError) {
-	    return new Promise((resolve, reject) => {
-	        /* eslint-disable-next-line prefer-const */
-	        let timeout;
-	        const abortHandler = () => {
-	            if (timeout !== undefined) {
-	                clearTimeout(timeout);
-	            }
-	            reject(abortError);
-	        };
-	        const resolveHandler = () => {
-	            if (aborter !== undefined) {
-	                aborter.removeEventListener("abort", abortHandler);
-	            }
-	            resolve();
-	        };
-	        timeout = setTimeout(resolveHandler, timeInMs);
-	        if (aborter !== undefined) {
-	            aborter.addEventListener("abort", abortHandler);
-	        }
-	    });
-	}
-	/**
-	 * String.prototype.padStart()
-	 *
-	 * @param currentString -
-	 * @param targetLength -
-	 * @param padString -
-	 */
-	function padStart(currentString, targetLength, padString = " ") {
-	    // @ts-expect-error: TS doesn't know this code needs to run downlevel sometimes
-	    if (String.prototype.padStart) {
-	        return currentString.padStart(targetLength, padString);
-	    }
-	    padString = padString || " ";
-	    if (currentString.length > targetLength) {
-	        return currentString;
-	    }
-	    else {
-	        targetLength = targetLength - currentString.length;
-	        if (targetLength > padString.length) {
-	            padString += padString.repeat(targetLength / padString.length);
-	        }
-	        return padString.slice(0, targetLength) + currentString;
-	    }
-	}
-	function sanitizeURL(url) {
-	    let safeURL = url;
-	    if (getURLParameter(safeURL, constants_js_1.URLConstants.Parameters.SIGNATURE)) {
-	        safeURL = setURLParameter(safeURL, constants_js_1.URLConstants.Parameters.SIGNATURE, "*****");
-	    }
-	    return safeURL;
-	}
-	function sanitizeHeaders(originalHeader) {
-	    const headers = (0, core_rest_pipeline_1.createHttpHeaders)();
-	    for (const [name, value] of originalHeader) {
-	        if (name.toLowerCase() === constants_js_1.HeaderConstants.AUTHORIZATION.toLowerCase()) {
-	            headers.set(name, "*****");
-	        }
-	        else if (name.toLowerCase() === constants_js_1.HeaderConstants.X_MS_COPY_SOURCE) {
-	            headers.set(name, sanitizeURL(value));
-	        }
-	        else {
-	            headers.set(name, value);
-	        }
-	    }
-	    return headers;
-	}
-	/**
-	 * If two strings are equal when compared case insensitive.
-	 *
-	 * @param str1 -
-	 * @param str2 -
-	 */
-	function iEqual(str1, str2) {
-	    return str1.toLocaleLowerCase() === str2.toLocaleLowerCase();
-	}
-	/**
-	 * Extracts account name from the url
-	 * @param url - url to extract the account name from
-	 * @returns with the account name
-	 */
-	function getAccountNameFromUrl(url) {
-	    const parsedUrl = new URL(url);
-	    let accountName;
-	    try {
-	        if (parsedUrl.hostname.split(".")[1] === "blob") {
-	            // `${defaultEndpointsProtocol}://${accountName}.blob.${endpointSuffix}`;
-	            accountName = parsedUrl.hostname.split(".")[0];
-	        }
-	        else if (isIpEndpointStyle(parsedUrl)) {
-	            // IPv4/IPv6 address hosts... Example - http://192.0.0.10:10001/devstoreaccount1/
-	            // Single word domain without a [dot] in the endpoint... Example - http://localhost:10001/devstoreaccount1/
-	            // .getPath() -> /devstoreaccount1/
-	            accountName = parsedUrl.pathname.split("/")[1];
-	        }
-	        else {
-	            // Custom domain case: "https://customdomain.com/containername/blob".
-	            accountName = "";
-	        }
-	        return accountName;
-	    }
-	    catch (error) {
-	        throw new Error("Unable to extract accountName with provided information.");
-	    }
-	}
-	function isIpEndpointStyle(parsedUrl) {
-	    const host = parsedUrl.host;
-	    // Case 1: Ipv6, use a broad regex to find out candidates whose host contains two ':'.
-	    // Case 2: localhost(:port) or host.docker.internal, use broad regex to match port part.
-	    // Case 3: Ipv4, use broad regex which just check if host contains Ipv4.
-	    // For valid host please refer to https://man7.org/linux/man-pages/man7/hostname.7.html.
-	    return (/^.*:.*:.*$|^(localhost|host.docker.internal)(:[0-9]+)?$|^(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])){3}(:[0-9]+)?$/.test(host) ||
-	        (Boolean(parsedUrl.port) && constants_js_1.PathStylePorts.includes(parsedUrl.port)));
-	}
-	/**
-	 * Convert Tags to encoded string.
-	 *
-	 * @param tags -
-	 */
-	function toBlobTagsString(tags) {
-	    if (tags === undefined) {
-	        return undefined;
-	    }
-	    const tagPairs = [];
-	    for (const key in tags) {
-	        if (Object.prototype.hasOwnProperty.call(tags, key)) {
-	            const value = tags[key];
-	            tagPairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-	        }
-	    }
-	    return tagPairs.join("&");
-	}
-	/**
-	 * Convert Tags type to BlobTags.
-	 *
-	 * @param tags -
-	 */
-	function toBlobTags(tags) {
-	    if (tags === undefined) {
-	        return undefined;
-	    }
-	    const res = {
-	        blobTagSet: [],
-	    };
-	    for (const key in tags) {
-	        if (Object.prototype.hasOwnProperty.call(tags, key)) {
-	            const value = tags[key];
-	            res.blobTagSet.push({
-	                key,
-	                value,
-	            });
-	        }
-	    }
-	    return res;
-	}
-	/**
-	 * Covert BlobTags to Tags type.
-	 *
-	 * @param tags -
-	 */
-	function toTags(tags) {
-	    if (tags === undefined) {
-	        return undefined;
-	    }
-	    const res = {};
-	    for (const blobTag of tags.blobTagSet) {
-	        res[blobTag.key] = blobTag.value;
-	    }
-	    return res;
-	}
-	/**
-	 * Convert BlobQueryTextConfiguration to QuerySerialization type.
-	 *
-	 * @param textConfiguration -
-	 */
-	function toQuerySerialization(textConfiguration) {
-	    if (textConfiguration === undefined) {
-	        return undefined;
-	    }
-	    switch (textConfiguration.kind) {
-	        case "csv":
-	            return {
-	                format: {
-	                    type: "delimited",
-	                    delimitedTextConfiguration: {
-	                        columnSeparator: textConfiguration.columnSeparator || ",",
-	                        fieldQuote: textConfiguration.fieldQuote || "",
-	                        recordSeparator: textConfiguration.recordSeparator,
-	                        escapeChar: textConfiguration.escapeCharacter || "",
-	                        headersPresent: textConfiguration.hasHeaders || false,
-	                    },
-	                },
-	            };
-	        case "json":
-	            return {
-	                format: {
-	                    type: "json",
-	                    jsonTextConfiguration: {
-	                        recordSeparator: textConfiguration.recordSeparator,
-	                    },
-	                },
-	            };
-	        case "arrow":
-	            return {
-	                format: {
-	                    type: "arrow",
-	                    arrowConfiguration: {
-	                        schema: textConfiguration.schema,
-	                    },
-	                },
-	            };
-	        case "parquet":
-	            return {
-	                format: {
-	                    type: "parquet",
-	                },
-	            };
-	        default:
-	            throw Error("Invalid BlobQueryTextConfiguration.");
-	    }
-	}
-	function parseObjectReplicationRecord(objectReplicationRecord) {
-	    if (!objectReplicationRecord) {
-	        return undefined;
-	    }
-	    if ("policy-id" in objectReplicationRecord) {
-	        // If the dictionary contains a key with policy id, we are not required to do any parsing since
-	        // the policy id should already be stored in the ObjectReplicationDestinationPolicyId.
-	        return undefined;
-	    }
-	    const orProperties = [];
-	    for (const key in objectReplicationRecord) {
-	        const ids = key.split("_");
-	        const policyPrefix = "or-";
-	        if (ids[0].startsWith(policyPrefix)) {
-	            ids[0] = ids[0].substring(policyPrefix.length);
-	        }
-	        const rule = {
-	            ruleId: ids[1],
-	            replicationStatus: objectReplicationRecord[key],
-	        };
-	        const policyIndex = orProperties.findIndex((policy) => policy.policyId === ids[0]);
-	        if (policyIndex > -1) {
-	            orProperties[policyIndex].rules.push(rule);
-	        }
-	        else {
-	            orProperties.push({
-	                policyId: ids[0],
-	                rules: [rule],
-	            });
-	        }
-	    }
-	    return orProperties;
-	}
-	/**
-	 * Attach a TokenCredential to an object.
-	 *
-	 * @param thing -
-	 * @param credential -
-	 */
-	function attachCredential(thing, credential) {
-	    thing.credential = credential;
-	    return thing;
-	}
-	function httpAuthorizationToString(httpAuthorization) {
-	    return httpAuthorization ? httpAuthorization.scheme + " " + httpAuthorization.value : undefined;
-	}
-	function BlobNameToString(name) {
-	    if (name.encoded) {
-	        return decodeURIComponent(name.content);
-	    }
-	    else {
-	        return name.content;
-	    }
-	}
-	function ConvertInternalResponseOfListBlobFlat(internalResponse) {
-	    return {
-	        ...internalResponse,
-	        segment: {
-	            blobItems: internalResponse.segment.blobItems.map((blobItemInteral) => {
-	                const blobItem = {
-	                    ...blobItemInteral,
-	                    name: BlobNameToString(blobItemInteral.name),
-	                };
-	                return blobItem;
-	            }),
-	        },
-	    };
-	}
-	function ConvertInternalResponseOfListBlobHierarchy(internalResponse) {
-	    return {
-	        ...internalResponse,
-	        segment: {
-	            blobPrefixes: internalResponse.segment.blobPrefixes?.map((blobPrefixInternal) => {
-	                const blobPrefix = {
-	                    ...blobPrefixInternal,
-	                    name: BlobNameToString(blobPrefixInternal.name),
-	                };
-	                return blobPrefix;
-	            }),
-	            blobItems: internalResponse.segment.blobItems.map((blobItemInteral) => {
-	                const blobItem = {
-	                    ...blobItemInteral,
-	                    name: BlobNameToString(blobItemInteral.name),
-	                };
-	                return blobItem;
-	            }),
-	        },
-	    };
-	}
-	function* ExtractPageRangeInfoItems(getPageRangesSegment) {
-	    let pageRange = [];
-	    let clearRange = [];
-	    if (getPageRangesSegment.pageRange)
-	        pageRange = getPageRangesSegment.pageRange;
-	    if (getPageRangesSegment.clearRange)
-	        clearRange = getPageRangesSegment.clearRange;
-	    let pageRangeIndex = 0;
-	    let clearRangeIndex = 0;
-	    while (pageRangeIndex < pageRange.length && clearRangeIndex < clearRange.length) {
-	        if (pageRange[pageRangeIndex].start < clearRange[clearRangeIndex].start) {
-	            yield {
-	                start: pageRange[pageRangeIndex].start,
-	                end: pageRange[pageRangeIndex].end,
-	                isClear: false,
-	            };
-	            ++pageRangeIndex;
-	        }
-	        else {
-	            yield {
-	                start: clearRange[clearRangeIndex].start,
-	                end: clearRange[clearRangeIndex].end,
-	                isClear: true,
-	            };
-	            ++clearRangeIndex;
-	        }
-	    }
-	    for (; pageRangeIndex < pageRange.length; ++pageRangeIndex) {
-	        yield {
-	            start: pageRange[pageRangeIndex].start,
-	            end: pageRange[pageRangeIndex].end,
-	            isClear: false,
-	        };
-	    }
-	    for (; clearRangeIndex < clearRange.length; ++clearRangeIndex) {
-	        yield {
-	            start: clearRange[clearRangeIndex].start,
-	            end: clearRange[clearRangeIndex].end,
-	            isClear: true,
-	        };
-	    }
-	}
-	/**
-	 * Escape the blobName but keep path separator ('/').
-	 */
-	function EscapePath(blobName) {
-	    const split = blobName.split("/");
-	    for (let i = 0; i < split.length; i++) {
-	        split[i] = encodeURIComponent(split[i]);
-	    }
-	    return split.join("/");
-	}
-	/**
-	 * A typesafe helper for ensuring that a given response object has
-	 * the original _response attached.
-	 * @param response - A response object from calling a client operation
-	 * @returns The same object, but with known _response property
-	 */
-	function assertResponse(response) {
-	    if (`_response` in response) {
-	        return response;
-	    }
-	    throw new TypeError(`Unexpected response object ${response}`);
-	}
-	
-	return utils_common$2;
-}
-
-var StorageRetryPolicyType$1 = {};
-
-var hasRequiredStorageRetryPolicyType$1;
-
-function requireStorageRetryPolicyType$1 () {
-	if (hasRequiredStorageRetryPolicyType$1) return StorageRetryPolicyType$1;
-	hasRequiredStorageRetryPolicyType$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(StorageRetryPolicyType$1, "__esModule", { value: true });
-	StorageRetryPolicyType$1.StorageRetryPolicyType = void 0;
-	/**
-	 * RetryPolicy types.
-	 */
-	var StorageRetryPolicyType;
-	(function (StorageRetryPolicyType) {
-	    /**
-	     * Exponential retry. Retry time delay grows exponentially.
-	     */
-	    StorageRetryPolicyType[StorageRetryPolicyType["EXPONENTIAL"] = 0] = "EXPONENTIAL";
-	    /**
-	     * Linear retry. Retry time delay grows linearly.
-	     */
-	    StorageRetryPolicyType[StorageRetryPolicyType["FIXED"] = 1] = "FIXED";
-	})(StorageRetryPolicyType || (StorageRetryPolicyType$1.StorageRetryPolicyType = StorageRetryPolicyType = {}));
-	
-	return StorageRetryPolicyType$1;
-}
-
-var hasRequiredStorageRetryPolicy$1;
-
-function requireStorageRetryPolicy$1 () {
-	if (hasRequiredStorageRetryPolicy$1) return StorageRetryPolicy$1;
-	hasRequiredStorageRetryPolicy$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(StorageRetryPolicy$1, "__esModule", { value: true });
-	StorageRetryPolicy$1.StorageRetryPolicy = void 0;
-	StorageRetryPolicy$1.NewRetryPolicyFactory = NewRetryPolicyFactory;
-	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$4();
-	const RequestPolicy_js_1 = requireRequestPolicy$1();
-	const constants_js_1 = requireConstants$2();
-	const utils_common_js_1 = requireUtils_common$2();
-	const log_js_1 = requireLog$1();
-	const StorageRetryPolicyType_js_1 = requireStorageRetryPolicyType$1();
-	/**
-	 * A factory method used to generated a RetryPolicy factory.
-	 *
-	 * @param retryOptions -
-	 */
-	function NewRetryPolicyFactory(retryOptions) {
-	    return {
-	        create: (nextPolicy, options) => {
-	            return new StorageRetryPolicy(nextPolicy, options, retryOptions);
-	        },
-	    };
-	}
-	// Default values of StorageRetryOptions
-	const DEFAULT_RETRY_OPTIONS = {
-	    maxRetryDelayInMs: 120 * 1000,
-	    maxTries: 4,
-	    retryDelayInMs: 4 * 1000,
-	    retryPolicyType: StorageRetryPolicyType_js_1.StorageRetryPolicyType.EXPONENTIAL,
-	    secondaryHost: "",
-	    tryTimeoutInMs: undefined, // Use server side default timeout strategy
-	};
-	const RETRY_ABORT_ERROR = new abort_controller_1.AbortError("The operation was aborted.");
-	/**
-	 * Retry policy with exponential retry and linear retry implemented.
-	 */
-	class StorageRetryPolicy extends RequestPolicy_js_1.BaseRequestPolicy {
-	    /**
-	     * RetryOptions.
-	     */
-	    retryOptions;
-	    /**
-	     * Creates an instance of RetryPolicy.
-	     *
-	     * @param nextPolicy -
-	     * @param options -
-	     * @param retryOptions -
-	     */
-	    constructor(nextPolicy, options, retryOptions = DEFAULT_RETRY_OPTIONS) {
-	        super(nextPolicy, options);
-	        // Initialize retry options
-	        this.retryOptions = {
-	            retryPolicyType: retryOptions.retryPolicyType
-	                ? retryOptions.retryPolicyType
-	                : DEFAULT_RETRY_OPTIONS.retryPolicyType,
-	            maxTries: retryOptions.maxTries && retryOptions.maxTries >= 1
-	                ? Math.floor(retryOptions.maxTries)
-	                : DEFAULT_RETRY_OPTIONS.maxTries,
-	            tryTimeoutInMs: retryOptions.tryTimeoutInMs && retryOptions.tryTimeoutInMs >= 0
-	                ? retryOptions.tryTimeoutInMs
-	                : DEFAULT_RETRY_OPTIONS.tryTimeoutInMs,
-	            retryDelayInMs: retryOptions.retryDelayInMs && retryOptions.retryDelayInMs >= 0
-	                ? Math.min(retryOptions.retryDelayInMs, retryOptions.maxRetryDelayInMs
-	                    ? retryOptions.maxRetryDelayInMs
-	                    : DEFAULT_RETRY_OPTIONS.maxRetryDelayInMs)
-	                : DEFAULT_RETRY_OPTIONS.retryDelayInMs,
-	            maxRetryDelayInMs: retryOptions.maxRetryDelayInMs && retryOptions.maxRetryDelayInMs >= 0
-	                ? retryOptions.maxRetryDelayInMs
-	                : DEFAULT_RETRY_OPTIONS.maxRetryDelayInMs,
-	            secondaryHost: retryOptions.secondaryHost
-	                ? retryOptions.secondaryHost
-	                : DEFAULT_RETRY_OPTIONS.secondaryHost,
-	        };
-	    }
-	    /**
-	     * Sends request.
-	     *
-	     * @param request -
-	     */
-	    async sendRequest(request) {
-	        return this.attemptSendRequest(request, false, 1);
-	    }
-	    /**
-	     * Decide and perform next retry. Won't mutate request parameter.
-	     *
-	     * @param request -
-	     * @param secondaryHas404 -  If attempt was against the secondary & it returned a StatusNotFound (404), then
-	     *                                   the resource was not found. This may be due to replication delay. So, in this
-	     *                                   case, we'll never try the secondary again for this operation.
-	     * @param attempt -           How many retries has been attempted to performed, starting from 1, which includes
-	     *                                   the attempt will be performed by this method call.
-	     */
-	    async attemptSendRequest(request, secondaryHas404, attempt) {
-	        const newRequest = request.clone();
-	        const isPrimaryRetry = secondaryHas404 ||
-	            !this.retryOptions.secondaryHost ||
-	            !(request.method === "GET" || request.method === "HEAD" || request.method === "OPTIONS") ||
-	            attempt % 2 === 1;
-	        if (!isPrimaryRetry) {
-	            newRequest.url = (0, utils_common_js_1.setURLHost)(newRequest.url, this.retryOptions.secondaryHost);
-	        }
-	        // Set the server-side timeout query parameter "timeout=[seconds]"
-	        if (this.retryOptions.tryTimeoutInMs) {
-	            newRequest.url = (0, utils_common_js_1.setURLParameter)(newRequest.url, constants_js_1.URLConstants.Parameters.TIMEOUT, Math.floor(this.retryOptions.tryTimeoutInMs / 1000).toString());
-	        }
-	        let response;
-	        try {
-	            log_js_1.logger.info(`RetryPolicy: =====> Try=${attempt} ${isPrimaryRetry ? "Primary" : "Secondary"}`);
-	            response = await this._nextPolicy.sendRequest(newRequest);
-	            if (!this.shouldRetry(isPrimaryRetry, attempt, response)) {
-	                return response;
-	            }
-	            secondaryHas404 = secondaryHas404 || (!isPrimaryRetry && response.status === 404);
-	        }
-	        catch (err) {
-	            log_js_1.logger.error(`RetryPolicy: Caught error, message: ${err.message}, code: ${err.code}`);
-	            if (!this.shouldRetry(isPrimaryRetry, attempt, response, err)) {
-	                throw err;
-	            }
-	        }
-	        await this.delay(isPrimaryRetry, attempt, request.abortSignal);
-	        return this.attemptSendRequest(request, secondaryHas404, ++attempt);
-	    }
-	    /**
-	     * Decide whether to retry according to last HTTP response and retry counters.
-	     *
-	     * @param isPrimaryRetry -
-	     * @param attempt -
-	     * @param response -
-	     * @param err -
-	     */
-	    shouldRetry(isPrimaryRetry, attempt, response, err) {
-	        if (attempt >= this.retryOptions.maxTries) {
-	            log_js_1.logger.info(`RetryPolicy: Attempt(s) ${attempt} >= maxTries ${this.retryOptions
-	                .maxTries}, no further try.`);
-	            return false;
-	        }
-	        // Handle network failures, you may need to customize the list when you implement
-	        // your own http client
-	        const retriableErrors = [
-	            "ETIMEDOUT",
-	            "ESOCKETTIMEDOUT",
-	            "ECONNREFUSED",
-	            "ECONNRESET",
-	            "ENOENT",
-	            "ENOTFOUND",
-	            "TIMEOUT",
-	            "EPIPE",
-	            "REQUEST_SEND_ERROR", // For default xhr based http client provided in ms-rest-js
-	        ];
-	        if (err) {
-	            for (const retriableError of retriableErrors) {
-	                if (err.name.toUpperCase().includes(retriableError) ||
-	                    err.message.toUpperCase().includes(retriableError) ||
-	                    (err.code && err.code.toString().toUpperCase() === retriableError)) {
-	                    log_js_1.logger.info(`RetryPolicy: Network error ${retriableError} found, will retry.`);
-	                    return true;
-	                }
-	            }
-	        }
-	        // If attempt was against the secondary & it returned a StatusNotFound (404), then
-	        // the resource was not found. This may be due to replication delay. So, in this
-	        // case, we'll never try the secondary again for this operation.
-	        if (response || err) {
-	            const statusCode = response ? response.status : err ? err.statusCode : 0;
-	            if (!isPrimaryRetry && statusCode === 404) {
-	                log_js_1.logger.info(`RetryPolicy: Secondary access with 404, will retry.`);
-	                return true;
-	            }
-	            // Server internal error or server timeout
-	            if (statusCode === 503 || statusCode === 500) {
-	                log_js_1.logger.info(`RetryPolicy: Will retry for status code ${statusCode}.`);
-	                return true;
-	            }
-	        }
-	        // [Copy source error code] Feature is pending on service side, skip retry on copy source error for now.
-	        // if (response) {
-	        //   // Retry select Copy Source Error Codes.
-	        //   if (response?.status >= 400) {
-	        //     const copySourceError = response.headers.get(HeaderConstants.X_MS_CopySourceErrorCode);
-	        //     if (copySourceError !== undefined) {
-	        //       switch (copySourceError) {
-	        //         case "InternalError":
-	        //         case "OperationTimedOut":
-	        //         case "ServerBusy":
-	        //           return true;
-	        //       }
-	        //     }
-	        //   }
-	        // }
-	        if (err?.code === "PARSE_ERROR" && err?.message.startsWith(`Error "Error: Unclosed root tag`)) {
-	            log_js_1.logger.info("RetryPolicy: Incomplete XML response likely due to service timeout, will retry.");
-	            return true;
-	        }
-	        return false;
-	    }
-	    /**
-	     * Delay a calculated time between retries.
-	     *
-	     * @param isPrimaryRetry -
-	     * @param attempt -
-	     * @param abortSignal -
-	     */
-	    async delay(isPrimaryRetry, attempt, abortSignal) {
-	        let delayTimeInMs = 0;
-	        if (isPrimaryRetry) {
-	            switch (this.retryOptions.retryPolicyType) {
-	                case StorageRetryPolicyType_js_1.StorageRetryPolicyType.EXPONENTIAL:
-	                    delayTimeInMs = Math.min((Math.pow(2, attempt - 1) - 1) * this.retryOptions.retryDelayInMs, this.retryOptions.maxRetryDelayInMs);
-	                    break;
-	                case StorageRetryPolicyType_js_1.StorageRetryPolicyType.FIXED:
-	                    delayTimeInMs = this.retryOptions.retryDelayInMs;
-	                    break;
-	            }
-	        }
-	        else {
-	            delayTimeInMs = Math.random() * 1000;
-	        }
-	        log_js_1.logger.info(`RetryPolicy: Delay for ${delayTimeInMs}ms`);
-	        return (0, utils_common_js_1.delay)(delayTimeInMs, abortSignal, RETRY_ABORT_ERROR);
-	    }
-	}
-	StorageRetryPolicy$1.StorageRetryPolicy = StorageRetryPolicy;
-	
-	return StorageRetryPolicy$1;
-}
-
-var hasRequiredStorageRetryPolicyFactory$1;
-
-function requireStorageRetryPolicyFactory$1 () {
-	if (hasRequiredStorageRetryPolicyFactory$1) return StorageRetryPolicyFactory$1;
-	hasRequiredStorageRetryPolicyFactory$1 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.StorageRetryPolicyFactory = exports.StorageRetryPolicy = exports.StorageRetryPolicyType = void 0;
-		const StorageRetryPolicy_js_1 = requireStorageRetryPolicy$1();
-		Object.defineProperty(exports, "StorageRetryPolicy", { enumerable: true, get: function () { return StorageRetryPolicy_js_1.StorageRetryPolicy; } });
-		const StorageRetryPolicyType_js_1 = requireStorageRetryPolicyType$1();
-		Object.defineProperty(exports, "StorageRetryPolicyType", { enumerable: true, get: function () { return StorageRetryPolicyType_js_1.StorageRetryPolicyType; } });
-		/**
-		 * StorageRetryPolicyFactory is a factory class helping generating {@link StorageRetryPolicy} objects.
-		 */
-		class StorageRetryPolicyFactory {
-		    retryOptions;
-		    /**
-		     * Creates an instance of StorageRetryPolicyFactory.
-		     * @param retryOptions -
-		     */
-		    constructor(retryOptions) {
-		        this.retryOptions = retryOptions;
-		    }
-		    /**
-		     * Creates a StorageRetryPolicy object.
-		     *
-		     * @param nextPolicy -
-		     * @param options -
-		     */
-		    create(nextPolicy, options) {
-		        return new StorageRetryPolicy_js_1.StorageRetryPolicy(nextPolicy, options, this.retryOptions);
-		    }
-		}
-		exports.StorageRetryPolicyFactory = StorageRetryPolicyFactory;
-		
-	} (StorageRetryPolicyFactory$1));
-	return StorageRetryPolicyFactory$1;
-}
-
-var StorageSharedKeyCredential$1 = {};
-
-var StorageSharedKeyCredentialPolicy$1 = {};
-
-var CredentialPolicy$1 = {};
-
-var hasRequiredCredentialPolicy$1;
-
-function requireCredentialPolicy$1 () {
-	if (hasRequiredCredentialPolicy$1) return CredentialPolicy$1;
-	hasRequiredCredentialPolicy$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(CredentialPolicy$1, "__esModule", { value: true });
-	CredentialPolicy$1.CredentialPolicy = void 0;
-	const RequestPolicy_js_1 = requireRequestPolicy$1();
-	/**
-	 * Credential policy used to sign HTTP(S) requests before sending. This is an
-	 * abstract class.
-	 */
-	class CredentialPolicy extends RequestPolicy_js_1.BaseRequestPolicy {
-	    /**
-	     * Sends out request.
-	     *
-	     * @param request -
-	     */
-	    sendRequest(request) {
-	        return this._nextPolicy.sendRequest(this.signRequest(request));
-	    }
-	    /**
-	     * Child classes must implement this method with request signing. This method
-	     * will be executed in {@link sendRequest}.
-	     *
-	     * @param request -
-	     */
-	    signRequest(request) {
-	        // Child classes must override this method with request signing. This method
-	        // will be executed in sendRequest().
-	        return request;
-	    }
-	}
-	CredentialPolicy$1.CredentialPolicy = CredentialPolicy;
-	
-	return CredentialPolicy$1;
-}
-
-var SharedKeyComparator$1 = {};
-
-var hasRequiredSharedKeyComparator$1;
-
-function requireSharedKeyComparator$1 () {
-	if (hasRequiredSharedKeyComparator$1) return SharedKeyComparator$1;
-	hasRequiredSharedKeyComparator$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(SharedKeyComparator$1, "__esModule", { value: true });
-	SharedKeyComparator$1.compareHeader = compareHeader;
-	/*
-	 * We need to imitate .Net culture-aware sorting, which is used in storage service.
-	 * Below tables contain sort-keys for en-US culture.
-	 */
-	const table_lv0 = new Uint32Array([
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x71c, 0x0, 0x71f, 0x721,
-	    0x723, 0x725, 0x0, 0x0, 0x0, 0x72d, 0x803, 0x0, 0x0, 0x733, 0x0, 0xd03, 0xd1a, 0xd1c, 0xd1e,
-	    0xd20, 0xd22, 0xd24, 0xd26, 0xd28, 0xd2a, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xe02, 0xe09, 0xe0a,
-	    0xe1a, 0xe21, 0xe23, 0xe25, 0xe2c, 0xe32, 0xe35, 0xe36, 0xe48, 0xe51, 0xe70, 0xe7c, 0xe7e, 0xe89,
-	    0xe8a, 0xe91, 0xe99, 0xe9f, 0xea2, 0xea4, 0xea6, 0xea7, 0xea9, 0x0, 0x0, 0x0, 0x743, 0x744, 0x748,
-	    0xe02, 0xe09, 0xe0a, 0xe1a, 0xe21, 0xe23, 0xe25, 0xe2c, 0xe32, 0xe35, 0xe36, 0xe48, 0xe51, 0xe70,
-	    0xe7c, 0xe7e, 0xe89, 0xe8a, 0xe91, 0xe99, 0xe9f, 0xea2, 0xea4, 0xea6, 0xea7, 0xea9, 0x0, 0x74c,
-	    0x0, 0x750, 0x0,
-	]);
-	const table_lv2 = new Uint32Array([
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12,
-	    0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12,
-	    0x12, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	]);
-	const table_lv4 = new Uint32Array([
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x8012, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8212, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-	]);
-	function compareHeader(lhs, rhs) {
-	    if (isLessThan(lhs, rhs))
-	        return -1;
-	    return 1;
-	}
-	function isLessThan(lhs, rhs) {
-	    const tables = [table_lv0, table_lv2, table_lv4];
-	    let curr_level = 0;
-	    let i = 0;
-	    let j = 0;
-	    while (curr_level < tables.length) {
-	        if (curr_level === tables.length - 1 && i !== j) {
-	            return i > j;
-	        }
-	        const weight1 = i < lhs.length ? tables[curr_level][lhs[i].charCodeAt(0)] : 0x1;
-	        const weight2 = j < rhs.length ? tables[curr_level][rhs[j].charCodeAt(0)] : 0x1;
-	        if (weight1 === 0x1 && weight2 === 0x1) {
-	            i = 0;
-	            j = 0;
-	            ++curr_level;
-	        }
-	        else if (weight1 === weight2) {
-	            ++i;
-	            ++j;
-	        }
-	        else if (weight1 === 0) {
-	            ++i;
-	        }
-	        else if (weight2 === 0) {
-	            ++j;
-	        }
-	        else {
-	            return weight1 < weight2;
-	        }
-	    }
-	    return false;
-	}
-	
-	return SharedKeyComparator$1;
-}
-
-var hasRequiredStorageSharedKeyCredentialPolicy$1;
-
-function requireStorageSharedKeyCredentialPolicy$1 () {
-	if (hasRequiredStorageSharedKeyCredentialPolicy$1) return StorageSharedKeyCredentialPolicy$1;
-	hasRequiredStorageSharedKeyCredentialPolicy$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(StorageSharedKeyCredentialPolicy$1, "__esModule", { value: true });
-	StorageSharedKeyCredentialPolicy$1.StorageSharedKeyCredentialPolicy = void 0;
-	const constants_js_1 = requireConstants$2();
-	const utils_common_js_1 = requireUtils_common$2();
-	const CredentialPolicy_js_1 = requireCredentialPolicy$1();
-	const SharedKeyComparator_js_1 = requireSharedKeyComparator$1();
-	/**
-	 * StorageSharedKeyCredentialPolicy is a policy used to sign HTTP request with a shared key.
-	 */
-	class StorageSharedKeyCredentialPolicy extends CredentialPolicy_js_1.CredentialPolicy {
-	    /**
-	     * Reference to StorageSharedKeyCredential which generates StorageSharedKeyCredentialPolicy
-	     */
-	    factory;
-	    /**
-	     * Creates an instance of StorageSharedKeyCredentialPolicy.
-	     * @param nextPolicy -
-	     * @param options -
-	     * @param factory -
-	     */
-	    constructor(nextPolicy, options, factory) {
-	        super(nextPolicy, options);
-	        this.factory = factory;
-	    }
-	    /**
-	     * Signs request.
-	     *
-	     * @param request -
-	     */
-	    signRequest(request) {
-	        request.headers.set(constants_js_1.HeaderConstants.X_MS_DATE, new Date().toUTCString());
-	        if (request.body &&
-	            (typeof request.body === "string" || request.body !== undefined) &&
-	            request.body.length > 0) {
-	            request.headers.set(constants_js_1.HeaderConstants.CONTENT_LENGTH, Buffer.byteLength(request.body));
-	        }
-	        const stringToSign = [
-	            request.method.toUpperCase(),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_LANGUAGE),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_ENCODING),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_LENGTH),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_MD5),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_TYPE),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.DATE),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_MODIFIED_SINCE),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_MATCH),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_NONE_MATCH),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_UNMODIFIED_SINCE),
-	            this.getHeaderValueToSign(request, constants_js_1.HeaderConstants.RANGE),
-	        ].join("\n") +
-	            "\n" +
-	            this.getCanonicalizedHeadersString(request) +
-	            this.getCanonicalizedResourceString(request);
-	        const signature = this.factory.computeHMACSHA256(stringToSign);
-	        request.headers.set(constants_js_1.HeaderConstants.AUTHORIZATION, `SharedKey ${this.factory.accountName}:${signature}`);
-	        // console.log(`[URL]:${request.url}`);
-	        // console.log(`[HEADERS]:${request.headers.toString()}`);
-	        // console.log(`[STRING TO SIGN]:${JSON.stringify(stringToSign)}`);
-	        // console.log(`[KEY]: ${request.headers.get(HeaderConstants.AUTHORIZATION)}`);
-	        return request;
-	    }
-	    /**
-	     * Retrieve header value according to shared key sign rules.
-	     * @see https://learn.microsoft.com/rest/api/storageservices/authenticate-with-shared-key
-	     *
-	     * @param request -
-	     * @param headerName -
-	     */
-	    getHeaderValueToSign(request, headerName) {
-	        const value = request.headers.get(headerName);
-	        if (!value) {
-	            return "";
-	        }
-	        // When using version 2015-02-21 or later, if Content-Length is zero, then
-	        // set the Content-Length part of the StringToSign to an empty string.
-	        // https://learn.microsoft.com/rest/api/storageservices/authenticate-with-shared-key
-	        if (headerName === constants_js_1.HeaderConstants.CONTENT_LENGTH && value === "0") {
-	            return "";
-	        }
-	        return value;
-	    }
-	    /**
-	     * To construct the CanonicalizedHeaders portion of the signature string, follow these steps:
-	     * 1. Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date header.
-	     * 2. Convert each HTTP header name to lowercase.
-	     * 3. Sort the headers lexicographically by header name, in ascending order.
-	     *    Each header may appear only once in the string.
-	     * 4. Replace any linear whitespace in the header value with a single space.
-	     * 5. Trim any whitespace around the colon in the header.
-	     * 6. Finally, append a new-line character to each canonicalized header in the resulting list.
-	     *    Construct the CanonicalizedHeaders string by concatenating all headers in this list into a single string.
-	     *
-	     * @param request -
-	     */
-	    getCanonicalizedHeadersString(request) {
-	        let headersArray = request.headers.headersArray().filter((value) => {
-	            return value.name.toLowerCase().startsWith(constants_js_1.HeaderConstants.PREFIX_FOR_STORAGE);
-	        });
-	        headersArray.sort((a, b) => {
-	            return (0, SharedKeyComparator_js_1.compareHeader)(a.name.toLowerCase(), b.name.toLowerCase());
-	        });
-	        // Remove duplicate headers
-	        headersArray = headersArray.filter((value, index, array) => {
-	            if (index > 0 && value.name.toLowerCase() === array[index - 1].name.toLowerCase()) {
-	                return false;
-	            }
-	            return true;
-	        });
-	        let canonicalizedHeadersStringToSign = "";
-	        headersArray.forEach((header) => {
-	            canonicalizedHeadersStringToSign += `${header.name
-	                .toLowerCase()
-	                .trimRight()}:${header.value.trimLeft()}\n`;
-	        });
-	        return canonicalizedHeadersStringToSign;
-	    }
-	    /**
-	     * Retrieves the webResource canonicalized resource string.
-	     *
-	     * @param request -
-	     */
-	    getCanonicalizedResourceString(request) {
-	        const path = (0, utils_common_js_1.getURLPath)(request.url) || "/";
-	        let canonicalizedResourceString = "";
-	        canonicalizedResourceString += `/${this.factory.accountName}${path}`;
-	        const queries = (0, utils_common_js_1.getURLQueries)(request.url);
-	        const lowercaseQueries = {};
-	        if (queries) {
-	            const queryKeys = [];
-	            for (const key in queries) {
-	                if (Object.prototype.hasOwnProperty.call(queries, key)) {
-	                    const lowercaseKey = key.toLowerCase();
-	                    lowercaseQueries[lowercaseKey] = queries[key];
-	                    queryKeys.push(lowercaseKey);
-	                }
-	            }
-	            queryKeys.sort();
-	            for (const key of queryKeys) {
-	                canonicalizedResourceString += `\n${key}:${decodeURIComponent(lowercaseQueries[key])}`;
-	            }
-	        }
-	        return canonicalizedResourceString;
-	    }
-	}
-	StorageSharedKeyCredentialPolicy$1.StorageSharedKeyCredentialPolicy = StorageSharedKeyCredentialPolicy;
-	
-	return StorageSharedKeyCredentialPolicy$1;
-}
-
-var Credential$1 = {};
-
-var hasRequiredCredential$1;
-
-function requireCredential$1 () {
-	if (hasRequiredCredential$1) return Credential$1;
-	hasRequiredCredential$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(Credential$1, "__esModule", { value: true });
-	Credential$1.Credential = void 0;
-	/**
-	 * Credential is an abstract class for Azure Storage HTTP requests signing. This
-	 * class will host an credentialPolicyCreator factory which generates CredentialPolicy.
-	 */
-	class Credential {
-	    /**
-	     * Creates a RequestPolicy object.
-	     *
-	     * @param _nextPolicy -
-	     * @param _options -
-	     */
-	    create(_nextPolicy, _options) {
-	        throw new Error("Method should be implemented in children classes.");
-	    }
-	}
-	Credential$1.Credential = Credential;
-	
-	return Credential$1;
-}
-
-var hasRequiredStorageSharedKeyCredential$1;
-
-function requireStorageSharedKeyCredential$1 () {
-	if (hasRequiredStorageSharedKeyCredential$1) return StorageSharedKeyCredential$1;
-	hasRequiredStorageSharedKeyCredential$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(StorageSharedKeyCredential$1, "__esModule", { value: true });
-	StorageSharedKeyCredential$1.StorageSharedKeyCredential = void 0;
-	const node_crypto_1 = require$$0$g;
-	const StorageSharedKeyCredentialPolicy_js_1 = requireStorageSharedKeyCredentialPolicy$1();
-	const Credential_js_1 = requireCredential$1();
-	/**
-	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
-	 *
-	 * StorageSharedKeyCredential for account key authorization of Azure Storage service.
-	 */
-	class StorageSharedKeyCredential extends Credential_js_1.Credential {
-	    /**
-	     * Azure Storage account name; readonly.
-	     */
-	    accountName;
-	    /**
-	     * Azure Storage account key; readonly.
-	     */
-	    accountKey;
-	    /**
-	     * Creates an instance of StorageSharedKeyCredential.
-	     * @param accountName -
-	     * @param accountKey -
-	     */
-	    constructor(accountName, accountKey) {
-	        super();
-	        this.accountName = accountName;
-	        this.accountKey = Buffer.from(accountKey, "base64");
-	    }
-	    /**
-	     * Creates a StorageSharedKeyCredentialPolicy object.
-	     *
-	     * @param nextPolicy -
-	     * @param options -
-	     */
-	    create(nextPolicy, options) {
-	        return new StorageSharedKeyCredentialPolicy_js_1.StorageSharedKeyCredentialPolicy(nextPolicy, options, this);
-	    }
-	    /**
-	     * Generates a hash signature for an HTTP request or for a SAS.
-	     *
-	     * @param stringToSign -
-	     */
-	    computeHMACSHA256(stringToSign) {
-	        return (0, node_crypto_1.createHmac)("sha256", this.accountKey).update(stringToSign, "utf8").digest("base64");
-	    }
-	}
-	StorageSharedKeyCredential$1.StorageSharedKeyCredential = StorageSharedKeyCredential;
-	
-	return StorageSharedKeyCredential$1;
-}
-
-var AnonymousCredential$1 = {};
-
-var AnonymousCredentialPolicy$1 = {};
-
-var hasRequiredAnonymousCredentialPolicy$1;
-
-function requireAnonymousCredentialPolicy$1 () {
-	if (hasRequiredAnonymousCredentialPolicy$1) return AnonymousCredentialPolicy$1;
-	hasRequiredAnonymousCredentialPolicy$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(AnonymousCredentialPolicy$1, "__esModule", { value: true });
-	AnonymousCredentialPolicy$1.AnonymousCredentialPolicy = void 0;
-	const CredentialPolicy_js_1 = requireCredentialPolicy$1();
-	/**
-	 * AnonymousCredentialPolicy is used with HTTP(S) requests that read public resources
-	 * or for use with Shared Access Signatures (SAS).
-	 */
-	class AnonymousCredentialPolicy extends CredentialPolicy_js_1.CredentialPolicy {
-	    /**
-	     * Creates an instance of AnonymousCredentialPolicy.
-	     * @param nextPolicy -
-	     * @param options -
-	     */
-	    // The base class has a protected constructor. Adding a public one to enable constructing of this class.
-	    /* eslint-disable-next-line @typescript-eslint/no-useless-constructor*/
-	    constructor(nextPolicy, options) {
-	        super(nextPolicy, options);
-	    }
-	}
-	AnonymousCredentialPolicy$1.AnonymousCredentialPolicy = AnonymousCredentialPolicy;
-	
-	return AnonymousCredentialPolicy$1;
-}
-
-var hasRequiredAnonymousCredential$1;
-
-function requireAnonymousCredential$1 () {
-	if (hasRequiredAnonymousCredential$1) return AnonymousCredential$1;
-	hasRequiredAnonymousCredential$1 = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(AnonymousCredential$1, "__esModule", { value: true });
-	AnonymousCredential$1.AnonymousCredential = void 0;
-	const AnonymousCredentialPolicy_js_1 = requireAnonymousCredentialPolicy$1();
-	const Credential_js_1 = requireCredential$1();
-	/**
-	 * AnonymousCredential provides a credentialPolicyCreator member used to create
-	 * AnonymousCredentialPolicy objects. AnonymousCredentialPolicy is used with
-	 * HTTP(S) requests that read public resources or for use with Shared Access
-	 * Signatures (SAS).
-	 */
-	class AnonymousCredential extends Credential_js_1.Credential {
-	    /**
-	     * Creates an {@link AnonymousCredentialPolicy} object.
-	     *
-	     * @param nextPolicy -
-	     * @param options -
-	     */
-	    create(nextPolicy, options) {
-	        return new AnonymousCredentialPolicy_js_1.AnonymousCredentialPolicy(nextPolicy, options);
-	    }
-	}
-	AnonymousCredential$1.AnonymousCredential = AnonymousCredential;
-	
-	return AnonymousCredential$1;
-}
-
-var commonjs$2 = {};
+var commonjs$1 = {};
 
 var BufferScheduler = {};
 
@@ -172520,7 +170636,7 @@ function requireCache$2 () {
 	// Licensed under the MIT License.
 	Object.defineProperty(cache$1, "__esModule", { value: true });
 	cache$1.getCachedDefaultHttpClient = getCachedDefaultHttpClient;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 	let _defaultHttpClient;
 	function getCachedDefaultHttpClient() {
 	    if (!_defaultHttpClient) {
@@ -172532,9 +170648,23 @@ function requireCache$2 () {
 	return cache$1;
 }
 
-var StorageBrowserPolicyFactory$1 = {};
+var interfaces = {};
 
-var StorageBrowserPolicy$1 = {};
+var hasRequiredInterfaces;
+
+function requireInterfaces () {
+	if (hasRequiredInterfaces) return interfaces;
+	hasRequiredInterfaces = 1;
+	// Copyright (c) Microsoft Corporation.
+	// Licensed under the MIT License.
+	Object.defineProperty(interfaces, "__esModule", { value: true });
+	
+	return interfaces;
+}
+
+var StorageBrowserPolicyFactory = {};
+
+var StorageBrowserPolicy = {};
 
 var RequestPolicy = {};
 
@@ -172591,19 +170721,19 @@ function requireRequestPolicy () {
 	return RequestPolicy;
 }
 
-var constants$1 = {};
+var constants$2 = {};
 
-var hasRequiredConstants$1;
+var hasRequiredConstants$2;
 
-function requireConstants$1 () {
-	if (hasRequiredConstants$1) return constants$1;
-	hasRequiredConstants$1 = 1;
+function requireConstants$2 () {
+	if (hasRequiredConstants$2) return constants$2;
+	hasRequiredConstants$2 = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	Object.defineProperty(constants$1, "__esModule", { value: true });
-	constants$1.PathStylePorts = constants$1.DevelopmentConnectionString = constants$1.HeaderConstants = constants$1.URLConstants = constants$1.SDK_VERSION = void 0;
-	constants$1.SDK_VERSION = "1.0.0";
-	constants$1.URLConstants = {
+	Object.defineProperty(constants$2, "__esModule", { value: true });
+	constants$2.PathStylePorts = constants$2.DevelopmentConnectionString = constants$2.HeaderConstants = constants$2.URLConstants = constants$2.SDK_VERSION = void 0;
+	constants$2.SDK_VERSION = "1.0.0";
+	constants$2.URLConstants = {
 	    Parameters: {
 	        FORCE_BROWSER_NO_CACHE: "_",
 	        SIGNATURE: "sig",
@@ -172612,7 +170742,7 @@ function requireConstants$1 () {
 	        TIMEOUT: "timeout",
 	    },
 	};
-	constants$1.HeaderConstants = {
+	constants$2.HeaderConstants = {
 	    AUTHORIZATION: "Authorization",
 	    AUTHORIZATION_SCHEME: "Bearer",
 	    CONTENT_ENCODING: "Content-Encoding",
@@ -172638,10 +170768,10 @@ function requireConstants$1 () {
 	    X_MS_VERSION: "x-ms-version",
 	    X_MS_CopySourceErrorCode: "x-ms-copy-source-error-code",
 	};
-	constants$1.DevelopmentConnectionString = `DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;`;
+	constants$2.DevelopmentConnectionString = `DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;`;
 	/// List of ports used for path style addressing.
 	/// Path style addressing means that storage account is put in URI's Path segment in instead of in host.
-	constants$1.PathStylePorts = [
+	constants$2.PathStylePorts = [
 	    "10000",
 	    "10001",
 	    "10002",
@@ -172664,49 +170794,49 @@ function requireConstants$1 () {
 	    "11104",
 	];
 	
-	return constants$1;
+	return constants$2;
 }
 
-var utils_common$1 = {};
+var utils_common$2 = {};
 
-var hasRequiredUtils_common$1;
+var hasRequiredUtils_common$2;
 
-function requireUtils_common$1 () {
-	if (hasRequiredUtils_common$1) return utils_common$1;
-	hasRequiredUtils_common$1 = 1;
+function requireUtils_common$2 () {
+	if (hasRequiredUtils_common$2) return utils_common$2;
+	hasRequiredUtils_common$2 = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	Object.defineProperty(utils_common$1, "__esModule", { value: true });
-	utils_common$1.escapeURLPath = escapeURLPath;
-	utils_common$1.getValueInConnString = getValueInConnString;
-	utils_common$1.extractConnectionStringParts = extractConnectionStringParts;
-	utils_common$1.appendToURLPath = appendToURLPath;
-	utils_common$1.setURLParameter = setURLParameter;
-	utils_common$1.getURLParameter = getURLParameter;
-	utils_common$1.setURLHost = setURLHost;
-	utils_common$1.getURLPath = getURLPath;
-	utils_common$1.getURLScheme = getURLScheme;
-	utils_common$1.getURLPathAndQuery = getURLPathAndQuery;
-	utils_common$1.getURLQueries = getURLQueries;
-	utils_common$1.appendToURLQuery = appendToURLQuery;
-	utils_common$1.truncatedISO8061Date = truncatedISO8061Date;
-	utils_common$1.base64encode = base64encode;
-	utils_common$1.base64decode = base64decode;
-	utils_common$1.generateBlockID = generateBlockID;
-	utils_common$1.delay = delay;
-	utils_common$1.padStart = padStart;
-	utils_common$1.sanitizeURL = sanitizeURL;
-	utils_common$1.sanitizeHeaders = sanitizeHeaders;
-	utils_common$1.iEqual = iEqual;
-	utils_common$1.getAccountNameFromUrl = getAccountNameFromUrl;
-	utils_common$1.isIpEndpointStyle = isIpEndpointStyle;
-	utils_common$1.attachCredential = attachCredential;
-	utils_common$1.httpAuthorizationToString = httpAuthorizationToString;
-	utils_common$1.EscapePath = EscapePath;
-	utils_common$1.assertResponse = assertResponse;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const constants_js_1 = requireConstants$1();
+	Object.defineProperty(utils_common$2, "__esModule", { value: true });
+	utils_common$2.escapeURLPath = escapeURLPath;
+	utils_common$2.getValueInConnString = getValueInConnString;
+	utils_common$2.extractConnectionStringParts = extractConnectionStringParts;
+	utils_common$2.appendToURLPath = appendToURLPath;
+	utils_common$2.setURLParameter = setURLParameter;
+	utils_common$2.getURLParameter = getURLParameter;
+	utils_common$2.setURLHost = setURLHost;
+	utils_common$2.getURLPath = getURLPath;
+	utils_common$2.getURLScheme = getURLScheme;
+	utils_common$2.getURLPathAndQuery = getURLPathAndQuery;
+	utils_common$2.getURLQueries = getURLQueries;
+	utils_common$2.appendToURLQuery = appendToURLQuery;
+	utils_common$2.truncatedISO8061Date = truncatedISO8061Date;
+	utils_common$2.base64encode = base64encode;
+	utils_common$2.base64decode = base64decode;
+	utils_common$2.generateBlockID = generateBlockID;
+	utils_common$2.delay = delay;
+	utils_common$2.padStart = padStart;
+	utils_common$2.sanitizeURL = sanitizeURL;
+	utils_common$2.sanitizeHeaders = sanitizeHeaders;
+	utils_common$2.iEqual = iEqual;
+	utils_common$2.getAccountNameFromUrl = getAccountNameFromUrl;
+	utils_common$2.isIpEndpointStyle = isIpEndpointStyle;
+	utils_common$2.attachCredential = attachCredential;
+	utils_common$2.httpAuthorizationToString = httpAuthorizationToString;
+	utils_common$2.EscapePath = EscapePath;
+	utils_common$2.assertResponse = assertResponse;
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const constants_js_1 = requireConstants$2();
 	/**
 	 * Reserved URL characters must be properly escaped for Storage services like Blob or File.
 	 *
@@ -172754,8 +170884,8 @@ function requireUtils_common$1 () {
 	 *
 	 * We will apply strategy one, and call encodeURIComponent for these parameters like blobName. Because what customers passes in is a plain name instead of a URL.
 	 *
-	 * @see https://learn.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
-	 * @see https://learn.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata
+	 * @see https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
+	 * @see https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata
 	 *
 	 * @param url -
 	 */
@@ -172769,7 +170899,7 @@ function requireUtils_common$1 () {
 	}
 	function getProxyUriFromDevConnString(connectionString) {
 	    // Development Connection String
-	    // https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string#connect-to-the-emulator-account-using-the-well-known-account-name-and-key
+	    // https://learn.microsoft.com/azure/storage/common/storage-configure-connection-string#connect-to-the-emulator-account-using-the-well-known-account-name-and-key
 	    let proxyUri = "";
 	    if (connectionString.search("DevelopmentStorageProxyUri=") !== -1) {
 	        // CONNECTION_STRING=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://myProxyUri
@@ -173246,22 +171376,22 @@ function requireUtils_common$1 () {
 	    throw new TypeError(`Unexpected response object ${response}`);
 	}
 	
-	return utils_common$1;
+	return utils_common$2;
 }
 
-var hasRequiredStorageBrowserPolicy$1;
+var hasRequiredStorageBrowserPolicy;
 
-function requireStorageBrowserPolicy$1 () {
-	if (hasRequiredStorageBrowserPolicy$1) return StorageBrowserPolicy$1;
-	hasRequiredStorageBrowserPolicy$1 = 1;
+function requireStorageBrowserPolicy () {
+	if (hasRequiredStorageBrowserPolicy) return StorageBrowserPolicy;
+	hasRequiredStorageBrowserPolicy = 1;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	Object.defineProperty(StorageBrowserPolicy$1, "__esModule", { value: true });
-	StorageBrowserPolicy$1.StorageBrowserPolicy = void 0;
+	Object.defineProperty(StorageBrowserPolicy, "__esModule", { value: true });
+	StorageBrowserPolicy.StorageBrowserPolicy = void 0;
 	const RequestPolicy_js_1 = requireRequestPolicy();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const constants_js_1 = requireConstants$1();
-	const utils_common_js_1 = requireUtils_common$1();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const constants_js_1 = requireConstants$2();
+	const utils_common_js_1 = requireUtils_common$2();
 	/**
 	 * StorageBrowserPolicy will handle differences between Node.js and browser runtime, including:
 	 *
@@ -173273,7 +171403,7 @@ function requireStorageBrowserPolicy$1 () {
 	 *
 	 * 3. Remove content-length header to avoid browsers warning
 	 */
-	class StorageBrowserPolicy extends RequestPolicy_js_1.BaseRequestPolicy {
+	let StorageBrowserPolicy$1 = class StorageBrowserPolicy extends RequestPolicy_js_1.BaseRequestPolicy {
 	    /**
 	     * Creates an instance of StorageBrowserPolicy.
 	     * @param nextPolicy -
@@ -173301,23 +171431,23 @@ function requireStorageBrowserPolicy$1 () {
 	        request.headers.remove(constants_js_1.HeaderConstants.CONTENT_LENGTH);
 	        return this._nextPolicy.sendRequest(request);
 	    }
-	}
-	StorageBrowserPolicy$1.StorageBrowserPolicy = StorageBrowserPolicy;
+	};
+	StorageBrowserPolicy.StorageBrowserPolicy = StorageBrowserPolicy$1;
 	
-	return StorageBrowserPolicy$1;
+	return StorageBrowserPolicy;
 }
 
-var hasRequiredStorageBrowserPolicyFactory$1;
+var hasRequiredStorageBrowserPolicyFactory;
 
-function requireStorageBrowserPolicyFactory$1 () {
-	if (hasRequiredStorageBrowserPolicyFactory$1) return StorageBrowserPolicyFactory$1;
-	hasRequiredStorageBrowserPolicyFactory$1 = 1;
+function requireStorageBrowserPolicyFactory () {
+	if (hasRequiredStorageBrowserPolicyFactory) return StorageBrowserPolicyFactory;
+	hasRequiredStorageBrowserPolicyFactory = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.StorageBrowserPolicyFactory = exports.StorageBrowserPolicy = void 0;
-		const StorageBrowserPolicy_js_1 = requireStorageBrowserPolicy$1();
+		const StorageBrowserPolicy_js_1 = requireStorageBrowserPolicy();
 		Object.defineProperty(exports, "StorageBrowserPolicy", { enumerable: true, get: function () { return StorageBrowserPolicy_js_1.StorageBrowserPolicy; } });
 		/**
 		 * StorageBrowserPolicyFactory is a factory class helping generating StorageBrowserPolicy objects.
@@ -173335,8 +171465,8 @@ function requireStorageBrowserPolicyFactory$1 () {
 		}
 		exports.StorageBrowserPolicyFactory = StorageBrowserPolicyFactory;
 		
-	} (StorageBrowserPolicyFactory$1));
-	return StorageBrowserPolicyFactory$1;
+	} (StorageBrowserPolicyFactory));
+	return StorageBrowserPolicyFactory;
 }
 
 var AnonymousCredential = {};
@@ -173578,8 +171708,8 @@ function requireStorageSharedKeyCredentialPolicy () {
 	// Licensed under the MIT License.
 	Object.defineProperty(StorageSharedKeyCredentialPolicy, "__esModule", { value: true });
 	StorageSharedKeyCredentialPolicy.StorageSharedKeyCredentialPolicy = void 0;
-	const constants_js_1 = requireConstants$1();
-	const utils_common_js_1 = requireUtils_common$1();
+	const constants_js_1 = requireConstants$2();
+	const utils_common_js_1 = requireUtils_common$2();
 	const CredentialPolicy_js_1 = requireCredentialPolicy();
 	const SharedKeyComparator_js_1 = requireSharedKeyComparator();
 	/**
@@ -173639,7 +171769,7 @@ function requireStorageSharedKeyCredentialPolicy () {
 	    }
 	    /**
 	     * Retrieve header value according to shared key sign rules.
-	     * @see https://learn.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
+	     * @see https://learn.microsoft.com/rest/api/storageservices/authenticate-with-shared-key
 	     *
 	     * @param request -
 	     * @param headerName -
@@ -173651,7 +171781,7 @@ function requireStorageSharedKeyCredentialPolicy () {
 	        }
 	        // When using version 2015-02-21 or later, if Content-Length is zero, then
 	        // set the Content-Length part of the StringToSign to an empty string.
-	        // https://learn.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
+	        // https://learn.microsoft.com/rest/api/storageservices/authenticate-with-shared-key
 	        if (headerName === constants_js_1.HeaderConstants.CONTENT_LENGTH && value === "0") {
 	            return "";
 	        }
@@ -173788,65 +171918,6 @@ var StorageRetryPolicyFactory = {};
 
 var StorageRetryPolicy = {};
 
-var commonjs$1 = {};
-
-var AbortError$1 = {};
-
-var hasRequiredAbortError;
-
-function requireAbortError () {
-	if (hasRequiredAbortError) return AbortError$1;
-	hasRequiredAbortError = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT license.
-	Object.defineProperty(AbortError$1, "__esModule", { value: true });
-	AbortError$1.AbortError = void 0;
-	/**
-	 * This error is thrown when an asynchronous operation has been aborted.
-	 * Check for this error by testing the `name` that the name property of the
-	 * error matches `"AbortError"`.
-	 *
-	 * @example
-	 * ```ts
-	 * const controller = new AbortController();
-	 * controller.abort();
-	 * try {
-	 *   doAsyncWork(controller.signal)
-	 * } catch (e) {
-	 *   if (e.name === 'AbortError') {
-	 *     // handle abort error here.
-	 *   }
-	 * }
-	 * ```
-	 */
-	class AbortError extends Error {
-	    constructor(message) {
-	        super(message);
-	        this.name = "AbortError";
-	    }
-	}
-	AbortError$1.AbortError = AbortError;
-	
-	return AbortError$1;
-}
-
-var hasRequiredCommonjs$3;
-
-function requireCommonjs$3 () {
-	if (hasRequiredCommonjs$3) return commonjs$1;
-	hasRequiredCommonjs$3 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT license.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.AbortError = void 0;
-		var AbortError_js_1 = requireAbortError();
-		Object.defineProperty(exports, "AbortError", { enumerable: true, get: function () { return AbortError_js_1.AbortError; } });
-		
-	} (commonjs$1));
-	return commonjs$1;
-}
-
 var log = {};
 
 var hasRequiredLog;
@@ -173858,7 +171929,7 @@ function requireLog () {
 	// Licensed under the MIT License.
 	Object.defineProperty(log, "__esModule", { value: true });
 	log.logger = void 0;
-	const logger_1 = /*@__PURE__*/ requireCommonjs$d();
+	const logger_1 = /*@__PURE__*/ requireCommonjs$b();
 	/**
 	 * The `@azure/logger` configuration for this package.
 	 */
@@ -173906,10 +171977,10 @@ function requireStorageRetryPolicy () {
 	Object.defineProperty(StorageRetryPolicy, "__esModule", { value: true });
 	StorageRetryPolicy.StorageRetryPolicy = void 0;
 	StorageRetryPolicy.NewRetryPolicyFactory = NewRetryPolicyFactory;
-	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$3();
+	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$a();
 	const RequestPolicy_js_1 = requireRequestPolicy();
-	const constants_js_1 = requireConstants$1();
-	const utils_common_js_1 = requireUtils_common$1();
+	const constants_js_1 = requireConstants$2();
+	const utils_common_js_1 = requireUtils_common$2();
 	const log_js_1 = requireLog();
 	const StorageRetryPolicyType_js_1 = requireStorageRetryPolicyType();
 	/**
@@ -174076,21 +172147,20 @@ function requireStorageRetryPolicy () {
 	                return true;
 	            }
 	        }
-	        // [Copy source error code] Feature is pending on service side, skip retry on copy source error for now.
-	        // if (response) {
-	        //   // Retry select Copy Source Error Codes.
-	        //   if (response?.status >= 400) {
-	        //     const copySourceError = response.headers.get(HeaderConstants.X_MS_CopySourceErrorCode);
-	        //     if (copySourceError !== undefined) {
-	        //       switch (copySourceError) {
-	        //         case "InternalError":
-	        //         case "OperationTimedOut":
-	        //         case "ServerBusy":
-	        //           return true;
-	        //       }
-	        //     }
-	        //   }
-	        // }
+	        if (response) {
+	            // Retry select Copy Source Error Codes.
+	            if (response?.status >= 400) {
+	                const copySourceError = response.headers.get(constants_js_1.HeaderConstants.X_MS_CopySourceErrorCode);
+	                if (copySourceError !== undefined) {
+	                    switch (copySourceError) {
+	                        case "InternalError":
+	                        case "OperationTimedOut":
+	                        case "ServerBusy":
+	                            return true;
+	                    }
+	                }
+	            }
+	        }
 	        if (err?.code === "PARSE_ERROR" && err?.message.startsWith(`Error "Error: Unclosed root tag`)) {
 	            log_js_1.logger.info("RetryPolicy: Incomplete XML response likely due to service timeout, will retry.");
 	            return true;
@@ -174137,9 +172207,10 @@ function requireStorageRetryPolicyFactory () {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.StorageRetryPolicyFactory = exports.StorageRetryPolicy = exports.StorageRetryPolicyType = void 0;
+		exports.StorageRetryPolicyFactory = exports.NewRetryPolicyFactory = exports.StorageRetryPolicy = exports.StorageRetryPolicyType = void 0;
 		const StorageRetryPolicy_js_1 = requireStorageRetryPolicy();
 		Object.defineProperty(exports, "StorageRetryPolicy", { enumerable: true, get: function () { return StorageRetryPolicy_js_1.StorageRetryPolicy; } });
+		Object.defineProperty(exports, "NewRetryPolicyFactory", { enumerable: true, get: function () { return StorageRetryPolicy_js_1.NewRetryPolicyFactory; } });
 		const StorageRetryPolicyType_js_1 = requireStorageRetryPolicyType();
 		Object.defineProperty(exports, "StorageRetryPolicyType", { enumerable: true, get: function () { return StorageRetryPolicyType_js_1.StorageRetryPolicyType; } });
 		/**
@@ -174170,22 +172241,22 @@ function requireStorageRetryPolicyFactory () {
 	return StorageRetryPolicyFactory;
 }
 
-var StorageBrowserPolicyV2$1 = {};
+var StorageBrowserPolicyV2 = {};
 
-var hasRequiredStorageBrowserPolicyV2$1;
+var hasRequiredStorageBrowserPolicyV2;
 
-function requireStorageBrowserPolicyV2$1 () {
-	if (hasRequiredStorageBrowserPolicyV2$1) return StorageBrowserPolicyV2$1;
-	hasRequiredStorageBrowserPolicyV2$1 = 1;
+function requireStorageBrowserPolicyV2 () {
+	if (hasRequiredStorageBrowserPolicyV2) return StorageBrowserPolicyV2;
+	hasRequiredStorageBrowserPolicyV2 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.storageBrowserPolicyName = void 0;
 		exports.storageBrowserPolicy = storageBrowserPolicy;
-		const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-		const constants_js_1 = requireConstants$1();
-		const utils_common_js_1 = requireUtils_common$1();
+		const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+		const constants_js_1 = requireConstants$2();
+		const utils_common_js_1 = requireUtils_common$2();
 		/**
 		 * The programmatic identifier of the StorageBrowserPolicy.
 		 */
@@ -174212,24 +172283,24 @@ function requireStorageBrowserPolicyV2$1 () {
 		    };
 		}
 		
-	} (StorageBrowserPolicyV2$1));
-	return StorageBrowserPolicyV2$1;
+	} (StorageBrowserPolicyV2));
+	return StorageBrowserPolicyV2;
 }
 
-var StorageCorrectContentLengthPolicy$1 = {};
+var StorageCorrectContentLengthPolicy = {};
 
-var hasRequiredStorageCorrectContentLengthPolicy$1;
+var hasRequiredStorageCorrectContentLengthPolicy;
 
-function requireStorageCorrectContentLengthPolicy$1 () {
-	if (hasRequiredStorageCorrectContentLengthPolicy$1) return StorageCorrectContentLengthPolicy$1;
-	hasRequiredStorageCorrectContentLengthPolicy$1 = 1;
+function requireStorageCorrectContentLengthPolicy () {
+	if (hasRequiredStorageCorrectContentLengthPolicy) return StorageCorrectContentLengthPolicy;
+	hasRequiredStorageCorrectContentLengthPolicy = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.storageCorrectContentLengthPolicyName = void 0;
 		exports.storageCorrectContentLengthPolicy = storageCorrectContentLengthPolicy;
-		const constants_js_1 = requireConstants$1();
+		const constants_js_1 = requireConstants$2();
 		/**
 		 * The programmatic identifier of the storageCorrectContentLengthPolicy.
 		 */
@@ -174254,29 +172325,29 @@ function requireStorageCorrectContentLengthPolicy$1 () {
 		    };
 		}
 		
-	} (StorageCorrectContentLengthPolicy$1));
-	return StorageCorrectContentLengthPolicy$1;
+	} (StorageCorrectContentLengthPolicy));
+	return StorageCorrectContentLengthPolicy;
 }
 
-var StorageRetryPolicyV2$1 = {};
+var StorageRetryPolicyV2 = {};
 
-var hasRequiredStorageRetryPolicyV2$1;
+var hasRequiredStorageRetryPolicyV2;
 
-function requireStorageRetryPolicyV2$1 () {
-	if (hasRequiredStorageRetryPolicyV2$1) return StorageRetryPolicyV2$1;
-	hasRequiredStorageRetryPolicyV2$1 = 1;
+function requireStorageRetryPolicyV2 () {
+	if (hasRequiredStorageRetryPolicyV2) return StorageRetryPolicyV2;
+	hasRequiredStorageRetryPolicyV2 = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.storageRetryPolicyName = void 0;
 		exports.storageRetryPolicy = storageRetryPolicy;
-		const abort_controller_1 = /*@__PURE__*/ requireCommonjs$3();
-		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-		const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+		const abort_controller_1 = /*@__PURE__*/ requireCommonjs$a();
+		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+		const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 		const StorageRetryPolicyFactory_js_1 = requireStorageRetryPolicyFactory();
-		const constants_js_1 = requireConstants$1();
-		const utils_common_js_1 = requireUtils_common$1();
+		const constants_js_1 = requireConstants$2();
+		const utils_common_js_1 = requireUtils_common$2();
 		const log_js_1 = requireLog();
 		/**
 		 * Name of the {@link storageRetryPolicy}
@@ -174348,431 +172419,20 @@ function requireStorageRetryPolicyV2$1 () {
 		                return true;
 		            }
 		        }
-		        // [Copy source error code] Feature is pending on service side, skip retry on copy source error for now.
-		        // if (response) {
-		        //   // Retry select Copy Source Error Codes.
-		        //   if (response?.status >= 400) {
-		        //     const copySourceError = response.headers.get(HeaderConstants.X_MS_CopySourceErrorCode);
-		        //     if (copySourceError !== undefined) {
-		        //       switch (copySourceError) {
-		        //         case "InternalError":
-		        //         case "OperationTimedOut":
-		        //         case "ServerBusy":
-		        //           return true;
-		        //       }
-		        //     }
-		        //   }
-		        // }
-		        return false;
-		    }
-		    function calculateDelay(isPrimaryRetry, attempt) {
-		        let delayTimeInMs = 0;
-		        if (isPrimaryRetry) {
-		            switch (retryPolicyType) {
-		                case StorageRetryPolicyFactory_js_1.StorageRetryPolicyType.EXPONENTIAL:
-		                    delayTimeInMs = Math.min((Math.pow(2, attempt - 1) - 1) * retryDelayInMs, maxRetryDelayInMs);
-		                    break;
-		                case StorageRetryPolicyFactory_js_1.StorageRetryPolicyType.FIXED:
-		                    delayTimeInMs = retryDelayInMs;
-		                    break;
-		            }
-		        }
-		        else {
-		            delayTimeInMs = Math.random() * 1000;
-		        }
-		        log_js_1.logger.info(`RetryPolicy: Delay for ${delayTimeInMs}ms`);
-		        return delayTimeInMs;
-		    }
-		    return {
-		        name: exports.storageRetryPolicyName,
-		        async sendRequest(request, next) {
-		            // Set the server-side timeout query parameter "timeout=[seconds]"
-		            if (tryTimeoutInMs) {
-		                request.url = (0, utils_common_js_1.setURLParameter)(request.url, constants_js_1.URLConstants.Parameters.TIMEOUT, String(Math.floor(tryTimeoutInMs / 1000)));
-		            }
-		            const primaryUrl = request.url;
-		            const secondaryUrl = secondaryHost ? (0, utils_common_js_1.setURLHost)(request.url, secondaryHost) : undefined;
-		            let secondaryHas404 = false;
-		            let attempt = 1;
-		            let retryAgain = true;
-		            let response;
-		            let error;
-		            while (retryAgain) {
-		                const isPrimaryRetry = secondaryHas404 ||
-		                    !secondaryUrl ||
-		                    !["GET", "HEAD", "OPTIONS"].includes(request.method) ||
-		                    attempt % 2 === 1;
-		                request.url = isPrimaryRetry ? primaryUrl : secondaryUrl;
-		                response = undefined;
-		                error = undefined;
-		                try {
-		                    log_js_1.logger.info(`RetryPolicy: =====> Try=${attempt} ${isPrimaryRetry ? "Primary" : "Secondary"}`);
-		                    response = await next(request);
-		                    secondaryHas404 = secondaryHas404 || (!isPrimaryRetry && response.status === 404);
-		                }
-		                catch (e) {
-		                    if ((0, core_rest_pipeline_1.isRestError)(e)) {
-		                        log_js_1.logger.error(`RetryPolicy: Caught error, message: ${e.message}, code: ${e.code}`);
-		                        error = e;
-		                    }
-		                    else {
-		                        log_js_1.logger.error(`RetryPolicy: Caught error, message: ${(0, core_util_1.getErrorMessage)(e)}`);
-		                        throw e;
+		        if (response) {
+		            // Retry select Copy Source Error Codes.
+		            if (response?.status >= 400) {
+		                const copySourceError = response.headers.get(constants_js_1.HeaderConstants.X_MS_CopySourceErrorCode);
+		                if (copySourceError !== undefined) {
+		                    switch (copySourceError) {
+		                        case "InternalError":
+		                        case "OperationTimedOut":
+		                        case "ServerBusy":
+		                            return true;
 		                    }
 		                }
-		                retryAgain = shouldRetry({ isPrimaryRetry, attempt, response, error });
-		                if (retryAgain) {
-		                    await (0, utils_common_js_1.delay)(calculateDelay(isPrimaryRetry, attempt), request.abortSignal, RETRY_ABORT_ERROR);
-		                }
-		                attempt++;
-		            }
-		            if (response) {
-		                return response;
-		            }
-		            throw error ?? new core_rest_pipeline_1.RestError("RetryPolicy failed without known error.");
-		        },
-		    };
-		}
-		
-	} (StorageRetryPolicyV2$1));
-	return StorageRetryPolicyV2$1;
-}
-
-var StorageSharedKeyCredentialPolicyV2$1 = {};
-
-var hasRequiredStorageSharedKeyCredentialPolicyV2$1;
-
-function requireStorageSharedKeyCredentialPolicyV2$1 () {
-	if (hasRequiredStorageSharedKeyCredentialPolicyV2$1) return StorageSharedKeyCredentialPolicyV2$1;
-	hasRequiredStorageSharedKeyCredentialPolicyV2$1 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.storageSharedKeyCredentialPolicyName = void 0;
-		exports.storageSharedKeyCredentialPolicy = storageSharedKeyCredentialPolicy;
-		const node_crypto_1 = require$$0$g;
-		const constants_js_1 = requireConstants$1();
-		const utils_common_js_1 = requireUtils_common$1();
-		const SharedKeyComparator_js_1 = requireSharedKeyComparator();
-		/**
-		 * The programmatic identifier of the storageSharedKeyCredentialPolicy.
-		 */
-		exports.storageSharedKeyCredentialPolicyName = "storageSharedKeyCredentialPolicy";
-		/**
-		 * storageSharedKeyCredentialPolicy handles signing requests using storage account keys.
-		 */
-		function storageSharedKeyCredentialPolicy(options) {
-		    function signRequest(request) {
-		        request.headers.set(constants_js_1.HeaderConstants.X_MS_DATE, new Date().toUTCString());
-		        if (request.body &&
-		            (typeof request.body === "string" || Buffer.isBuffer(request.body)) &&
-		            request.body.length > 0) {
-		            request.headers.set(constants_js_1.HeaderConstants.CONTENT_LENGTH, Buffer.byteLength(request.body));
-		        }
-		        const stringToSign = [
-		            request.method.toUpperCase(),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_LANGUAGE),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_ENCODING),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_LENGTH),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_MD5),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.CONTENT_TYPE),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.DATE),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_MODIFIED_SINCE),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_MATCH),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_NONE_MATCH),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.IF_UNMODIFIED_SINCE),
-		            getHeaderValueToSign(request, constants_js_1.HeaderConstants.RANGE),
-		        ].join("\n") +
-		            "\n" +
-		            getCanonicalizedHeadersString(request) +
-		            getCanonicalizedResourceString(request);
-		        const signature = (0, node_crypto_1.createHmac)("sha256", options.accountKey)
-		            .update(stringToSign, "utf8")
-		            .digest("base64");
-		        request.headers.set(constants_js_1.HeaderConstants.AUTHORIZATION, `SharedKey ${options.accountName}:${signature}`);
-		        // console.log(`[URL]:${request.url}`);
-		        // console.log(`[HEADERS]:${request.headers.toString()}`);
-		        // console.log(`[STRING TO SIGN]:${JSON.stringify(stringToSign)}`);
-		        // console.log(`[KEY]: ${request.headers.get(HeaderConstants.AUTHORIZATION)}`);
-		    }
-		    /**
-		     * Retrieve header value according to shared key sign rules.
-		     * @see https://learn.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
-		     */
-		    function getHeaderValueToSign(request, headerName) {
-		        const value = request.headers.get(headerName);
-		        if (!value) {
-		            return "";
-		        }
-		        // When using version 2015-02-21 or later, if Content-Length is zero, then
-		        // set the Content-Length part of the StringToSign to an empty string.
-		        // https://learn.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
-		        if (headerName === constants_js_1.HeaderConstants.CONTENT_LENGTH && value === "0") {
-		            return "";
-		        }
-		        return value;
-		    }
-		    /**
-		     * To construct the CanonicalizedHeaders portion of the signature string, follow these steps:
-		     * 1. Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date header.
-		     * 2. Convert each HTTP header name to lowercase.
-		     * 3. Sort the headers lexicographically by header name, in ascending order.
-		     *    Each header may appear only once in the string.
-		     * 4. Replace any linear whitespace in the header value with a single space.
-		     * 5. Trim any whitespace around the colon in the header.
-		     * 6. Finally, append a new-line character to each canonicalized header in the resulting list.
-		     *    Construct the CanonicalizedHeaders string by concatenating all headers in this list into a single string.
-		     *
-		     */
-		    function getCanonicalizedHeadersString(request) {
-		        let headersArray = [];
-		        for (const [name, value] of request.headers) {
-		            if (name.toLowerCase().startsWith(constants_js_1.HeaderConstants.PREFIX_FOR_STORAGE)) {
-		                headersArray.push({ name, value });
 		            }
 		        }
-		        headersArray.sort((a, b) => {
-		            return (0, SharedKeyComparator_js_1.compareHeader)(a.name.toLowerCase(), b.name.toLowerCase());
-		        });
-		        // Remove duplicate headers
-		        headersArray = headersArray.filter((value, index, array) => {
-		            if (index > 0 && value.name.toLowerCase() === array[index - 1].name.toLowerCase()) {
-		                return false;
-		            }
-		            return true;
-		        });
-		        let canonicalizedHeadersStringToSign = "";
-		        headersArray.forEach((header) => {
-		            canonicalizedHeadersStringToSign += `${header.name
-		                .toLowerCase()
-		                .trimRight()}:${header.value.trimLeft()}\n`;
-		        });
-		        return canonicalizedHeadersStringToSign;
-		    }
-		    function getCanonicalizedResourceString(request) {
-		        const path = (0, utils_common_js_1.getURLPath)(request.url) || "/";
-		        let canonicalizedResourceString = "";
-		        canonicalizedResourceString += `/${options.accountName}${path}`;
-		        const queries = (0, utils_common_js_1.getURLQueries)(request.url);
-		        const lowercaseQueries = {};
-		        if (queries) {
-		            const queryKeys = [];
-		            for (const key in queries) {
-		                if (Object.prototype.hasOwnProperty.call(queries, key)) {
-		                    const lowercaseKey = key.toLowerCase();
-		                    lowercaseQueries[lowercaseKey] = queries[key];
-		                    queryKeys.push(lowercaseKey);
-		                }
-		            }
-		            queryKeys.sort();
-		            for (const key of queryKeys) {
-		                canonicalizedResourceString += `\n${key}:${decodeURIComponent(lowercaseQueries[key])}`;
-		            }
-		        }
-		        return canonicalizedResourceString;
-		    }
-		    return {
-		        name: exports.storageSharedKeyCredentialPolicyName,
-		        async sendRequest(request, next) {
-		            signRequest(request);
-		            return next(request);
-		        },
-		    };
-		}
-		
-	} (StorageSharedKeyCredentialPolicyV2$1));
-	return StorageSharedKeyCredentialPolicyV2$1;
-}
-
-var hasRequiredCommonjs$2;
-
-function requireCommonjs$2 () {
-	if (hasRequiredCommonjs$2) return commonjs$2;
-	hasRequiredCommonjs$2 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.BaseRequestPolicy = exports.getCachedDefaultHttpClient = void 0;
-		const tslib_1 = require$$0$2;
-		tslib_1.__exportStar(requireBufferScheduler(), exports);
-		var cache_js_1 = requireCache$2();
-		Object.defineProperty(exports, "getCachedDefaultHttpClient", { enumerable: true, get: function () { return cache_js_1.getCachedDefaultHttpClient; } });
-		tslib_1.__exportStar(requireStorageBrowserPolicyFactory$1(), exports);
-		tslib_1.__exportStar(requireAnonymousCredential(), exports);
-		tslib_1.__exportStar(requireCredential(), exports);
-		tslib_1.__exportStar(requireStorageSharedKeyCredential(), exports);
-		tslib_1.__exportStar(requireStorageRetryPolicyFactory(), exports);
-		var RequestPolicy_js_1 = requireRequestPolicy();
-		Object.defineProperty(exports, "BaseRequestPolicy", { enumerable: true, get: function () { return RequestPolicy_js_1.BaseRequestPolicy; } });
-		tslib_1.__exportStar(requireAnonymousCredentialPolicy(), exports);
-		tslib_1.__exportStar(requireCredentialPolicy(), exports);
-		tslib_1.__exportStar(requireStorageBrowserPolicy$1(), exports);
-		tslib_1.__exportStar(requireStorageBrowserPolicyV2$1(), exports);
-		tslib_1.__exportStar(requireStorageCorrectContentLengthPolicy$1(), exports);
-		tslib_1.__exportStar(requireStorageRetryPolicyType(), exports);
-		tslib_1.__exportStar(requireStorageRetryPolicy(), exports);
-		tslib_1.__exportStar(requireStorageRetryPolicyV2$1(), exports);
-		tslib_1.__exportStar(requireStorageSharedKeyCredentialPolicy(), exports);
-		tslib_1.__exportStar(requireStorageSharedKeyCredentialPolicyV2$1(), exports);
-		tslib_1.__exportStar(requireStorageRetryPolicyFactory(), exports);
-		
-	} (commonjs$2));
-	return commonjs$2;
-}
-
-var StorageBrowserPolicyV2 = {};
-
-var hasRequiredStorageBrowserPolicyV2;
-
-function requireStorageBrowserPolicyV2 () {
-	if (hasRequiredStorageBrowserPolicyV2) return StorageBrowserPolicyV2;
-	hasRequiredStorageBrowserPolicyV2 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.storageBrowserPolicyName = void 0;
-		exports.storageBrowserPolicy = storageBrowserPolicy;
-		const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-		const constants_js_1 = requireConstants$2();
-		const utils_common_js_1 = requireUtils_common$2();
-		/**
-		 * The programmatic identifier of the StorageBrowserPolicy.
-		 */
-		exports.storageBrowserPolicyName = "storageBrowserPolicy";
-		/**
-		 * storageBrowserPolicy is a policy used to prevent browsers from caching requests
-		 * and to remove cookies and explicit content-length headers.
-		 */
-		function storageBrowserPolicy() {
-		    return {
-		        name: exports.storageBrowserPolicyName,
-		        async sendRequest(request, next) {
-		            if (core_util_1.isNodeLike) {
-		                return next(request);
-		            }
-		            if (request.method === "GET" || request.method === "HEAD") {
-		                request.url = (0, utils_common_js_1.setURLParameter)(request.url, constants_js_1.URLConstants.Parameters.FORCE_BROWSER_NO_CACHE, new Date().getTime().toString());
-		            }
-		            request.headers.delete(constants_js_1.HeaderConstants.COOKIE);
-		            // According to XHR standards, content-length should be fully controlled by browsers
-		            request.headers.delete(constants_js_1.HeaderConstants.CONTENT_LENGTH);
-		            return next(request);
-		        },
-		    };
-		}
-		
-	} (StorageBrowserPolicyV2));
-	return StorageBrowserPolicyV2;
-}
-
-var StorageRetryPolicyV2 = {};
-
-var hasRequiredStorageRetryPolicyV2;
-
-function requireStorageRetryPolicyV2 () {
-	if (hasRequiredStorageRetryPolicyV2) return StorageRetryPolicyV2;
-	hasRequiredStorageRetryPolicyV2 = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.storageRetryPolicyName = void 0;
-		exports.storageRetryPolicy = storageRetryPolicy;
-		const abort_controller_1 = /*@__PURE__*/ requireCommonjs$4();
-		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-		const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-		const StorageRetryPolicyFactory_js_1 = requireStorageRetryPolicyFactory$1();
-		const constants_js_1 = requireConstants$2();
-		const utils_common_js_1 = requireUtils_common$2();
-		const log_js_1 = requireLog$1();
-		/**
-		 * Name of the {@link storageRetryPolicy}
-		 */
-		exports.storageRetryPolicyName = "storageRetryPolicy";
-		// Default values of StorageRetryOptions
-		const DEFAULT_RETRY_OPTIONS = {
-		    maxRetryDelayInMs: 120 * 1000,
-		    maxTries: 4,
-		    retryDelayInMs: 4 * 1000,
-		    retryPolicyType: StorageRetryPolicyFactory_js_1.StorageRetryPolicyType.EXPONENTIAL,
-		    secondaryHost: "",
-		    tryTimeoutInMs: undefined, // Use server side default timeout strategy
-		};
-		const retriableErrors = [
-		    "ETIMEDOUT",
-		    "ESOCKETTIMEDOUT",
-		    "ECONNREFUSED",
-		    "ECONNRESET",
-		    "ENOENT",
-		    "ENOTFOUND",
-		    "TIMEOUT",
-		    "EPIPE",
-		    "REQUEST_SEND_ERROR",
-		];
-		const RETRY_ABORT_ERROR = new abort_controller_1.AbortError("The operation was aborted.");
-		/**
-		 * Retry policy with exponential retry and linear retry implemented.
-		 */
-		function storageRetryPolicy(options = {}) {
-		    const retryPolicyType = options.retryPolicyType ?? DEFAULT_RETRY_OPTIONS.retryPolicyType;
-		    const maxTries = options.maxTries ?? DEFAULT_RETRY_OPTIONS.maxTries;
-		    const retryDelayInMs = options.retryDelayInMs ?? DEFAULT_RETRY_OPTIONS.retryDelayInMs;
-		    const maxRetryDelayInMs = options.maxRetryDelayInMs ?? DEFAULT_RETRY_OPTIONS.maxRetryDelayInMs;
-		    const secondaryHost = options.secondaryHost ?? DEFAULT_RETRY_OPTIONS.secondaryHost;
-		    const tryTimeoutInMs = options.tryTimeoutInMs ?? DEFAULT_RETRY_OPTIONS.tryTimeoutInMs;
-		    function shouldRetry({ isPrimaryRetry, attempt, response, error, }) {
-		        if (attempt >= maxTries) {
-		            log_js_1.logger.info(`RetryPolicy: Attempt(s) ${attempt} >= maxTries ${maxTries}, no further try.`);
-		            return false;
-		        }
-		        if (error) {
-		            for (const retriableError of retriableErrors) {
-		                if (error.name.toUpperCase().includes(retriableError) ||
-		                    error.message.toUpperCase().includes(retriableError) ||
-		                    (error.code && error.code.toString().toUpperCase() === retriableError)) {
-		                    log_js_1.logger.info(`RetryPolicy: Network error ${retriableError} found, will retry.`);
-		                    return true;
-		                }
-		            }
-		            if (error?.code === "PARSE_ERROR" &&
-		                error?.message.startsWith(`Error "Error: Unclosed root tag`)) {
-		                log_js_1.logger.info("RetryPolicy: Incomplete XML response likely due to service timeout, will retry.");
-		                return true;
-		            }
-		        }
-		        // If attempt was against the secondary & it returned a StatusNotFound (404), then
-		        // the resource was not found. This may be due to replication delay. So, in this
-		        // case, we'll never try the secondary again for this operation.
-		        if (response || error) {
-		            const statusCode = response?.status ?? error?.statusCode ?? 0;
-		            if (!isPrimaryRetry && statusCode === 404) {
-		                log_js_1.logger.info(`RetryPolicy: Secondary access with 404, will retry.`);
-		                return true;
-		            }
-		            // Server internal error or server timeout
-		            if (statusCode === 503 || statusCode === 500) {
-		                log_js_1.logger.info(`RetryPolicy: Will retry for status code ${statusCode}.`);
-		                return true;
-		            }
-		        }
-		        // [Copy source error code] Feature is pending on service side, skip retry on copy source error for now.
-		        // if (response) {
-		        //   // Retry select Copy Source Error Codes.
-		        //   if (response?.status >= 400) {
-		        //     const copySourceError = response.headers.get(HeaderConstants.X_MS_CopySourceErrorCode);
-		        //     if (copySourceError !== undefined) {
-		        //       switch (copySourceError) {
-		        //         case "InternalError":
-		        //         case "OperationTimedOut":
-		        //         case "ServerBusy":
-		        //           return true;
-		        //       }
-		        //     }
-		        //   }
-		        // }
 		        return false;
 		    }
 		    function calculateDelay(isPrimaryRetry, attempt) {
@@ -174864,7 +172524,7 @@ function requireStorageSharedKeyCredentialPolicyV2 () {
 		const node_crypto_1 = require$$0$g;
 		const constants_js_1 = requireConstants$2();
 		const utils_common_js_1 = requireUtils_common$2();
-		const SharedKeyComparator_js_1 = requireSharedKeyComparator$1();
+		const SharedKeyComparator_js_1 = requireSharedKeyComparator();
 		/**
 		 * The programmatic identifier of the storageSharedKeyCredentialPolicy.
 		 */
@@ -174995,140 +172655,385 @@ function requireStorageSharedKeyCredentialPolicyV2 () {
 	return StorageSharedKeyCredentialPolicyV2;
 }
 
-var StorageBrowserPolicyFactory = {};
+var StorageRequestFailureDetailsParserPolicy = {};
 
-var StorageBrowserPolicy = {};
+var hasRequiredStorageRequestFailureDetailsParserPolicy;
 
-var hasRequiredStorageBrowserPolicy;
-
-function requireStorageBrowserPolicy () {
-	if (hasRequiredStorageBrowserPolicy) return StorageBrowserPolicy;
-	hasRequiredStorageBrowserPolicy = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(StorageBrowserPolicy, "__esModule", { value: true });
-	StorageBrowserPolicy.StorageBrowserPolicy = void 0;
-	const RequestPolicy_js_1 = requireRequestPolicy$1();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const constants_js_1 = requireConstants$2();
-	const utils_common_js_1 = requireUtils_common$2();
-	/**
-	 * StorageBrowserPolicy will handle differences between Node.js and browser runtime, including:
-	 *
-	 * 1. Browsers cache GET/HEAD requests by adding conditional headers such as 'IF_MODIFIED_SINCE'.
-	 * StorageBrowserPolicy is a policy used to add a timestamp query to GET/HEAD request URL
-	 * thus avoid the browser cache.
-	 *
-	 * 2. Remove cookie header for security
-	 *
-	 * 3. Remove content-length header to avoid browsers warning
-	 */
-	let StorageBrowserPolicy$1 = class StorageBrowserPolicy extends RequestPolicy_js_1.BaseRequestPolicy {
-	    /**
-	     * Creates an instance of StorageBrowserPolicy.
-	     * @param nextPolicy -
-	     * @param options -
-	     */
-	    // The base class has a protected constructor. Adding a public one to enable constructing of this class.
-	    /* eslint-disable-next-line @typescript-eslint/no-useless-constructor*/
-	    constructor(nextPolicy, options) {
-	        super(nextPolicy, options);
-	    }
-	    /**
-	     * Sends out request.
-	     *
-	     * @param request -
-	     */
-	    async sendRequest(request) {
-	        if (core_util_1.isNodeLike) {
-	            return this._nextPolicy.sendRequest(request);
-	        }
-	        if (request.method.toUpperCase() === "GET" || request.method.toUpperCase() === "HEAD") {
-	            request.url = (0, utils_common_js_1.setURLParameter)(request.url, constants_js_1.URLConstants.Parameters.FORCE_BROWSER_NO_CACHE, new Date().getTime().toString());
-	        }
-	        request.headers.remove(constants_js_1.HeaderConstants.COOKIE);
-	        // According to XHR standards, content-length should be fully controlled by browsers
-	        request.headers.remove(constants_js_1.HeaderConstants.CONTENT_LENGTH);
-	        return this._nextPolicy.sendRequest(request);
-	    }
-	};
-	StorageBrowserPolicy.StorageBrowserPolicy = StorageBrowserPolicy$1;
-	
-	return StorageBrowserPolicy;
-}
-
-var hasRequiredStorageBrowserPolicyFactory;
-
-function requireStorageBrowserPolicyFactory () {
-	if (hasRequiredStorageBrowserPolicyFactory) return StorageBrowserPolicyFactory;
-	hasRequiredStorageBrowserPolicyFactory = 1;
+function requireStorageRequestFailureDetailsParserPolicy () {
+	if (hasRequiredStorageRequestFailureDetailsParserPolicy) return StorageRequestFailureDetailsParserPolicy;
+	hasRequiredStorageRequestFailureDetailsParserPolicy = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.StorageBrowserPolicyFactory = exports.StorageBrowserPolicy = void 0;
-		const StorageBrowserPolicy_js_1 = requireStorageBrowserPolicy();
-		Object.defineProperty(exports, "StorageBrowserPolicy", { enumerable: true, get: function () { return StorageBrowserPolicy_js_1.StorageBrowserPolicy; } });
+		exports.storageRequestFailureDetailsParserPolicyName = void 0;
+		exports.storageRequestFailureDetailsParserPolicy = storageRequestFailureDetailsParserPolicy;
 		/**
-		 * StorageBrowserPolicyFactory is a factory class helping generating StorageBrowserPolicy objects.
+		 * The programmatic identifier of the StorageRequestFailureDetailsParserPolicy.
 		 */
-		class StorageBrowserPolicyFactory {
-		    /**
-		     * Creates a StorageBrowserPolicyFactory object.
-		     *
-		     * @param nextPolicy -
-		     * @param options -
-		     */
-		    create(nextPolicy, options) {
-		        return new StorageBrowserPolicy_js_1.StorageBrowserPolicy(nextPolicy, options);
-		    }
-		}
-		exports.StorageBrowserPolicyFactory = StorageBrowserPolicyFactory;
-		
-	} (StorageBrowserPolicyFactory));
-	return StorageBrowserPolicyFactory;
-}
-
-var StorageCorrectContentLengthPolicy = {};
-
-var hasRequiredStorageCorrectContentLengthPolicy;
-
-function requireStorageCorrectContentLengthPolicy () {
-	if (hasRequiredStorageCorrectContentLengthPolicy) return StorageCorrectContentLengthPolicy;
-	hasRequiredStorageCorrectContentLengthPolicy = 1;
-	(function (exports) {
-		// Copyright (c) Microsoft Corporation.
-		// Licensed under the MIT License.
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.storageCorrectContentLengthPolicyName = void 0;
-		exports.storageCorrectContentLengthPolicy = storageCorrectContentLengthPolicy;
-		const constants_js_1 = requireConstants$2();
+		exports.storageRequestFailureDetailsParserPolicyName = "storageRequestFailureDetailsParserPolicy";
 		/**
-		 * The programmatic identifier of the storageCorrectContentLengthPolicy.
+		 * StorageRequestFailureDetailsParserPolicy
 		 */
-		exports.storageCorrectContentLengthPolicyName = "StorageCorrectContentLengthPolicy";
-		/**
-		 * storageCorrectContentLengthPolicy to correctly set Content-Length header with request body length.
-		 */
-		function storageCorrectContentLengthPolicy() {
-		    function correctContentLength(request) {
-		        if (request.body &&
-		            (typeof request.body === "string" || Buffer.isBuffer(request.body)) &&
-		            request.body.length > 0) {
-		            request.headers.set(constants_js_1.HeaderConstants.CONTENT_LENGTH, Buffer.byteLength(request.body));
-		        }
-		    }
+		function storageRequestFailureDetailsParserPolicy() {
 		    return {
-		        name: exports.storageCorrectContentLengthPolicyName,
+		        name: exports.storageRequestFailureDetailsParserPolicyName,
 		        async sendRequest(request, next) {
-		            correctContentLength(request);
-		            return next(request);
+		            try {
+		                const response = await next(request);
+		                return response;
+		            }
+		            catch (err) {
+		                if (typeof err === "object" &&
+		                    err !== null &&
+		                    err.response &&
+		                    err.response.parsedBody) {
+		                    if (err.response.parsedBody.code === "InvalidHeaderValue" &&
+		                        err.response.parsedBody.HeaderName === "x-ms-version") {
+		                        err.message =
+		                            "The provided service version is not enabled on this storage account. Please see https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-services for additional information.\n";
+		                    }
+		                }
+		                throw err;
+		            }
 		        },
 		    };
 		}
 		
-	} (StorageCorrectContentLengthPolicy));
-	return StorageCorrectContentLengthPolicy;
+	} (StorageRequestFailureDetailsParserPolicy));
+	return StorageRequestFailureDetailsParserPolicy;
+}
+
+var UserDelegationKeyCredential = {};
+
+var hasRequiredUserDelegationKeyCredential;
+
+function requireUserDelegationKeyCredential () {
+	if (hasRequiredUserDelegationKeyCredential) return UserDelegationKeyCredential;
+	hasRequiredUserDelegationKeyCredential = 1;
+	// Copyright (c) Microsoft Corporation.
+	// Licensed under the MIT License.
+	Object.defineProperty(UserDelegationKeyCredential, "__esModule", { value: true });
+	UserDelegationKeyCredential.UserDelegationKeyCredential = void 0;
+	const node_crypto_1 = require$$0$g;
+	/**
+	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
+	 *
+	 * UserDelegationKeyCredential is only used for generation of user delegation SAS.
+	 * @see https://learn.microsoft.com/rest/api/storageservices/create-user-delegation-sas
+	 */
+	let UserDelegationKeyCredential$1 = class UserDelegationKeyCredential {
+	    /**
+	     * Azure Storage account name; readonly.
+	     */
+	    accountName;
+	    /**
+	     * Azure Storage user delegation key; readonly.
+	     */
+	    userDelegationKey;
+	    /**
+	     * Key value in Buffer type.
+	     */
+	    key;
+	    /**
+	     * Creates an instance of UserDelegationKeyCredential.
+	     * @param accountName -
+	     * @param userDelegationKey -
+	     */
+	    constructor(accountName, userDelegationKey) {
+	        this.accountName = accountName;
+	        this.userDelegationKey = userDelegationKey;
+	        this.key = Buffer.from(userDelegationKey.value, "base64");
+	    }
+	    /**
+	     * Generates a hash signature for an HTTP request or for a SAS.
+	     *
+	     * @param stringToSign -
+	     */
+	    computeHMACSHA256(stringToSign) {
+	        // console.log(`stringToSign: ${JSON.stringify(stringToSign)}`);
+	        return (0, node_crypto_1.createHmac)("sha256", this.key).update(stringToSign, "utf8").digest("base64");
+	    }
+	};
+	UserDelegationKeyCredential.UserDelegationKeyCredential = UserDelegationKeyCredential$1;
+	
+	return UserDelegationKeyCredential;
+}
+
+var hasRequiredCommonjs$2;
+
+function requireCommonjs$2 () {
+	if (hasRequiredCommonjs$2) return commonjs$1;
+	hasRequiredCommonjs$2 = 1;
+	(function (exports) {
+		// Copyright (c) Microsoft Corporation.
+		// Licensed under the MIT License.
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.BaseRequestPolicy = exports.getCachedDefaultHttpClient = void 0;
+		const tslib_1 = require$$0$2;
+		tslib_1.__exportStar(requireBufferScheduler(), exports);
+		var cache_js_1 = requireCache$2();
+		Object.defineProperty(exports, "getCachedDefaultHttpClient", { enumerable: true, get: function () { return cache_js_1.getCachedDefaultHttpClient; } });
+		tslib_1.__exportStar(requireInterfaces(), exports);
+		tslib_1.__exportStar(requireStorageBrowserPolicyFactory(), exports);
+		tslib_1.__exportStar(requireAnonymousCredential(), exports);
+		tslib_1.__exportStar(requireCredential(), exports);
+		tslib_1.__exportStar(requireStorageSharedKeyCredential(), exports);
+		tslib_1.__exportStar(requireStorageRetryPolicyFactory(), exports);
+		var RequestPolicy_js_1 = requireRequestPolicy();
+		Object.defineProperty(exports, "BaseRequestPolicy", { enumerable: true, get: function () { return RequestPolicy_js_1.BaseRequestPolicy; } });
+		tslib_1.__exportStar(requireAnonymousCredentialPolicy(), exports);
+		tslib_1.__exportStar(requireCredentialPolicy(), exports);
+		tslib_1.__exportStar(requireStorageBrowserPolicyV2(), exports);
+		tslib_1.__exportStar(requireStorageCorrectContentLengthPolicy(), exports);
+		tslib_1.__exportStar(requireStorageRetryPolicyV2(), exports);
+		tslib_1.__exportStar(requireStorageSharedKeyCredentialPolicy(), exports);
+		tslib_1.__exportStar(requireStorageSharedKeyCredentialPolicyV2(), exports);
+		tslib_1.__exportStar(requireStorageRequestFailureDetailsParserPolicy(), exports);
+		tslib_1.__exportStar(requireUserDelegationKeyCredential(), exports);
+		
+	} (commonjs$1));
+	return commonjs$1;
+}
+
+var constants$1 = {};
+
+var hasRequiredConstants$1;
+
+function requireConstants$1 () {
+	if (hasRequiredConstants$1) return constants$1;
+	hasRequiredConstants$1 = 1;
+	(function (exports) {
+		// Copyright (c) Microsoft Corporation.
+		// Licensed under the MIT License.
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.PathStylePorts = exports.BlobDoesNotUseCustomerSpecifiedEncryption = exports.BlobUsesCustomerSpecifiedEncryptionMsg = exports.StorageBlobLoggingAllowedQueryParameters = exports.StorageBlobLoggingAllowedHeaderNames = exports.DevelopmentConnectionString = exports.EncryptionAlgorithmAES25 = exports.HTTP_VERSION_1_1 = exports.HTTP_LINE_ENDING = exports.BATCH_MAX_PAYLOAD_IN_BYTES = exports.BATCH_MAX_REQUEST = exports.SIZE_1_MB = exports.ETagAny = exports.ETagNone = exports.HeaderConstants = exports.HTTPURLConnection = exports.URLConstants = exports.StorageOAuthScopes = exports.REQUEST_TIMEOUT = exports.DEFAULT_MAX_DOWNLOAD_RETRY_REQUESTS = exports.DEFAULT_BLOB_DOWNLOAD_BLOCK_BYTES = exports.DEFAULT_BLOCK_BUFFER_SIZE_BYTES = exports.BLOCK_BLOB_MAX_BLOCKS = exports.BLOCK_BLOB_MAX_STAGE_BLOCK_BYTES = exports.BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES = exports.SERVICE_VERSION = exports.SDK_VERSION = void 0;
+		exports.SDK_VERSION = "12.31.0";
+		exports.SERVICE_VERSION = "2026-02-06";
+		exports.BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES = 256 * 1024 * 1024; // 256MB
+		exports.BLOCK_BLOB_MAX_STAGE_BLOCK_BYTES = 4000 * 1024 * 1024; // 4000MB
+		exports.BLOCK_BLOB_MAX_BLOCKS = 50000;
+		exports.DEFAULT_BLOCK_BUFFER_SIZE_BYTES = 8 * 1024 * 1024; // 8MB
+		exports.DEFAULT_BLOB_DOWNLOAD_BLOCK_BYTES = 4 * 1024 * 1024; // 4MB
+		exports.DEFAULT_MAX_DOWNLOAD_RETRY_REQUESTS = 5;
+		exports.REQUEST_TIMEOUT = 100 * 1000; // In ms
+		/**
+		 * The OAuth scope to use with Azure Storage.
+		 */
+		exports.StorageOAuthScopes = "https://storage.azure.com/.default";
+		exports.URLConstants = {
+		    Parameters: {
+		        FORCE_BROWSER_NO_CACHE: "_",
+		        SIGNATURE: "sig",
+		        SNAPSHOT: "snapshot",
+		        VERSIONID: "versionid",
+		        TIMEOUT: "timeout",
+		    },
+		};
+		exports.HTTPURLConnection = {
+		    HTTP_ACCEPTED: 202,
+		    HTTP_CONFLICT: 409,
+		    HTTP_NOT_FOUND: 404,
+		    HTTP_PRECON_FAILED: 412,
+		    HTTP_RANGE_NOT_SATISFIABLE: 416,
+		};
+		exports.HeaderConstants = {
+		    AUTHORIZATION: "Authorization",
+		    AUTHORIZATION_SCHEME: "Bearer",
+		    CONTENT_ENCODING: "Content-Encoding",
+		    CONTENT_ID: "Content-ID",
+		    CONTENT_LANGUAGE: "Content-Language",
+		    CONTENT_LENGTH: "Content-Length",
+		    CONTENT_MD5: "Content-Md5",
+		    CONTENT_TRANSFER_ENCODING: "Content-Transfer-Encoding",
+		    CONTENT_TYPE: "Content-Type",
+		    COOKIE: "Cookie",
+		    DATE: "date",
+		    IF_MATCH: "if-match",
+		    IF_MODIFIED_SINCE: "if-modified-since",
+		    IF_NONE_MATCH: "if-none-match",
+		    IF_UNMODIFIED_SINCE: "if-unmodified-since",
+		    PREFIX_FOR_STORAGE: "x-ms-",
+		    RANGE: "Range",
+		    USER_AGENT: "User-Agent",
+		    X_MS_CLIENT_REQUEST_ID: "x-ms-client-request-id",
+		    X_MS_COPY_SOURCE: "x-ms-copy-source",
+		    X_MS_DATE: "x-ms-date",
+		    X_MS_ERROR_CODE: "x-ms-error-code",
+		    X_MS_VERSION: "x-ms-version",
+		    X_MS_CopySourceErrorCode: "x-ms-copy-source-error-code",
+		};
+		exports.ETagNone = "";
+		exports.ETagAny = "*";
+		exports.SIZE_1_MB = 1 * 1024 * 1024;
+		exports.BATCH_MAX_REQUEST = 256;
+		exports.BATCH_MAX_PAYLOAD_IN_BYTES = 4 * exports.SIZE_1_MB;
+		exports.HTTP_LINE_ENDING = "\r\n";
+		exports.HTTP_VERSION_1_1 = "HTTP/1.1";
+		exports.EncryptionAlgorithmAES25 = "AES256";
+		exports.DevelopmentConnectionString = `DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;`;
+		exports.StorageBlobLoggingAllowedHeaderNames = [
+		    "Access-Control-Allow-Origin",
+		    "Cache-Control",
+		    "Content-Length",
+		    "Content-Type",
+		    "Date",
+		    "Request-Id",
+		    "traceparent",
+		    "Transfer-Encoding",
+		    "User-Agent",
+		    "x-ms-client-request-id",
+		    "x-ms-date",
+		    "x-ms-error-code",
+		    "x-ms-request-id",
+		    "x-ms-return-client-request-id",
+		    "x-ms-version",
+		    "Accept-Ranges",
+		    "Content-Disposition",
+		    "Content-Encoding",
+		    "Content-Language",
+		    "Content-MD5",
+		    "Content-Range",
+		    "ETag",
+		    "Last-Modified",
+		    "Server",
+		    "Vary",
+		    "x-ms-content-crc64",
+		    "x-ms-copy-action",
+		    "x-ms-copy-completion-time",
+		    "x-ms-copy-id",
+		    "x-ms-copy-progress",
+		    "x-ms-copy-status",
+		    "x-ms-has-immutability-policy",
+		    "x-ms-has-legal-hold",
+		    "x-ms-lease-state",
+		    "x-ms-lease-status",
+		    "x-ms-range",
+		    "x-ms-request-server-encrypted",
+		    "x-ms-server-encrypted",
+		    "x-ms-snapshot",
+		    "x-ms-source-range",
+		    "If-Match",
+		    "If-Modified-Since",
+		    "If-None-Match",
+		    "If-Unmodified-Since",
+		    "x-ms-access-tier",
+		    "x-ms-access-tier-change-time",
+		    "x-ms-access-tier-inferred",
+		    "x-ms-account-kind",
+		    "x-ms-archive-status",
+		    "x-ms-blob-append-offset",
+		    "x-ms-blob-cache-control",
+		    "x-ms-blob-committed-block-count",
+		    "x-ms-blob-condition-appendpos",
+		    "x-ms-blob-condition-maxsize",
+		    "x-ms-blob-content-disposition",
+		    "x-ms-blob-content-encoding",
+		    "x-ms-blob-content-language",
+		    "x-ms-blob-content-length",
+		    "x-ms-blob-content-md5",
+		    "x-ms-blob-content-type",
+		    "x-ms-blob-public-access",
+		    "x-ms-blob-sequence-number",
+		    "x-ms-blob-type",
+		    "x-ms-copy-destination-snapshot",
+		    "x-ms-creation-time",
+		    "x-ms-default-encryption-scope",
+		    "x-ms-delete-snapshots",
+		    "x-ms-delete-type-permanent",
+		    "x-ms-deny-encryption-scope-override",
+		    "x-ms-encryption-algorithm",
+		    "x-ms-if-sequence-number-eq",
+		    "x-ms-if-sequence-number-le",
+		    "x-ms-if-sequence-number-lt",
+		    "x-ms-incremental-copy",
+		    "x-ms-lease-action",
+		    "x-ms-lease-break-period",
+		    "x-ms-lease-duration",
+		    "x-ms-lease-id",
+		    "x-ms-lease-time",
+		    "x-ms-page-write",
+		    "x-ms-proposed-lease-id",
+		    "x-ms-range-get-content-md5",
+		    "x-ms-rehydrate-priority",
+		    "x-ms-sequence-number-action",
+		    "x-ms-sku-name",
+		    "x-ms-source-content-md5",
+		    "x-ms-source-if-match",
+		    "x-ms-source-if-modified-since",
+		    "x-ms-source-if-none-match",
+		    "x-ms-source-if-unmodified-since",
+		    "x-ms-tag-count",
+		    "x-ms-encryption-key-sha256",
+		    "x-ms-copy-source-error-code",
+		    "x-ms-copy-source-status-code",
+		    "x-ms-if-tags",
+		    "x-ms-source-if-tags",
+		];
+		exports.StorageBlobLoggingAllowedQueryParameters = [
+		    "comp",
+		    "maxresults",
+		    "rscc",
+		    "rscd",
+		    "rsce",
+		    "rscl",
+		    "rsct",
+		    "se",
+		    "si",
+		    "sip",
+		    "sp",
+		    "spr",
+		    "sr",
+		    "srt",
+		    "ss",
+		    "st",
+		    "sv",
+		    "include",
+		    "marker",
+		    "prefix",
+		    "copyid",
+		    "restype",
+		    "blockid",
+		    "blocklisttype",
+		    "delimiter",
+		    "prevsnapshot",
+		    "ske",
+		    "skoid",
+		    "sks",
+		    "skt",
+		    "sktid",
+		    "skv",
+		    "snapshot",
+		];
+		exports.BlobUsesCustomerSpecifiedEncryptionMsg = "BlobUsesCustomerSpecifiedEncryption";
+		exports.BlobDoesNotUseCustomerSpecifiedEncryption = "BlobDoesNotUseCustomerSpecifiedEncryption";
+		/// List of ports used for path style addressing.
+		/// Path style addressing means that storage account is put in URI's Path segment in instead of in host.
+		exports.PathStylePorts = [
+		    "10000",
+		    "10001",
+		    "10002",
+		    "10003",
+		    "10004",
+		    "10100",
+		    "10101",
+		    "10102",
+		    "10103",
+		    "10104",
+		    "11000",
+		    "11001",
+		    "11002",
+		    "11003",
+		    "11004",
+		    "11100",
+		    "11101",
+		    "11102",
+		    "11103",
+		    "11104",
+		];
+		
+	} (constants$1));
+	return constants$1;
 }
 
 var hasRequiredPipeline;
@@ -175145,23 +173050,15 @@ function requirePipeline () {
 		exports.newPipeline = newPipeline;
 		exports.getCoreClientOptions = getCoreClientOptions;
 		exports.getCredentialFromPipeline = getCredentialFromPipeline;
-		const core_http_compat_1 = /*@__PURE__*/ requireCommonjs$6();
-		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-		const core_client_1 = /*@__PURE__*/ requireCommonjs$7();
-		const core_xml_1 = /*@__PURE__*/ requireCommonjs$5();
-		const core_auth_1 = /*@__PURE__*/ requireCommonjs$8();
+		const core_http_compat_1 = /*@__PURE__*/ requireCommonjs$4();
+		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+		const core_client_1 = /*@__PURE__*/ requireCommonjs$5();
+		const core_xml_1 = /*@__PURE__*/ requireCommonjs$3();
+		const core_auth_1 = /*@__PURE__*/ requireCommonjs$6();
 		const log_js_1 = requireLog$1();
-		const StorageRetryPolicyFactory_js_1 = requireStorageRetryPolicyFactory$1();
-		const StorageSharedKeyCredential_js_1 = requireStorageSharedKeyCredential$1();
-		const AnonymousCredential_js_1 = requireAnonymousCredential$1();
-		const constants_js_1 = requireConstants$2();
-		Object.defineProperty(exports, "StorageOAuthScopes", { enumerable: true, get: function () { return constants_js_1.StorageOAuthScopes; } });
 		const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
-		const StorageBrowserPolicyV2_js_1 = requireStorageBrowserPolicyV2();
-		const StorageRetryPolicyV2_js_1 = requireStorageRetryPolicyV2();
-		const StorageSharedKeyCredentialPolicyV2_js_1 = requireStorageSharedKeyCredentialPolicyV2();
-		const StorageBrowserPolicyFactory_js_1 = requireStorageBrowserPolicyFactory();
-		const StorageCorrectContentLengthPolicy_js_1 = requireStorageCorrectContentLengthPolicy();
+		const constants_js_1 = requireConstants$1();
+		Object.defineProperty(exports, "StorageOAuthScopes", { enumerable: true, get: function () { return constants_js_1.StorageOAuthScopes; } });
 		/**
 		 * A helper to decide if a given argument satisfies the Pipeline contract
 		 * @param pipeline - An argument that may be a Pipeline
@@ -175226,7 +173123,7 @@ function requirePipeline () {
 		 */
 		function newPipeline(credential, pipelineOptions = {}) {
 		    if (!credential) {
-		        credential = new AnonymousCredential_js_1.AnonymousCredential();
+		        credential = new storage_common_1.AnonymousCredential();
 		    }
 		    const pipeline = new Pipeline([], pipelineOptions);
 		    pipeline._credential = credential;
@@ -175303,9 +173200,10 @@ function requirePipeline () {
 		        });
 		        corePipeline.removePolicy({ phase: "Retry" });
 		        corePipeline.removePolicy({ name: core_rest_pipeline_1.decompressResponsePolicyName });
-		        corePipeline.addPolicy((0, StorageCorrectContentLengthPolicy_js_1.storageCorrectContentLengthPolicy)());
-		        corePipeline.addPolicy((0, StorageRetryPolicyV2_js_1.storageRetryPolicy)(restOptions.retryOptions), { phase: "Retry" });
-		        corePipeline.addPolicy((0, StorageBrowserPolicyV2_js_1.storageBrowserPolicy)());
+		        corePipeline.addPolicy((0, storage_common_1.storageCorrectContentLengthPolicy)());
+		        corePipeline.addPolicy((0, storage_common_1.storageRetryPolicy)(restOptions.retryOptions), { phase: "Retry" });
+		        corePipeline.addPolicy((0, storage_common_1.storageRequestFailureDetailsParserPolicy)());
+		        corePipeline.addPolicy((0, storage_common_1.storageBrowserPolicy)());
 		        const downlevelResults = processDownlevelPipeline(pipeline);
 		        if (downlevelResults) {
 		            corePipeline.addPolicy(downlevelResults.wrappedPolicies, downlevelResults.afterRetry ? { afterPhase: "Retry" } : undefined);
@@ -175318,8 +173216,8 @@ function requirePipeline () {
 		                challengeCallbacks: { authorizeRequestOnChallenge: core_client_1.authorizeRequestOnTenantChallenge },
 		            }), { phase: "Sign" });
 		        }
-		        else if (credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) {
-		            corePipeline.addPolicy((0, StorageSharedKeyCredentialPolicyV2_js_1.storageSharedKeyCredentialPolicy)({
+		        else if (credential instanceof storage_common_1.StorageSharedKeyCredential) {
+		            corePipeline.addPolicy((0, storage_common_1.storageSharedKeyCredentialPolicy)({
 		                accountName: credential.accountName,
 		                accountKey: credential.accountKey,
 		            }), { phase: "Sign" });
@@ -175339,7 +173237,7 @@ function requirePipeline () {
 		        return pipeline._credential;
 		    }
 		    // if it came from another package, loop over the factories and look for one like before
-		    let credential = new AnonymousCredential_js_1.AnonymousCredential();
+		    let credential = new storage_common_1.AnonymousCredential();
 		    for (const factory of pipeline.factories) {
 		        if ((0, core_auth_1.isTokenCredential)(factory.credential)) {
 		            // Only works if the factory has been attached a "credential" property.
@@ -175353,13 +173251,13 @@ function requirePipeline () {
 		    return credential;
 		}
 		function isStorageSharedKeyCredential(factory) {
-		    if (factory instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) {
+		    if (factory instanceof storage_common_1.StorageSharedKeyCredential) {
 		        return true;
 		    }
 		    return factory.constructor.name === "StorageSharedKeyCredential";
 		}
 		function isAnonymousCredential(factory) {
-		    if (factory instanceof AnonymousCredential_js_1.AnonymousCredential) {
+		    if (factory instanceof storage_common_1.AnonymousCredential) {
 		        return true;
 		    }
 		    return factory.constructor.name === "AnonymousCredential";
@@ -175368,13 +173266,13 @@ function requirePipeline () {
 		    return (0, core_auth_1.isTokenCredential)(factory.credential);
 		}
 		function isStorageBrowserPolicyFactory(factory) {
-		    if (factory instanceof StorageBrowserPolicyFactory_js_1.StorageBrowserPolicyFactory) {
+		    if (factory instanceof storage_common_1.StorageBrowserPolicyFactory) {
 		        return true;
 		    }
 		    return factory.constructor.name === "StorageBrowserPolicyFactory";
 		}
 		function isStorageRetryPolicyFactory(factory) {
-		    if (factory instanceof StorageRetryPolicyFactory_js_1.StorageRetryPolicyFactory) {
+		    if (factory instanceof storage_common_1.StorageRetryPolicyFactory) {
 		        return true;
 		    }
 		    return factory.constructor.name === "StorageRetryPolicyFactory";
@@ -176019,6 +173917,27 @@ function requireMappers () {
 	            message: {
 	                serializedName: "Message",
 	                xmlName: "Message",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "CopySourceStatusCode",
+	                xmlName: "CopySourceStatusCode",
+	                type: {
+	                    name: "Number",
+	                },
+	            },
+	            copySourceErrorCode: {
+	                serializedName: "CopySourceErrorCode",
+	                xmlName: "CopySourceErrorCode",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceErrorMessage: {
+	                serializedName: "CopySourceErrorMessage",
+	                xmlName: "CopySourceErrorMessage",
 	                type: {
 	                    name: "String",
 	                },
@@ -181357,6 +179276,20 @@ function requireMappers () {
 	                    name: "String",
 	                },
 	            },
+	            copySourceErrorCode: {
+	                serializedName: "x-ms-copy-source-error-code",
+	                xmlName: "x-ms-copy-source-error-code",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "x-ms-copy-source-status-code",
+	                xmlName: "x-ms-copy-source-status-code",
+	                type: {
+	                    name: "Number",
+	                },
+	            },
 	        },
 	    },
 	};
@@ -181472,6 +179405,20 @@ function requireMappers () {
 	                xmlName: "x-ms-error-code",
 	                type: {
 	                    name: "String",
+	                },
+	            },
+	            copySourceErrorCode: {
+	                serializedName: "x-ms-copy-source-error-code",
+	                xmlName: "x-ms-copy-source-error-code",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "x-ms-copy-source-status-code",
+	                xmlName: "x-ms-copy-source-status-code",
+	                type: {
+	                    name: "Number",
 	                },
 	            },
 	        },
@@ -182500,6 +180447,20 @@ function requireMappers () {
 	                    name: "String",
 	                },
 	            },
+	            copySourceErrorCode: {
+	                serializedName: "x-ms-copy-source-error-code",
+	                xmlName: "x-ms-copy-source-error-code",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "x-ms-copy-source-status-code",
+	                xmlName: "x-ms-copy-source-status-code",
+	                type: {
+	                    name: "Number",
+	                },
+	            },
 	        },
 	    },
 	};
@@ -183261,6 +181222,20 @@ function requireMappers () {
 	                    name: "String",
 	                },
 	            },
+	            copySourceErrorCode: {
+	                serializedName: "x-ms-copy-source-error-code",
+	                xmlName: "x-ms-copy-source-error-code",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "x-ms-copy-source-status-code",
+	                xmlName: "x-ms-copy-source-status-code",
+	                type: {
+	                    name: "Number",
+	                },
+	            },
 	        },
 	    },
 	};
@@ -183553,6 +181528,20 @@ function requireMappers () {
 	                    name: "String",
 	                },
 	            },
+	            copySourceErrorCode: {
+	                serializedName: "x-ms-copy-source-error-code",
+	                xmlName: "x-ms-copy-source-error-code",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "x-ms-copy-source-status-code",
+	                xmlName: "x-ms-copy-source-status-code",
+	                type: {
+	                    name: "Number",
+	                },
+	            },
 	        },
 	    },
 	};
@@ -183741,6 +181730,20 @@ function requireMappers () {
 	                xmlName: "x-ms-error-code",
 	                type: {
 	                    name: "String",
+	                },
+	            },
+	            copySourceErrorCode: {
+	                serializedName: "x-ms-copy-source-error-code",
+	                xmlName: "x-ms-copy-source-error-code",
+	                type: {
+	                    name: "String",
+	                },
+	            },
+	            copySourceStatusCode: {
+	                serializedName: "x-ms-copy-source-status-code",
+	                xmlName: "x-ms-copy-source-status-code",
+	                type: {
+	                    name: "Number",
 	                },
 	            },
 	        },
@@ -183970,8 +181973,8 @@ function requireParameters () {
 	 */
 	Object.defineProperty(parameters, "__esModule", { value: true });
 	parameters.action3 = parameters.action2 = parameters.leaseId1 = parameters.action1 = parameters.proposedLeaseId = parameters.duration = parameters.action = parameters.comp10 = parameters.sourceLeaseId = parameters.sourceContainerName = parameters.comp9 = parameters.deletedContainerVersion = parameters.deletedContainerName = parameters.comp8 = parameters.containerAcl = parameters.comp7 = parameters.comp6 = parameters.ifUnmodifiedSince = parameters.ifModifiedSince = parameters.leaseId = parameters.preventEncryptionScopeOverride = parameters.defaultEncryptionScope = parameters.access = parameters.metadata = parameters.restype2 = parameters.where = parameters.comp5 = parameters.multipartContentType = parameters.contentLength = parameters.comp4 = parameters.body = parameters.restype1 = parameters.comp3 = parameters.keyInfo = parameters.include = parameters.maxPageSize = parameters.marker = parameters.prefix = parameters.comp2 = parameters.comp1 = parameters.accept1 = parameters.requestId = parameters.version = parameters.timeoutInSeconds = parameters.comp = parameters.restype = parameters.url = parameters.accept = parameters.blobServiceProperties = parameters.contentType = void 0;
-	parameters.fileRequestIntent = parameters.copySourceTags = parameters.copySourceAuthorization = parameters.sourceContentMD5 = parameters.xMsRequiresSync = parameters.legalHold1 = parameters.sealBlob = parameters.blobTagsString = parameters.copySource = parameters.sourceIfTags = parameters.sourceIfNoneMatch = parameters.sourceIfMatch = parameters.sourceIfUnmodifiedSince = parameters.sourceIfModifiedSince = parameters.rehydratePriority = parameters.tier = parameters.comp14 = parameters.encryptionScope = parameters.legalHold = parameters.comp13 = parameters.immutabilityPolicyMode = parameters.immutabilityPolicyExpiry = parameters.comp12 = parameters.blobContentDisposition = parameters.blobContentLanguage = parameters.blobContentEncoding = parameters.blobContentMD5 = parameters.blobContentType = parameters.blobCacheControl = parameters.expiresOn = parameters.expiryOptions = parameters.comp11 = parameters.blobDeleteType = parameters.deleteSnapshots = parameters.ifTags = parameters.ifNoneMatch = parameters.ifMatch = parameters.encryptionAlgorithm = parameters.encryptionKeySha256 = parameters.encryptionKey = parameters.rangeGetContentCRC64 = parameters.rangeGetContentMD5 = parameters.range = parameters.versionId = parameters.snapshot = parameters.delimiter = parameters.include1 = parameters.proposedLeaseId1 = parameters.action4 = parameters.breakPeriod = void 0;
-	parameters.listType = parameters.comp25 = parameters.blocks = parameters.blockId = parameters.comp24 = parameters.copySourceBlobProperties = parameters.blobType2 = parameters.comp23 = parameters.sourceRange1 = parameters.appendPosition = parameters.maxSize = parameters.comp22 = parameters.blobType1 = parameters.comp21 = parameters.sequenceNumberAction = parameters.prevSnapshotUrl = parameters.prevsnapshot = parameters.comp20 = parameters.range1 = parameters.sourceContentCrc64 = parameters.sourceRange = parameters.sourceUrl = parameters.pageWrite1 = parameters.ifSequenceNumberEqualTo = parameters.ifSequenceNumberLessThan = parameters.ifSequenceNumberLessThanOrEqualTo = parameters.pageWrite = parameters.comp19 = parameters.accept2 = parameters.body1 = parameters.contentType1 = parameters.blobSequenceNumber = parameters.blobContentLength = parameters.blobType = parameters.transactionalContentCrc64 = parameters.transactionalContentMD5 = parameters.tags = parameters.comp18 = parameters.comp17 = parameters.queryRequest = parameters.tier1 = parameters.comp16 = parameters.copyId = parameters.copyActionAbortConstant = parameters.comp15 = void 0;
+	parameters.copySourceTags = parameters.copySourceAuthorization = parameters.sourceContentMD5 = parameters.xMsRequiresSync = parameters.legalHold1 = parameters.sealBlob = parameters.blobTagsString = parameters.copySource = parameters.sourceIfTags = parameters.sourceIfNoneMatch = parameters.sourceIfMatch = parameters.sourceIfUnmodifiedSince = parameters.sourceIfModifiedSince = parameters.rehydratePriority = parameters.tier = parameters.comp14 = parameters.encryptionScope = parameters.legalHold = parameters.comp13 = parameters.immutabilityPolicyMode = parameters.immutabilityPolicyExpiry = parameters.comp12 = parameters.blobContentDisposition = parameters.blobContentLanguage = parameters.blobContentEncoding = parameters.blobContentMD5 = parameters.blobContentType = parameters.blobCacheControl = parameters.expiresOn = parameters.expiryOptions = parameters.comp11 = parameters.blobDeleteType = parameters.deleteSnapshots = parameters.ifTags = parameters.ifNoneMatch = parameters.ifMatch = parameters.encryptionAlgorithm = parameters.encryptionKeySha256 = parameters.encryptionKey = parameters.rangeGetContentCRC64 = parameters.rangeGetContentMD5 = parameters.range = parameters.versionId = parameters.snapshot = parameters.delimiter = parameters.startFrom = parameters.include1 = parameters.proposedLeaseId1 = parameters.action4 = parameters.breakPeriod = void 0;
+	parameters.listType = parameters.comp25 = parameters.blocks = parameters.blockId = parameters.comp24 = parameters.copySourceBlobProperties = parameters.blobType2 = parameters.comp23 = parameters.sourceRange1 = parameters.appendPosition = parameters.maxSize = parameters.comp22 = parameters.blobType1 = parameters.comp21 = parameters.sequenceNumberAction = parameters.prevSnapshotUrl = parameters.prevsnapshot = parameters.comp20 = parameters.range1 = parameters.sourceContentCrc64 = parameters.sourceRange = parameters.sourceUrl = parameters.pageWrite1 = parameters.ifSequenceNumberEqualTo = parameters.ifSequenceNumberLessThan = parameters.ifSequenceNumberLessThanOrEqualTo = parameters.pageWrite = parameters.comp19 = parameters.accept2 = parameters.body1 = parameters.contentType1 = parameters.blobSequenceNumber = parameters.blobContentLength = parameters.blobType = parameters.transactionalContentCrc64 = parameters.transactionalContentMD5 = parameters.tags = parameters.ifNoneMatch1 = parameters.ifMatch1 = parameters.ifUnmodifiedSince1 = parameters.ifModifiedSince1 = parameters.comp18 = parameters.comp17 = parameters.queryRequest = parameters.tier1 = parameters.comp16 = parameters.copyId = parameters.copyActionAbortConstant = parameters.comp15 = parameters.fileRequestIntent = void 0;
 	const mappers_js_1 = requireMappers();
 	parameters.contentType = {
 	    parameterPath: ["options", "contentType"],
@@ -184049,7 +182052,7 @@ function requireParameters () {
 	parameters.version = {
 	    parameterPath: "version",
 	    mapper: {
-	        defaultValue: "2025-07-05",
+	        defaultValue: "2026-02-06",
 	        isConstant: true,
 	        serializedName: "x-ms-version",
 	        type: {
@@ -184583,6 +182586,16 @@ function requireParameters () {
 	        },
 	    },
 	    collectionFormat: "CSV",
+	};
+	parameters.startFrom = {
+	    parameterPath: ["options", "startFrom"],
+	    mapper: {
+	        serializedName: "startFrom",
+	        xmlName: "startFrom",
+	        type: {
+	            name: "String",
+	        },
+	    },
 	};
 	parameters.delimiter = {
 	    parameterPath: "delimiter",
@@ -185184,6 +183197,50 @@ function requireParameters () {
 	        },
 	    },
 	};
+	parameters.ifModifiedSince1 = {
+	    parameterPath: ["options", "blobModifiedAccessConditions", "ifModifiedSince"],
+	    mapper: {
+	        serializedName: "x-ms-blob-if-modified-since",
+	        xmlName: "x-ms-blob-if-modified-since",
+	        type: {
+	            name: "DateTimeRfc1123",
+	        },
+	    },
+	};
+	parameters.ifUnmodifiedSince1 = {
+	    parameterPath: [
+	        "options",
+	        "blobModifiedAccessConditions",
+	        "ifUnmodifiedSince",
+	    ],
+	    mapper: {
+	        serializedName: "x-ms-blob-if-unmodified-since",
+	        xmlName: "x-ms-blob-if-unmodified-since",
+	        type: {
+	            name: "DateTimeRfc1123",
+	        },
+	    },
+	};
+	parameters.ifMatch1 = {
+	    parameterPath: ["options", "blobModifiedAccessConditions", "ifMatch"],
+	    mapper: {
+	        serializedName: "x-ms-blob-if-match",
+	        xmlName: "x-ms-blob-if-match",
+	        type: {
+	            name: "String",
+	        },
+	    },
+	};
+	parameters.ifNoneMatch1 = {
+	    parameterPath: ["options", "blobModifiedAccessConditions", "ifNoneMatch"],
+	    mapper: {
+	        serializedName: "x-ms-blob-if-none-match",
+	        xmlName: "x-ms-blob-if-none-match",
+	        type: {
+	            name: "String",
+	        },
+	    },
+	};
 	parameters.tags = {
 	    parameterPath: ["options", "tags"],
 	    mapper: mappers_js_1.BlobTags,
@@ -185603,7 +183660,7 @@ function requireService$1 () {
 	Object.defineProperty(service$1, "__esModule", { value: true });
 	service$1.ServiceImpl = void 0;
 	const tslib_1 = require$$0$2;
-	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$7());
+	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$5());
 	const Mappers = tslib_1.__importStar(requireMappers());
 	const Parameters = tslib_1.__importStar(requireParameters());
 	/** Class containing Service operations. */
@@ -185941,7 +183998,7 @@ function requireContainer$1 () {
 	Object.defineProperty(container$1, "__esModule", { value: true });
 	container$1.ContainerImpl = void 0;
 	const tslib_1 = require$$0$2;
-	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$7());
+	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$5());
 	const Mappers = tslib_1.__importStar(requireMappers());
 	const Parameters = tslib_1.__importStar(requireParameters());
 	/** Class containing Container operations. */
@@ -186580,6 +184637,7 @@ function requireContainer$1 () {
 	        Parameters.maxPageSize,
 	        Parameters.restype2,
 	        Parameters.include1,
+	        Parameters.startFrom,
 	    ],
 	    urlParameters: [Parameters.url],
 	    headerParameters: [
@@ -186611,6 +184669,7 @@ function requireContainer$1 () {
 	        Parameters.maxPageSize,
 	        Parameters.restype2,
 	        Parameters.include1,
+	        Parameters.startFrom,
 	        Parameters.delimiter,
 	    ],
 	    urlParameters: [Parameters.url],
@@ -186669,7 +184728,7 @@ function requireBlob$1 () {
 	Object.defineProperty(blob$1, "__esModule", { value: true });
 	blob$1.BlobImpl = void 0;
 	const tslib_1 = require$$0$2;
-	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$7());
+	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$5());
 	const Mappers = tslib_1.__importStar(requireMappers());
 	const Parameters = tslib_1.__importStar(requireParameters());
 	/** Class containing Blob operations. */
@@ -187646,6 +185705,10 @@ function requireBlob$1 () {
 	        Parameters.accept1,
 	        Parameters.leaseId,
 	        Parameters.ifTags,
+	        Parameters.ifModifiedSince1,
+	        Parameters.ifUnmodifiedSince1,
+	        Parameters.ifMatch1,
+	        Parameters.ifNoneMatch1,
 	    ],
 	    isXML: true,
 	    serializer: xmlSerializer,
@@ -187676,6 +185739,10 @@ function requireBlob$1 () {
 	        Parameters.requestId,
 	        Parameters.leaseId,
 	        Parameters.ifTags,
+	        Parameters.ifModifiedSince1,
+	        Parameters.ifUnmodifiedSince1,
+	        Parameters.ifMatch1,
+	        Parameters.ifNoneMatch1,
 	        Parameters.transactionalContentMD5,
 	        Parameters.transactionalContentCrc64,
 	    ],
@@ -187705,7 +185772,7 @@ function requirePageBlob$1 () {
 	Object.defineProperty(pageBlob$1, "__esModule", { value: true });
 	pageBlob$1.PageBlobImpl = void 0;
 	const tslib_1 = require$$0$2;
-	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$7());
+	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$5());
 	const Mappers = tslib_1.__importStar(requireMappers());
 	const Parameters = tslib_1.__importStar(requireParameters());
 	/** Class containing PageBlob operations. */
@@ -188177,7 +186244,7 @@ function requireAppendBlob$1 () {
 	Object.defineProperty(appendBlob$1, "__esModule", { value: true });
 	appendBlob$1.AppendBlobImpl = void 0;
 	const tslib_1 = require$$0$2;
-	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$7());
+	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$5());
 	const Mappers = tslib_1.__importStar(requireMappers());
 	const Parameters = tslib_1.__importStar(requireParameters());
 	/** Class containing AppendBlob operations. */
@@ -188414,7 +186481,7 @@ function requireBlockBlob$1 () {
 	Object.defineProperty(blockBlob$1, "__esModule", { value: true });
 	blockBlob$1.BlockBlobImpl = void 0;
 	const tslib_1 = require$$0$2;
-	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$7());
+	const coreClient = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$5());
 	const Mappers = tslib_1.__importStar(requireMappers());
 	const Parameters = tslib_1.__importStar(requireParameters());
 	/** Class containing BlockBlob operations. */
@@ -188820,7 +186887,7 @@ function requireStorageClient$1 () {
 	Object.defineProperty(storageClient, "__esModule", { value: true });
 	storageClient.StorageClient = void 0;
 	const tslib_1 = require$$0$2;
-	const coreHttpCompat = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$6());
+	const coreHttpCompat = tslib_1.__importStar(/*@__PURE__*/ requireCommonjs$4());
 	const index_js_1 = requireOperations();
 	class StorageClient extends coreHttpCompat.ExtendedServiceClient {
 	    url;
@@ -188842,7 +186909,7 @@ function requireStorageClient$1 () {
 	        const defaults = {
 	            requestContentType: "application/json; charset=utf-8",
 	        };
-	        const packageDetails = `azsdk-js-azure-storage-blob/12.28.0`;
+	        const packageDetails = `azsdk-js-azure-storage-blob/12.30.0`;
 	        const userAgentPrefix = options.userAgentOptions && options.userAgentOptions.userAgentPrefix
 	            ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`
 	            : `${packageDetails}`;
@@ -188858,7 +186925,7 @@ function requireStorageClient$1 () {
 	        // Parameter assignments
 	        this.url = url;
 	        // Assigning values to Constant parameters
-	        this.version = options.version || "2025-07-05";
+	        this.version = options.version || "2026-02-06";
 	        this.service = new index_js_1.ServiceImpl(this);
 	        this.container = new index_js_1.ContainerImpl(this);
 	        this.blob = new index_js_1.BlobImpl(this);
@@ -189073,6 +187140,822 @@ function requireStorageContextClient () {
 	return StorageContextClient;
 }
 
+var utils_common$1 = {};
+
+var hasRequiredUtils_common$1;
+
+function requireUtils_common$1 () {
+	if (hasRequiredUtils_common$1) return utils_common$1;
+	hasRequiredUtils_common$1 = 1;
+	// Copyright (c) Microsoft Corporation.
+	// Licensed under the MIT License.
+	Object.defineProperty(utils_common$1, "__esModule", { value: true });
+	utils_common$1.escapeURLPath = escapeURLPath;
+	utils_common$1.getValueInConnString = getValueInConnString;
+	utils_common$1.extractConnectionStringParts = extractConnectionStringParts;
+	utils_common$1.appendToURLPath = appendToURLPath;
+	utils_common$1.setURLParameter = setURLParameter;
+	utils_common$1.getURLParameter = getURLParameter;
+	utils_common$1.setURLHost = setURLHost;
+	utils_common$1.getURLPath = getURLPath;
+	utils_common$1.getURLScheme = getURLScheme;
+	utils_common$1.getURLPathAndQuery = getURLPathAndQuery;
+	utils_common$1.getURLQueries = getURLQueries;
+	utils_common$1.appendToURLQuery = appendToURLQuery;
+	utils_common$1.truncatedISO8061Date = truncatedISO8061Date;
+	utils_common$1.base64encode = base64encode;
+	utils_common$1.base64decode = base64decode;
+	utils_common$1.generateBlockID = generateBlockID;
+	utils_common$1.delay = delay;
+	utils_common$1.padStart = padStart;
+	utils_common$1.sanitizeURL = sanitizeURL;
+	utils_common$1.sanitizeHeaders = sanitizeHeaders;
+	utils_common$1.iEqual = iEqual;
+	utils_common$1.getAccountNameFromUrl = getAccountNameFromUrl;
+	utils_common$1.isIpEndpointStyle = isIpEndpointStyle;
+	utils_common$1.toBlobTagsString = toBlobTagsString;
+	utils_common$1.toBlobTags = toBlobTags;
+	utils_common$1.toTags = toTags;
+	utils_common$1.toQuerySerialization = toQuerySerialization;
+	utils_common$1.parseObjectReplicationRecord = parseObjectReplicationRecord;
+	utils_common$1.attachCredential = attachCredential;
+	utils_common$1.httpAuthorizationToString = httpAuthorizationToString;
+	utils_common$1.BlobNameToString = BlobNameToString;
+	utils_common$1.ConvertInternalResponseOfListBlobFlat = ConvertInternalResponseOfListBlobFlat;
+	utils_common$1.ConvertInternalResponseOfListBlobHierarchy = ConvertInternalResponseOfListBlobHierarchy;
+	utils_common$1.ExtractPageRangeInfoItems = ExtractPageRangeInfoItems;
+	utils_common$1.EscapePath = EscapePath;
+	utils_common$1.assertResponse = assertResponse;
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const constants_js_1 = requireConstants$1();
+	/**
+	 * Reserved URL characters must be properly escaped for Storage services like Blob or File.
+	 *
+	 * ## URL encode and escape strategy for JS SDKs
+	 *
+	 * When customers pass a URL string into XxxClient classes constructor, the URL string may already be URL encoded or not.
+	 * But before sending to Azure Storage server, the URL must be encoded. However, it's hard for a SDK to guess whether the URL
+	 * string has been encoded or not. We have 2 potential strategies, and chose strategy two for the XxxClient constructors.
+	 *
+	 * ### Strategy One: Assume the customer URL string is not encoded, and always encode URL string in SDK.
+	 *
+	 * This is what legacy V2 SDK does, simple and works for most of the cases.
+	 * - When customer URL string is "http://account.blob.core.windows.net/con/b:",
+	 *   SDK will encode it to "http://account.blob.core.windows.net/con/b%3A" and send to server. A blob named "b:" will be created.
+	 * - When customer URL string is "http://account.blob.core.windows.net/con/b%3A",
+	 *   SDK will encode it to "http://account.blob.core.windows.net/con/b%253A" and send to server. A blob named "b%3A" will be created.
+	 *
+	 * But this strategy will make it not possible to create a blob with "?" in it's name. Because when customer URL string is
+	 * "http://account.blob.core.windows.net/con/blob?name", the "?name" will be treated as URL paramter instead of blob name.
+	 * If customer URL string is "http://account.blob.core.windows.net/con/blob%3Fname", a blob named "blob%3Fname" will be created.
+	 * V2 SDK doesn't have this issue because it doesn't allow customer pass in a full URL, it accepts a separate blob name and encodeURIComponent for it.
+	 * We cannot accept a SDK cannot create a blob name with "?". So we implement strategy two:
+	 *
+	 * ### Strategy Two: SDK doesn't assume the URL has been encoded or not. It will just escape the special characters.
+	 *
+	 * This is what V10 Blob Go SDK does. It accepts a URL type in Go, and call url.EscapedPath() to escape the special chars unescaped.
+	 * - When customer URL string is "http://account.blob.core.windows.net/con/b:",
+	 *   SDK will escape ":" like "http://account.blob.core.windows.net/con/b%3A" and send to server. A blob named "b:" will be created.
+	 * - When customer URL string is "http://account.blob.core.windows.net/con/b%3A",
+	 *   There is no special characters, so send "http://account.blob.core.windows.net/con/b%3A" to server. A blob named "b:" will be created.
+	 * - When customer URL string is "http://account.blob.core.windows.net/con/b%253A",
+	 *   There is no special characters, so send "http://account.blob.core.windows.net/con/b%253A" to server. A blob named "b%3A" will be created.
+	 *
+	 * This strategy gives us flexibility to create with any special characters. But "%" will be treated as a special characters, if the URL string
+	 * is not encoded, there shouldn't a "%" in the URL string, otherwise the URL is not a valid URL.
+	 * If customer needs to create a blob with "%" in it's blob name, use "%25" instead of "%". Just like above 3rd sample.
+	 * And following URL strings are invalid:
+	 * - "http://account.blob.core.windows.net/con/b%"
+	 * - "http://account.blob.core.windows.net/con/b%2"
+	 * - "http://account.blob.core.windows.net/con/b%G"
+	 *
+	 * Another special character is "?", use "%2F" to represent a blob name with "?" in a URL string.
+	 *
+	 * ### Strategy for containerName, blobName or other specific XXXName parameters in methods such as `containerClient.getBlobClient(blobName)`
+	 *
+	 * We will apply strategy one, and call encodeURIComponent for these parameters like blobName. Because what customers passes in is a plain name instead of a URL.
+	 *
+	 * @see https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
+	 * @see https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata
+	 *
+	 * @param url -
+	 */
+	function escapeURLPath(url) {
+	    const urlParsed = new URL(url);
+	    let path = urlParsed.pathname;
+	    path = path || "/";
+	    path = escape(path);
+	    urlParsed.pathname = path;
+	    return urlParsed.toString();
+	}
+	function getProxyUriFromDevConnString(connectionString) {
+	    // Development Connection String
+	    // https://learn.microsoft.com/azure/storage/common/storage-configure-connection-string#connect-to-the-emulator-account-using-the-well-known-account-name-and-key
+	    let proxyUri = "";
+	    if (connectionString.search("DevelopmentStorageProxyUri=") !== -1) {
+	        // CONNECTION_STRING=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://myProxyUri
+	        const matchCredentials = connectionString.split(";");
+	        for (const element of matchCredentials) {
+	            if (element.trim().startsWith("DevelopmentStorageProxyUri=")) {
+	                proxyUri = element.trim().match("DevelopmentStorageProxyUri=(.*)")[1];
+	            }
+	        }
+	    }
+	    return proxyUri;
+	}
+	function getValueInConnString(connectionString, argument) {
+	    const elements = connectionString.split(";");
+	    for (const element of elements) {
+	        if (element.trim().startsWith(argument)) {
+	            return element.trim().match(argument + "=(.*)")[1];
+	        }
+	    }
+	    return "";
+	}
+	/**
+	 * Extracts the parts of an Azure Storage account connection string.
+	 *
+	 * @param connectionString - Connection string.
+	 * @returns String key value pairs of the storage account's url and credentials.
+	 */
+	function extractConnectionStringParts(connectionString) {
+	    let proxyUri = "";
+	    if (connectionString.startsWith("UseDevelopmentStorage=true")) {
+	        // Development connection string
+	        proxyUri = getProxyUriFromDevConnString(connectionString);
+	        connectionString = constants_js_1.DevelopmentConnectionString;
+	    }
+	    // Matching BlobEndpoint in the Account connection string
+	    let blobEndpoint = getValueInConnString(connectionString, "BlobEndpoint");
+	    // Slicing off '/' at the end if exists
+	    // (The methods that use `extractConnectionStringParts` expect the url to not have `/` at the end)
+	    blobEndpoint = blobEndpoint.endsWith("/") ? blobEndpoint.slice(0, -1) : blobEndpoint;
+	    if (connectionString.search("DefaultEndpointsProtocol=") !== -1 &&
+	        connectionString.search("AccountKey=") !== -1) {
+	        // Account connection string
+	        let defaultEndpointsProtocol = "";
+	        let accountName = "";
+	        let accountKey = Buffer.from("accountKey", "base64");
+	        let endpointSuffix = "";
+	        // Get account name and key
+	        accountName = getValueInConnString(connectionString, "AccountName");
+	        accountKey = Buffer.from(getValueInConnString(connectionString, "AccountKey"), "base64");
+	        if (!blobEndpoint) {
+	            // BlobEndpoint is not present in the Account connection string
+	            // Can be obtained from `${defaultEndpointsProtocol}://${accountName}.blob.${endpointSuffix}`
+	            defaultEndpointsProtocol = getValueInConnString(connectionString, "DefaultEndpointsProtocol");
+	            const protocol = defaultEndpointsProtocol.toLowerCase();
+	            if (protocol !== "https" && protocol !== "http") {
+	                throw new Error("Invalid DefaultEndpointsProtocol in the provided Connection String. Expecting 'https' or 'http'");
+	            }
+	            endpointSuffix = getValueInConnString(connectionString, "EndpointSuffix");
+	            if (!endpointSuffix) {
+	                throw new Error("Invalid EndpointSuffix in the provided Connection String");
+	            }
+	            blobEndpoint = `${defaultEndpointsProtocol}://${accountName}.blob.${endpointSuffix}`;
+	        }
+	        if (!accountName) {
+	            throw new Error("Invalid AccountName in the provided Connection String");
+	        }
+	        else if (accountKey.length === 0) {
+	            throw new Error("Invalid AccountKey in the provided Connection String");
+	        }
+	        return {
+	            kind: "AccountConnString",
+	            url: blobEndpoint,
+	            accountName,
+	            accountKey,
+	            proxyUri,
+	        };
+	    }
+	    else {
+	        // SAS connection string
+	        let accountSas = getValueInConnString(connectionString, "SharedAccessSignature");
+	        let accountName = getValueInConnString(connectionString, "AccountName");
+	        // if accountName is empty, try to read it from BlobEndpoint
+	        if (!accountName) {
+	            accountName = getAccountNameFromUrl(blobEndpoint);
+	        }
+	        if (!blobEndpoint) {
+	            throw new Error("Invalid BlobEndpoint in the provided SAS Connection String");
+	        }
+	        else if (!accountSas) {
+	            throw new Error("Invalid SharedAccessSignature in the provided SAS Connection String");
+	        }
+	        // client constructors assume accountSas does *not* start with ?
+	        if (accountSas.startsWith("?")) {
+	            accountSas = accountSas.substring(1);
+	        }
+	        return { kind: "SASConnString", url: blobEndpoint, accountName, accountSas };
+	    }
+	}
+	/**
+	 * Internal escape method implemented Strategy Two mentioned in escapeURL() description.
+	 *
+	 * @param text -
+	 */
+	function escape(text) {
+	    return encodeURIComponent(text)
+	        .replace(/%2F/g, "/") // Don't escape for "/"
+	        .replace(/'/g, "%27") // Escape for "'"
+	        .replace(/\+/g, "%20")
+	        .replace(/%25/g, "%"); // Revert encoded "%"
+	}
+	/**
+	 * Append a string to URL path. Will remove duplicated "/" in front of the string
+	 * when URL path ends with a "/".
+	 *
+	 * @param url - Source URL string
+	 * @param name - String to be appended to URL
+	 * @returns An updated URL string
+	 */
+	function appendToURLPath(url, name) {
+	    const urlParsed = new URL(url);
+	    let path = urlParsed.pathname;
+	    path = path ? (path.endsWith("/") ? `${path}${name}` : `${path}/${name}`) : name;
+	    urlParsed.pathname = path;
+	    return urlParsed.toString();
+	}
+	/**
+	 * Set URL parameter name and value. If name exists in URL parameters, old value
+	 * will be replaced by name key. If not provide value, the parameter will be deleted.
+	 *
+	 * @param url - Source URL string
+	 * @param name - Parameter name
+	 * @param value - Parameter value
+	 * @returns An updated URL string
+	 */
+	function setURLParameter(url, name, value) {
+	    const urlParsed = new URL(url);
+	    const encodedName = encodeURIComponent(name);
+	    const encodedValue = value ? encodeURIComponent(value) : undefined;
+	    // mutating searchParams will change the encoding, so we have to do this ourselves
+	    const searchString = urlParsed.search === "" ? "?" : urlParsed.search;
+	    const searchPieces = [];
+	    for (const pair of searchString.slice(1).split("&")) {
+	        if (pair) {
+	            const [key] = pair.split("=", 2);
+	            if (key !== encodedName) {
+	                searchPieces.push(pair);
+	            }
+	        }
+	    }
+	    if (encodedValue) {
+	        searchPieces.push(`${encodedName}=${encodedValue}`);
+	    }
+	    urlParsed.search = searchPieces.length ? `?${searchPieces.join("&")}` : "";
+	    return urlParsed.toString();
+	}
+	/**
+	 * Get URL parameter by name.
+	 *
+	 * @param url -
+	 * @param name -
+	 */
+	function getURLParameter(url, name) {
+	    const urlParsed = new URL(url);
+	    return urlParsed.searchParams.get(name) ?? undefined;
+	}
+	/**
+	 * Set URL host.
+	 *
+	 * @param url - Source URL string
+	 * @param host - New host string
+	 * @returns An updated URL string
+	 */
+	function setURLHost(url, host) {
+	    const urlParsed = new URL(url);
+	    urlParsed.hostname = host;
+	    return urlParsed.toString();
+	}
+	/**
+	 * Get URL path from an URL string.
+	 *
+	 * @param url - Source URL string
+	 */
+	function getURLPath(url) {
+	    try {
+	        const urlParsed = new URL(url);
+	        return urlParsed.pathname;
+	    }
+	    catch (e) {
+	        return undefined;
+	    }
+	}
+	/**
+	 * Get URL scheme from an URL string.
+	 *
+	 * @param url - Source URL string
+	 */
+	function getURLScheme(url) {
+	    try {
+	        const urlParsed = new URL(url);
+	        return urlParsed.protocol.endsWith(":") ? urlParsed.protocol.slice(0, -1) : urlParsed.protocol;
+	    }
+	    catch (e) {
+	        return undefined;
+	    }
+	}
+	/**
+	 * Get URL path and query from an URL string.
+	 *
+	 * @param url - Source URL string
+	 */
+	function getURLPathAndQuery(url) {
+	    const urlParsed = new URL(url);
+	    const pathString = urlParsed.pathname;
+	    if (!pathString) {
+	        throw new RangeError("Invalid url without valid path.");
+	    }
+	    let queryString = urlParsed.search || "";
+	    queryString = queryString.trim();
+	    if (queryString !== "") {
+	        queryString = queryString.startsWith("?") ? queryString : `?${queryString}`; // Ensure query string start with '?'
+	    }
+	    return `${pathString}${queryString}`;
+	}
+	/**
+	 * Get URL query key value pairs from an URL string.
+	 *
+	 * @param url -
+	 */
+	function getURLQueries(url) {
+	    let queryString = new URL(url).search;
+	    if (!queryString) {
+	        return {};
+	    }
+	    queryString = queryString.trim();
+	    queryString = queryString.startsWith("?") ? queryString.substring(1) : queryString;
+	    let querySubStrings = queryString.split("&");
+	    querySubStrings = querySubStrings.filter((value) => {
+	        const indexOfEqual = value.indexOf("=");
+	        const lastIndexOfEqual = value.lastIndexOf("=");
+	        return (indexOfEqual > 0 && indexOfEqual === lastIndexOfEqual && lastIndexOfEqual < value.length - 1);
+	    });
+	    const queries = {};
+	    for (const querySubString of querySubStrings) {
+	        const splitResults = querySubString.split("=");
+	        const key = splitResults[0];
+	        const value = splitResults[1];
+	        queries[key] = value;
+	    }
+	    return queries;
+	}
+	/**
+	 * Append a string to URL query.
+	 *
+	 * @param url - Source URL string.
+	 * @param queryParts - String to be appended to the URL query.
+	 * @returns An updated URL string.
+	 */
+	function appendToURLQuery(url, queryParts) {
+	    const urlParsed = new URL(url);
+	    let query = urlParsed.search;
+	    if (query) {
+	        query += "&" + queryParts;
+	    }
+	    else {
+	        query = queryParts;
+	    }
+	    urlParsed.search = query;
+	    return urlParsed.toString();
+	}
+	/**
+	 * Rounds a date off to seconds.
+	 *
+	 * @param date -
+	 * @param withMilliseconds - If true, YYYY-MM-DDThh:mm:ss.fffffffZ will be returned;
+	 *                                          If false, YYYY-MM-DDThh:mm:ssZ will be returned.
+	 * @returns Date string in ISO8061 format, with or without 7 milliseconds component
+	 */
+	function truncatedISO8061Date(date, withMilliseconds = true) {
+	    // Date.toISOString() will return like "2018-10-29T06:34:36.139Z"
+	    const dateString = date.toISOString();
+	    return withMilliseconds
+	        ? dateString.substring(0, dateString.length - 1) + "0000" + "Z"
+	        : dateString.substring(0, dateString.length - 5) + "Z";
+	}
+	/**
+	 * Base64 encode.
+	 *
+	 * @param content -
+	 */
+	function base64encode(content) {
+	    return !core_util_1.isNodeLike ? btoa(content) : Buffer.from(content).toString("base64");
+	}
+	/**
+	 * Base64 decode.
+	 *
+	 * @param encodedString -
+	 */
+	function base64decode(encodedString) {
+	    return !core_util_1.isNodeLike ? atob(encodedString) : Buffer.from(encodedString, "base64").toString();
+	}
+	/**
+	 * Generate a 64 bytes base64 block ID string.
+	 *
+	 * @param blockIndex -
+	 */
+	function generateBlockID(blockIDPrefix, blockIndex) {
+	    // To generate a 64 bytes base64 string, source string should be 48
+	    const maxSourceStringLength = 48;
+	    // A blob can have a maximum of 100,000 uncommitted blocks at any given time
+	    const maxBlockIndexLength = 6;
+	    const maxAllowedBlockIDPrefixLength = maxSourceStringLength - maxBlockIndexLength;
+	    if (blockIDPrefix.length > maxAllowedBlockIDPrefixLength) {
+	        blockIDPrefix = blockIDPrefix.slice(0, maxAllowedBlockIDPrefixLength);
+	    }
+	    const res = blockIDPrefix +
+	        padStart(blockIndex.toString(), maxSourceStringLength - blockIDPrefix.length, "0");
+	    return base64encode(res);
+	}
+	/**
+	 * Delay specified time interval.
+	 *
+	 * @param timeInMs -
+	 * @param aborter -
+	 * @param abortError -
+	 */
+	async function delay(timeInMs, aborter, abortError) {
+	    return new Promise((resolve, reject) => {
+	        /* eslint-disable-next-line prefer-const */
+	        let timeout;
+	        const abortHandler = () => {
+	            if (timeout !== undefined) {
+	                clearTimeout(timeout);
+	            }
+	            reject(abortError);
+	        };
+	        const resolveHandler = () => {
+	            if (aborter !== undefined) {
+	                aborter.removeEventListener("abort", abortHandler);
+	            }
+	            resolve();
+	        };
+	        timeout = setTimeout(resolveHandler, timeInMs);
+	        if (aborter !== undefined) {
+	            aborter.addEventListener("abort", abortHandler);
+	        }
+	    });
+	}
+	/**
+	 * String.prototype.padStart()
+	 *
+	 * @param currentString -
+	 * @param targetLength -
+	 * @param padString -
+	 */
+	function padStart(currentString, targetLength, padString = " ") {
+	    // @ts-expect-error: TS doesn't know this code needs to run downlevel sometimes
+	    if (String.prototype.padStart) {
+	        return currentString.padStart(targetLength, padString);
+	    }
+	    padString = padString || " ";
+	    if (currentString.length > targetLength) {
+	        return currentString;
+	    }
+	    else {
+	        targetLength = targetLength - currentString.length;
+	        if (targetLength > padString.length) {
+	            padString += padString.repeat(targetLength / padString.length);
+	        }
+	        return padString.slice(0, targetLength) + currentString;
+	    }
+	}
+	function sanitizeURL(url) {
+	    let safeURL = url;
+	    if (getURLParameter(safeURL, constants_js_1.URLConstants.Parameters.SIGNATURE)) {
+	        safeURL = setURLParameter(safeURL, constants_js_1.URLConstants.Parameters.SIGNATURE, "*****");
+	    }
+	    return safeURL;
+	}
+	function sanitizeHeaders(originalHeader) {
+	    const headers = (0, core_rest_pipeline_1.createHttpHeaders)();
+	    for (const [name, value] of originalHeader) {
+	        if (name.toLowerCase() === constants_js_1.HeaderConstants.AUTHORIZATION.toLowerCase()) {
+	            headers.set(name, "*****");
+	        }
+	        else if (name.toLowerCase() === constants_js_1.HeaderConstants.X_MS_COPY_SOURCE) {
+	            headers.set(name, sanitizeURL(value));
+	        }
+	        else {
+	            headers.set(name, value);
+	        }
+	    }
+	    return headers;
+	}
+	/**
+	 * If two strings are equal when compared case insensitive.
+	 *
+	 * @param str1 -
+	 * @param str2 -
+	 */
+	function iEqual(str1, str2) {
+	    return str1.toLocaleLowerCase() === str2.toLocaleLowerCase();
+	}
+	/**
+	 * Extracts account name from the url
+	 * @param url - url to extract the account name from
+	 * @returns with the account name
+	 */
+	function getAccountNameFromUrl(url) {
+	    const parsedUrl = new URL(url);
+	    let accountName;
+	    try {
+	        if (parsedUrl.hostname.split(".")[1] === "blob") {
+	            // `${defaultEndpointsProtocol}://${accountName}.blob.${endpointSuffix}`;
+	            accountName = parsedUrl.hostname.split(".")[0];
+	        }
+	        else if (isIpEndpointStyle(parsedUrl)) {
+	            // IPv4/IPv6 address hosts... Example - http://192.0.0.10:10001/devstoreaccount1/
+	            // Single word domain without a [dot] in the endpoint... Example - http://localhost:10001/devstoreaccount1/
+	            // .getPath() -> /devstoreaccount1/
+	            accountName = parsedUrl.pathname.split("/")[1];
+	        }
+	        else {
+	            // Custom domain case: "https://customdomain.com/containername/blob".
+	            accountName = "";
+	        }
+	        return accountName;
+	    }
+	    catch (error) {
+	        throw new Error("Unable to extract accountName with provided information.");
+	    }
+	}
+	function isIpEndpointStyle(parsedUrl) {
+	    const host = parsedUrl.host;
+	    // Case 1: Ipv6, use a broad regex to find out candidates whose host contains two ':'.
+	    // Case 2: localhost(:port) or host.docker.internal, use broad regex to match port part.
+	    // Case 3: Ipv4, use broad regex which just check if host contains Ipv4.
+	    // For valid host please refer to https://man7.org/linux/man-pages/man7/hostname.7.html.
+	    return (/^.*:.*:.*$|^(localhost|host.docker.internal)(:[0-9]+)?$|^(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])){3}(:[0-9]+)?$/.test(host) ||
+	        (Boolean(parsedUrl.port) && constants_js_1.PathStylePorts.includes(parsedUrl.port)));
+	}
+	/**
+	 * Convert Tags to encoded string.
+	 *
+	 * @param tags -
+	 */
+	function toBlobTagsString(tags) {
+	    if (tags === undefined) {
+	        return undefined;
+	    }
+	    const tagPairs = [];
+	    for (const key in tags) {
+	        if (Object.prototype.hasOwnProperty.call(tags, key)) {
+	            const value = tags[key];
+	            tagPairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+	        }
+	    }
+	    return tagPairs.join("&");
+	}
+	/**
+	 * Convert Tags type to BlobTags.
+	 *
+	 * @param tags -
+	 */
+	function toBlobTags(tags) {
+	    if (tags === undefined) {
+	        return undefined;
+	    }
+	    const res = {
+	        blobTagSet: [],
+	    };
+	    for (const key in tags) {
+	        if (Object.prototype.hasOwnProperty.call(tags, key)) {
+	            const value = tags[key];
+	            res.blobTagSet.push({
+	                key,
+	                value,
+	            });
+	        }
+	    }
+	    return res;
+	}
+	/**
+	 * Covert BlobTags to Tags type.
+	 *
+	 * @param tags -
+	 */
+	function toTags(tags) {
+	    if (tags === undefined) {
+	        return undefined;
+	    }
+	    const res = {};
+	    for (const blobTag of tags.blobTagSet) {
+	        res[blobTag.key] = blobTag.value;
+	    }
+	    return res;
+	}
+	/**
+	 * Convert BlobQueryTextConfiguration to QuerySerialization type.
+	 *
+	 * @param textConfiguration -
+	 */
+	function toQuerySerialization(textConfiguration) {
+	    if (textConfiguration === undefined) {
+	        return undefined;
+	    }
+	    switch (textConfiguration.kind) {
+	        case "csv":
+	            return {
+	                format: {
+	                    type: "delimited",
+	                    delimitedTextConfiguration: {
+	                        columnSeparator: textConfiguration.columnSeparator || ",",
+	                        fieldQuote: textConfiguration.fieldQuote || "",
+	                        recordSeparator: textConfiguration.recordSeparator,
+	                        escapeChar: textConfiguration.escapeCharacter || "",
+	                        headersPresent: textConfiguration.hasHeaders || false,
+	                    },
+	                },
+	            };
+	        case "json":
+	            return {
+	                format: {
+	                    type: "json",
+	                    jsonTextConfiguration: {
+	                        recordSeparator: textConfiguration.recordSeparator,
+	                    },
+	                },
+	            };
+	        case "arrow":
+	            return {
+	                format: {
+	                    type: "arrow",
+	                    arrowConfiguration: {
+	                        schema: textConfiguration.schema,
+	                    },
+	                },
+	            };
+	        case "parquet":
+	            return {
+	                format: {
+	                    type: "parquet",
+	                },
+	            };
+	        default:
+	            throw Error("Invalid BlobQueryTextConfiguration.");
+	    }
+	}
+	function parseObjectReplicationRecord(objectReplicationRecord) {
+	    if (!objectReplicationRecord) {
+	        return undefined;
+	    }
+	    if ("policy-id" in objectReplicationRecord) {
+	        // If the dictionary contains a key with policy id, we are not required to do any parsing since
+	        // the policy id should already be stored in the ObjectReplicationDestinationPolicyId.
+	        return undefined;
+	    }
+	    const orProperties = [];
+	    for (const key in objectReplicationRecord) {
+	        const ids = key.split("_");
+	        const policyPrefix = "or-";
+	        if (ids[0].startsWith(policyPrefix)) {
+	            ids[0] = ids[0].substring(policyPrefix.length);
+	        }
+	        const rule = {
+	            ruleId: ids[1],
+	            replicationStatus: objectReplicationRecord[key],
+	        };
+	        const policyIndex = orProperties.findIndex((policy) => policy.policyId === ids[0]);
+	        if (policyIndex > -1) {
+	            orProperties[policyIndex].rules.push(rule);
+	        }
+	        else {
+	            orProperties.push({
+	                policyId: ids[0],
+	                rules: [rule],
+	            });
+	        }
+	    }
+	    return orProperties;
+	}
+	/**
+	 * Attach a TokenCredential to an object.
+	 *
+	 * @param thing -
+	 * @param credential -
+	 */
+	function attachCredential(thing, credential) {
+	    thing.credential = credential;
+	    return thing;
+	}
+	function httpAuthorizationToString(httpAuthorization) {
+	    return httpAuthorization ? httpAuthorization.scheme + " " + httpAuthorization.value : undefined;
+	}
+	function BlobNameToString(name) {
+	    if (name.encoded) {
+	        return decodeURIComponent(name.content);
+	    }
+	    else {
+	        return name.content;
+	    }
+	}
+	function ConvertInternalResponseOfListBlobFlat(internalResponse) {
+	    return {
+	        ...internalResponse,
+	        segment: {
+	            blobItems: internalResponse.segment.blobItems.map((blobItemInteral) => {
+	                const blobItem = {
+	                    ...blobItemInteral,
+	                    name: BlobNameToString(blobItemInteral.name),
+	                };
+	                return blobItem;
+	            }),
+	        },
+	    };
+	}
+	function ConvertInternalResponseOfListBlobHierarchy(internalResponse) {
+	    return {
+	        ...internalResponse,
+	        segment: {
+	            blobPrefixes: internalResponse.segment.blobPrefixes?.map((blobPrefixInternal) => {
+	                const blobPrefix = {
+	                    ...blobPrefixInternal,
+	                    name: BlobNameToString(blobPrefixInternal.name),
+	                };
+	                return blobPrefix;
+	            }),
+	            blobItems: internalResponse.segment.blobItems.map((blobItemInteral) => {
+	                const blobItem = {
+	                    ...blobItemInteral,
+	                    name: BlobNameToString(blobItemInteral.name),
+	                };
+	                return blobItem;
+	            }),
+	        },
+	    };
+	}
+	function* ExtractPageRangeInfoItems(getPageRangesSegment) {
+	    let pageRange = [];
+	    let clearRange = [];
+	    if (getPageRangesSegment.pageRange)
+	        pageRange = getPageRangesSegment.pageRange;
+	    if (getPageRangesSegment.clearRange)
+	        clearRange = getPageRangesSegment.clearRange;
+	    let pageRangeIndex = 0;
+	    let clearRangeIndex = 0;
+	    while (pageRangeIndex < pageRange.length && clearRangeIndex < clearRange.length) {
+	        if (pageRange[pageRangeIndex].start < clearRange[clearRangeIndex].start) {
+	            yield {
+	                start: pageRange[pageRangeIndex].start,
+	                end: pageRange[pageRangeIndex].end,
+	                isClear: false,
+	            };
+	            ++pageRangeIndex;
+	        }
+	        else {
+	            yield {
+	                start: clearRange[clearRangeIndex].start,
+	                end: clearRange[clearRangeIndex].end,
+	                isClear: true,
+	            };
+	            ++clearRangeIndex;
+	        }
+	    }
+	    for (; pageRangeIndex < pageRange.length; ++pageRangeIndex) {
+	        yield {
+	            start: pageRange[pageRangeIndex].start,
+	            end: pageRange[pageRangeIndex].end,
+	            isClear: false,
+	        };
+	    }
+	    for (; clearRangeIndex < clearRange.length; ++clearRangeIndex) {
+	        yield {
+	            start: clearRange[clearRangeIndex].start,
+	            end: clearRange[clearRangeIndex].end,
+	            isClear: true,
+	        };
+	    }
+	}
+	/**
+	 * Escape the blobName but keep path separator ('/').
+	 */
+	function EscapePath(blobName) {
+	    const split = blobName.split("/");
+	    for (let i = 0; i < split.length; i++) {
+	        split[i] = encodeURIComponent(split[i]);
+	    }
+	    return split.join("/");
+	}
+	/**
+	 * A typesafe helper for ensuring that a given response object has
+	 * the original _response attached.
+	 * @param response - A response object from calling a client operation
+	 * @returns The same object, but with known _response property
+	 */
+	function assertResponse(response) {
+	    if (`_response` in response) {
+	        return response;
+	    }
+	    throw new TypeError(`Unexpected response object ${response}`);
+	}
+	
+	return utils_common$1;
+}
+
 var hasRequiredStorageClient;
 
 function requireStorageClient () {
@@ -189084,7 +187967,7 @@ function requireStorageClient () {
 	StorageClient.StorageClient = void 0;
 	const StorageContextClient_js_1 = requireStorageContextClient();
 	const Pipeline_js_1 = requirePipeline();
-	const utils_common_js_1 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
 	/**
 	 * A StorageClient represents a based URL class for {@link BlobServiceClient}, {@link ContainerClient}
 	 * and etc.
@@ -189147,8 +188030,8 @@ function requireTracing () {
 	// Licensed under the MIT License.
 	Object.defineProperty(tracing, "__esModule", { value: true });
 	tracing.tracingClient = void 0;
-	const core_tracing_1 = /*@__PURE__*/ requireCommonjs$a();
-	const constants_js_1 = requireConstants$2();
+	const core_tracing_1 = /*@__PURE__*/ requireCommonjs$8();
+	const constants_js_1 = requireConstants$1();
 	/**
 	 * Creates a span using the global tracer.
 	 * @internal
@@ -189602,62 +188485,6 @@ function requireContainerSASPermissions () {
 	return ContainerSASPermissions;
 }
 
-var UserDelegationKeyCredential = {};
-
-var hasRequiredUserDelegationKeyCredential;
-
-function requireUserDelegationKeyCredential () {
-	if (hasRequiredUserDelegationKeyCredential) return UserDelegationKeyCredential;
-	hasRequiredUserDelegationKeyCredential = 1;
-	// Copyright (c) Microsoft Corporation.
-	// Licensed under the MIT License.
-	Object.defineProperty(UserDelegationKeyCredential, "__esModule", { value: true });
-	UserDelegationKeyCredential.UserDelegationKeyCredential = void 0;
-	const node_crypto_1 = require$$0$g;
-	/**
-	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
-	 *
-	 * UserDelegationKeyCredential is only used for generation of user delegation SAS.
-	 * @see https://learn.microsoft.com/rest/api/storageservices/create-user-delegation-sas
-	 */
-	let UserDelegationKeyCredential$1 = class UserDelegationKeyCredential {
-	    /**
-	     * Azure Storage account name; readonly.
-	     */
-	    accountName;
-	    /**
-	     * Azure Storage user delegation key; readonly.
-	     */
-	    userDelegationKey;
-	    /**
-	     * Key value in Buffer type.
-	     */
-	    key;
-	    /**
-	     * Creates an instance of UserDelegationKeyCredential.
-	     * @param accountName -
-	     * @param userDelegationKey -
-	     */
-	    constructor(accountName, userDelegationKey) {
-	        this.accountName = accountName;
-	        this.userDelegationKey = userDelegationKey;
-	        this.key = Buffer.from(userDelegationKey.value, "base64");
-	    }
-	    /**
-	     * Generates a hash signature for an HTTP request or for a SAS.
-	     *
-	     * @param stringToSign -
-	     */
-	    computeHMACSHA256(stringToSign) {
-	        // console.log(`stringToSign: ${JSON.stringify(stringToSign)}`);
-	        return (0, node_crypto_1.createHmac)("sha256", this.key).update(stringToSign, "utf8").digest("base64");
-	    }
-	};
-	UserDelegationKeyCredential.UserDelegationKeyCredential = UserDelegationKeyCredential$1;
-	
-	return UserDelegationKeyCredential;
-}
-
 var SasIPRange = {};
 
 var hasRequiredSasIPRange;
@@ -189695,7 +188522,7 @@ function requireSASQueryParameters () {
 	Object.defineProperty(SASQueryParameters, "__esModule", { value: true });
 	SASQueryParameters.SASQueryParameters = SASQueryParameters.SASProtocol = void 0;
 	const SasIPRange_js_1 = requireSasIPRange();
-	const utils_common_js_1 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
 	/**
 	 * Protocols for generated SAS.
 	 */
@@ -189758,6 +188585,12 @@ function requireSASQueryParameters () {
 	     * @see https://learn.microsoft.com/rest/api/storageservices/establishing-a-stored-access-policy
 	     */
 	    identifier;
+	    /**
+	     * Optional. Beginning in version 2025-07-05, this value specifies the Entra ID of the user would is authorized to
+	     * use the resulting SAS URL.  The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+	     * issued to the user specified in this value.
+	     */
+	    delegatedUserObjectId;
 	    /**
 	     * Optional. Encryption scope to use when sending requests authorized with this SAS URI.
 	     */
@@ -189851,7 +188684,7 @@ function requireSASQueryParameters () {
 	        }
 	        return undefined;
 	    }
-	    constructor(version, signature, permissionsOrOptions, services, resourceTypes, protocol, startsOn, expiresOn, ipRange, identifier, resource, cacheControl, contentDisposition, contentEncoding, contentLanguage, contentType, userDelegationKey, preauthorizedAgentObjectId, correlationId, encryptionScope) {
+	    constructor(version, signature, permissionsOrOptions, services, resourceTypes, protocol, startsOn, expiresOn, ipRange, identifier, resource, cacheControl, contentDisposition, contentEncoding, contentLanguage, contentType, userDelegationKey, preauthorizedAgentObjectId, correlationId, encryptionScope, delegatedUserObjectId) {
 	        this.version = version;
 	        this.signature = signature;
 	        if (permissionsOrOptions !== undefined && typeof permissionsOrOptions !== "string") {
@@ -189864,6 +188697,7 @@ function requireSASQueryParameters () {
 	            this.expiresOn = permissionsOrOptions.expiresOn;
 	            this.ipRangeInner = permissionsOrOptions.ipRange;
 	            this.identifier = permissionsOrOptions.identifier;
+	            this.delegatedUserObjectId = permissionsOrOptions.delegatedUserObjectId;
 	            this.encryptionScope = permissionsOrOptions.encryptionScope;
 	            this.resource = permissionsOrOptions.resource;
 	            this.cacheControl = permissionsOrOptions.cacheControl;
@@ -189890,6 +188724,7 @@ function requireSASQueryParameters () {
 	            this.protocol = protocol;
 	            this.startsOn = startsOn;
 	            this.ipRangeInner = ipRange;
+	            this.delegatedUserObjectId = delegatedUserObjectId;
 	            this.encryptionScope = encryptionScope;
 	            this.identifier = identifier;
 	            this.resource = resource;
@@ -189941,6 +188776,7 @@ function requireSASQueryParameters () {
 	            "rsct",
 	            "saoid",
 	            "scid",
+	            "sduoid", // Signed key user delegation object ID
 	        ];
 	        const queries = [];
 	        for (const param of params) {
@@ -190020,6 +188856,9 @@ function requireSASQueryParameters () {
 	                case "scid":
 	                    this.tryAppendQueryParameter(queries, param, this.correlationId);
 	                    break;
+	                case "sduoid":
+	                    this.tryAppendQueryParameter(queries, param, this.delegatedUserObjectId);
+	                    break;
 	            }
 	        }
 	        return queries.join("&");
@@ -190059,23 +188898,23 @@ function requireBlobSASSignatureValues () {
 	// Licensed under the MIT License.
 	const BlobSASPermissions_js_1 = requireBlobSASPermissions();
 	const ContainerSASPermissions_js_1 = requireContainerSASPermissions();
-	const StorageSharedKeyCredential_js_1 = requireStorageSharedKeyCredential$1();
-	const UserDelegationKeyCredential_js_1 = requireUserDelegationKeyCredential();
+	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
 	const SasIPRange_js_1 = requireSasIPRange();
 	const SASQueryParameters_js_1 = requireSASQueryParameters();
-	const constants_js_1 = requireConstants$2();
-	const utils_common_js_1 = requireUtils_common$2();
+	const constants_js_1 = requireConstants$1();
+	const utils_common_js_1 = requireUtils_common$1();
+	const storage_common_2 = /*@__PURE__*/ requireCommonjs$2();
 	function generateBlobSASQueryParameters(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName) {
 	    return generateBlobSASQueryParametersInternal(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName).sasQueryParameters;
 	}
 	function generateBlobSASQueryParametersInternal(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName) {
 	    const version = blobSASSignatureValues.version ? blobSASSignatureValues.version : constants_js_1.SERVICE_VERSION;
-	    const sharedKeyCredential = sharedKeyCredentialOrUserDelegationKey instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential
+	    const sharedKeyCredential = sharedKeyCredentialOrUserDelegationKey instanceof storage_common_1.StorageSharedKeyCredential
 	        ? sharedKeyCredentialOrUserDelegationKey
 	        : undefined;
 	    let userDelegationKeyCredential;
 	    if (sharedKeyCredential === undefined && accountName !== undefined) {
-	        userDelegationKeyCredential = new UserDelegationKeyCredential_js_1.UserDelegationKeyCredential(accountName, sharedKeyCredentialOrUserDelegationKey);
+	        userDelegationKeyCredential = new storage_common_2.UserDelegationKeyCredential(accountName, sharedKeyCredentialOrUserDelegationKey);
 	    }
 	    if (sharedKeyCredential === undefined && userDelegationKeyCredential === undefined) {
 	        throw TypeError("Invalid sharedKeyCredential, userDelegationKey or accountName.");
@@ -190638,7 +189477,7 @@ function requireBlobSASSignatureValues () {
 	        undefined, // agentObjectId
 	        blobSASSignatureValues.correlationId,
 	        undefined, // SignedKeyDelegatedUserTenantId, will be added in a future release.
-	        undefined, // SignedDelegatedUserObjectId, will be added in future release.
+	        blobSASSignatureValues.delegatedUserObjectId,
 	        blobSASSignatureValues.ipRange ? (0, SasIPRange_js_1.ipRangeToString)(blobSASSignatureValues.ipRange) : "",
 	        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
 	        blobSASSignatureValues.version,
@@ -190653,7 +189492,7 @@ function requireBlobSASSignatureValues () {
 	    ].join("\n");
 	    const signature = userDelegationKeyCredential.computeHMACSHA256(stringToSign);
 	    return {
-	        sasQueryParameters: new SASQueryParameters_js_1.SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType, userDelegationKeyCredential.userDelegationKey, blobSASSignatureValues.preauthorizedAgentObjectId, blobSASSignatureValues.correlationId, blobSASSignatureValues.encryptionScope),
+	        sasQueryParameters: new SASQueryParameters_js_1.SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType, userDelegationKeyCredential.userDelegationKey, blobSASSignatureValues.preauthorizedAgentObjectId, blobSASSignatureValues.correlationId, blobSASSignatureValues.encryptionScope, blobSASSignatureValues.delegatedUserObjectId),
 	        stringToSign: stringToSign,
 	    };
 	}
@@ -190735,10 +189574,10 @@ function requireBlobLeaseClient () {
 	// Licensed under the MIT License.
 	Object.defineProperty(BlobLeaseClient, "__esModule", { value: true });
 	BlobLeaseClient.BlobLeaseClient = void 0;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const constants_js_1 = requireConstants$2();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const constants_js_1 = requireConstants$1();
 	const tracing_js_1 = requireTracing();
-	const utils_common_js_1 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
 	/**
 	 * A client that manages leases for a {@link ContainerClient} or a {@link BlobClient}.
 	 */
@@ -190953,7 +189792,7 @@ function requireRetriableReadableStream () {
 	// Licensed under the MIT License.
 	Object.defineProperty(RetriableReadableStream, "__esModule", { value: true });
 	RetriableReadableStream.RetriableReadableStream = void 0;
-	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$4();
+	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$a();
 	const node_stream_1 = require$$0$c;
 	/**
 	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
@@ -191091,7 +189930,7 @@ function requireBlobDownloadResponse () {
 	BlobDownloadResponse.BlobDownloadResponse = void 0;
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	const RetriableReadableStream_js_1 = requireRetriableReadableStream();
 	/**
 	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
@@ -192107,7 +190946,7 @@ function requireAvroReadableFromStream () {
 	Object.defineProperty(AvroReadableFromStream, "__esModule", { value: true });
 	AvroReadableFromStream.AvroReadableFromStream = void 0;
 	const AvroReadable_js_1 = requireAvroReadable();
-	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$4();
+	const abort_controller_1 = /*@__PURE__*/ requireCommonjs$a();
 	const buffer_1 = require$$0$7;
 	const ABORT_ERROR = new abort_controller_1.AbortError("Reading from the avro stream was aborted.");
 	let AvroReadableFromStream$1 = class AvroReadableFromStream extends AvroReadable_js_1.AvroReadable {
@@ -192351,7 +191190,7 @@ function requireBlobQueryResponse () {
 	// Licensed under the MIT License.
 	Object.defineProperty(BlobQueryResponse, "__esModule", { value: true });
 	BlobQueryResponse.BlobQueryResponse = void 0;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	const BlobQuickQueryStream_js_1 = requireBlobQuickQueryStream();
 	/**
 	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
@@ -192736,7 +191575,7 @@ function requireModels () {
 	models.toAccessTier = toAccessTier;
 	models.ensureCpkIfSpecified = ensureCpkIfSpecified;
 	models.getBlobServiceAccountAudience = getBlobServiceAccountAudience;
-	const constants_js_1 = requireConstants$2();
+	const constants_js_1 = requireConstants$1();
 	/**
 	 * Represents the access tier on a blob.
 	 * For detailed information about block blob level tiering see {@link https://learn.microsoft.com/azure/storage/blobs/storage-blob-storage-tiers|Hot, cool and archive storage tiers.}
@@ -192916,7 +191755,7 @@ function requireLogger () {
 	// Licensed under the MIT license.
 	Object.defineProperty(logger, "__esModule", { value: true });
 	logger.logger = void 0;
-	const logger_1 = /*@__PURE__*/ requireCommonjs$d();
+	const logger_1 = /*@__PURE__*/ requireCommonjs$b();
 	/**
 	 * The `@azure/logger` configuration for this package.
 	 * @internal
@@ -193443,7 +192282,7 @@ function requirePoller$2 () {
 	poller$1.buildCreatePoller = void 0;
 	const operation_js_1 = requireOperation$2();
 	const constants_js_1 = requireConstants();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	const createStateProxy = () => ({
 	    /**
 	     * The state at this point is created to be of type OperationState<TResult>.
@@ -194294,7 +193133,7 @@ function requireBlobStartCopyFromUrlPoller () {
 	// Licensed under the MIT License.
 	Object.defineProperty(BlobStartCopyFromUrlPoller, "__esModule", { value: true });
 	BlobStartCopyFromUrlPoller.BlobBeginCopyFromUrlPoller = void 0;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	const core_lro_1 = /*@__PURE__*/ requireCommonjs$1();
 	/**
 	 * This is the poller returned by {@link BlobClient.beginCopyFromURL}.
@@ -194624,7 +193463,7 @@ function requireUtils () {
 	const tslib_1 = require$$0$2;
 	const node_fs_1 = tslib_1.__importDefault(actualFS__default);
 	const node_util_1 = tslib_1.__importDefault(require$$1$5);
-	const constants_js_1 = requireConstants$2();
+	const constants_js_1 = requireConstants$1();
 	/**
 	 * Reads a readable stream into buffer. Fill the buffer from offset to end.
 	 *
@@ -194764,14 +193603,13 @@ function requireClients () {
 	// Licensed under the MIT License.
 	Object.defineProperty(Clients, "__esModule", { value: true });
 	Clients.PageBlobClient = Clients.BlockBlobClient = Clients.AppendBlobClient = Clients.BlobClient = void 0;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_auth_1 = /*@__PURE__*/ requireCommonjs$8();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const core_util_2 = /*@__PURE__*/ requireCommonjs$b();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_auth_1 = /*@__PURE__*/ requireCommonjs$6();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_util_2 = /*@__PURE__*/ requireCommonjs$9();
 	const BlobDownloadResponse_js_1 = requireBlobDownloadResponse();
 	const BlobQueryResponse_js_1 = requireBlobQueryResponse();
-	const AnonymousCredential_js_1 = requireAnonymousCredential$1();
-	const StorageSharedKeyCredential_js_1 = requireStorageSharedKeyCredential$1();
+	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
 	const models_js_1 = requireModels();
 	const PageBlobRangeResponse_js_1 = requirePageBlobRangeResponse();
 	const Pipeline_js_1 = requirePipeline();
@@ -194779,10 +193617,10 @@ function requireClients () {
 	const Range_js_1 = requireRange();
 	const StorageClient_js_1 = requireStorageClient();
 	const Batch_js_1 = requireBatch();
-	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
-	const constants_js_1 = requireConstants$2();
+	const storage_common_2 = /*@__PURE__*/ requireCommonjs$2();
+	const constants_js_1 = requireConstants$1();
 	const tracing_js_1 = requireTracing();
-	const utils_common_js_1 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
 	const utils_js_1 = requireUtils();
 	const BlobSASSignatureValues_js_1 = requireBlobSASSignatureValues();
 	const BlobLeaseClient_js_1 = requireBlobLeaseClient();
@@ -194823,8 +193661,8 @@ function requireClients () {
 	            url = urlOrConnectionString;
 	            pipeline = credentialOrPipelineOrContainerName;
 	        }
-	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	            credentialOrPipelineOrContainerName instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof storage_common_1.StorageSharedKeyCredential) ||
+	            credentialOrPipelineOrContainerName instanceof storage_common_1.AnonymousCredential ||
 	            (0, core_auth_1.isTokenCredential)(credentialOrPipelineOrContainerName)) {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            url = urlOrConnectionString;
@@ -194839,7 +193677,7 @@ function requireClients () {
 	            if (blobNameOrOptions && typeof blobNameOrOptions !== "string") {
 	                options = blobNameOrOptions;
 	            }
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        else if (credentialOrPipelineOrContainerName &&
 	            typeof credentialOrPipelineOrContainerName === "string" &&
@@ -194851,7 +193689,7 @@ function requireClients () {
 	            const extractedCreds = (0, utils_common_js_1.extractConnectionStringParts)(urlOrConnectionString);
 	            if (extractedCreds.kind === "AccountConnString") {
 	                if (core_util_1.isNodeLike) {
-	                    const sharedKeyCredential = new StorageSharedKeyCredential_js_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+	                    const sharedKeyCredential = new storage_common_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
 	                    url = (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName));
 	                    if (!options.proxyOptions) {
 	                        options.proxyOptions = (0, core_rest_pipeline_1.getDefaultProxySettings)(extractedCreds.proxyUri);
@@ -194867,7 +193705,7 @@ function requireClients () {
 	                    (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName)) +
 	                        "?" +
 	                        extractedCreds.accountSas;
-	                pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	                pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	            }
 	            else {
 	                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
@@ -195010,7 +193848,7 @@ function requireClients () {
 	        options.conditions = options.conditions || {};
 	        (0, models_js_1.ensureCpkIfSpecified)(options.customerProvidedKey, this.isHttps);
 	        return tracing_js_1.tracingClient.withSpan("BlobClient-download", options, async (updatedOptions) => {
-	            const res = (0, utils_common_js_1.assertResponse)(await this.blobContext.download({
+	            const res = (0, utils_common_js_1.assertResponse)((await this.blobContext.download({
 	                abortSignal: options.abortSignal,
 	                leaseAccessConditions: options.conditions,
 	                modifiedAccessConditions: {
@@ -195026,7 +193864,7 @@ function requireClients () {
 	                snapshot: options.snapshot,
 	                cpkInfo: options.customerProvidedKey,
 	                tracingOptions: updatedOptions.tracingOptions,
-	            }));
+	            })));
 	            const wrappedRes = {
 	                ...res,
 	                _response: res._response, // _response is made non-enumerable
@@ -195307,6 +194145,7 @@ function requireClients () {
 	                    ...options.conditions,
 	                    ifTags: options.conditions?.tagConditions,
 	                },
+	                blobModifiedAccessConditions: options.conditions,
 	                tracingOptions: updatedOptions.tracingOptions,
 	                tags: (0, utils_common_js_1.toBlobTags)(tags),
 	            }));
@@ -195326,6 +194165,7 @@ function requireClients () {
 	                    ...options.conditions,
 	                    ifTags: options.conditions?.tagConditions,
 	                },
+	                blobModifiedAccessConditions: options.conditions,
 	                tracingOptions: updatedOptions.tracingOptions,
 	            }));
 	            const wrappedResponse = {
@@ -195764,7 +194604,7 @@ function requireClients () {
 	     */
 	    generateSasUrl(options) {
 	        return new Promise((resolve) => {
-	            if (!(this.credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential)) {
+	            if (!(this.credential instanceof storage_common_1.StorageSharedKeyCredential)) {
 	                throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
 	            }
 	            const sas = (0, BlobSASSignatureValues_js_1.generateBlobSASQueryParameters)({
@@ -195790,7 +194630,7 @@ function requireClients () {
 	     */
 	    /* eslint-disable-next-line @azure/azure-sdk/ts-naming-options*/
 	    generateSasStringToSign(options) {
-	        if (!(this.credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential)) {
+	        if (!(this.credential instanceof storage_common_1.StorageSharedKeyCredential)) {
 	            throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
 	        }
 	        return (0, BlobSASSignatureValues_js_1.generateBlobSASQueryParametersInternal)({
@@ -195925,8 +194765,8 @@ function requireClients () {
 	            url = urlOrConnectionString;
 	            pipeline = credentialOrPipelineOrContainerName;
 	        }
-	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	            credentialOrPipelineOrContainerName instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof storage_common_1.StorageSharedKeyCredential) ||
+	            credentialOrPipelineOrContainerName instanceof storage_common_1.AnonymousCredential ||
 	            (0, core_auth_1.isTokenCredential)(credentialOrPipelineOrContainerName)) {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)      url = urlOrConnectionString;
 	            url = urlOrConnectionString;
@@ -195938,7 +194778,7 @@ function requireClients () {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            url = urlOrConnectionString;
 	            // The second parameter is undefined. Use anonymous credential.
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        else if (credentialOrPipelineOrContainerName &&
 	            typeof credentialOrPipelineOrContainerName === "string" &&
@@ -195950,7 +194790,7 @@ function requireClients () {
 	            const extractedCreds = (0, utils_common_js_1.extractConnectionStringParts)(urlOrConnectionString);
 	            if (extractedCreds.kind === "AccountConnString") {
 	                if (core_util_1.isNodeLike) {
-	                    const sharedKeyCredential = new StorageSharedKeyCredential_js_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+	                    const sharedKeyCredential = new storage_common_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
 	                    url = (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName));
 	                    if (!options.proxyOptions) {
 	                        options.proxyOptions = (0, core_rest_pipeline_1.getDefaultProxySettings)(extractedCreds.proxyUri);
@@ -195966,7 +194806,7 @@ function requireClients () {
 	                    (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName)) +
 	                        "?" +
 	                        extractedCreds.accountSas;
-	                pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	                pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	            }
 	            else {
 	                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
@@ -196227,8 +195067,8 @@ function requireClients () {
 	            url = urlOrConnectionString;
 	            pipeline = credentialOrPipelineOrContainerName;
 	        }
-	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	            credentialOrPipelineOrContainerName instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof storage_common_1.StorageSharedKeyCredential) ||
+	            credentialOrPipelineOrContainerName instanceof storage_common_1.AnonymousCredential ||
 	            (0, core_auth_1.isTokenCredential)(credentialOrPipelineOrContainerName)) {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            url = urlOrConnectionString;
@@ -196243,7 +195083,7 @@ function requireClients () {
 	            if (blobNameOrOptions && typeof blobNameOrOptions !== "string") {
 	                options = blobNameOrOptions;
 	            }
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        else if (credentialOrPipelineOrContainerName &&
 	            typeof credentialOrPipelineOrContainerName === "string" &&
@@ -196255,7 +195095,7 @@ function requireClients () {
 	            const extractedCreds = (0, utils_common_js_1.extractConnectionStringParts)(urlOrConnectionString);
 	            if (extractedCreds.kind === "AccountConnString") {
 	                if (core_util_1.isNodeLike) {
-	                    const sharedKeyCredential = new StorageSharedKeyCredential_js_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+	                    const sharedKeyCredential = new storage_common_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
 	                    url = (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName));
 	                    if (!options.proxyOptions) {
 	                        options.proxyOptions = (0, core_rest_pipeline_1.getDefaultProxySettings)(extractedCreds.proxyUri);
@@ -196271,7 +195111,7 @@ function requireClients () {
 	                    (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName)) +
 	                        "?" +
 	                        extractedCreds.accountSas;
-	                pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	                pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	            }
 	            else {
 	                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
@@ -196348,7 +195188,7 @@ function requireClients () {
 	            throw new Error("This operation currently is only supported in Node.js.");
 	        }
 	        return tracing_js_1.tracingClient.withSpan("BlockBlobClient-query", options, async (updatedOptions) => {
-	            const response = (0, utils_common_js_1.assertResponse)(await this._blobContext.query({
+	            const response = (0, utils_common_js_1.assertResponse)((await this._blobContext.query({
 	                abortSignal: options.abortSignal,
 	                queryRequest: {
 	                    queryType: "SQL",
@@ -196363,7 +195203,7 @@ function requireClients () {
 	                },
 	                cpkInfo: options.customerProvidedKey,
 	                tracingOptions: updatedOptions.tracingOptions,
-	            }));
+	            })));
 	            return new BlobQueryResponse_js_1.BlobQueryResponse(response, {
 	                abortSignal: options.abortSignal,
 	                onProgress: options.onProgress,
@@ -196818,7 +195658,7 @@ function requireClients () {
 	            const blockIDPrefix = (0, core_util_2.randomUUID)();
 	            let transferProgress = 0;
 	            const blockList = [];
-	            const scheduler = new storage_common_1.BufferScheduler(stream, bufferSize, maxConcurrency, async (body, length) => {
+	            const scheduler = new storage_common_2.BufferScheduler(stream, bufferSize, maxConcurrency, async (body, length) => {
 	                const blockID = (0, utils_common_js_1.generateBlockID)(blockIDPrefix, blockNum);
 	                blockList.push(blockID);
 	                blockNum++;
@@ -196870,8 +195710,8 @@ function requireClients () {
 	            url = urlOrConnectionString;
 	            pipeline = credentialOrPipelineOrContainerName;
 	        }
-	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	            credentialOrPipelineOrContainerName instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof storage_common_1.StorageSharedKeyCredential) ||
+	            credentialOrPipelineOrContainerName instanceof storage_common_1.AnonymousCredential ||
 	            (0, core_auth_1.isTokenCredential)(credentialOrPipelineOrContainerName)) {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            url = urlOrConnectionString;
@@ -196883,7 +195723,7 @@ function requireClients () {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            // The second parameter is undefined. Use anonymous credential.
 	            url = urlOrConnectionString;
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        else if (credentialOrPipelineOrContainerName &&
 	            typeof credentialOrPipelineOrContainerName === "string" &&
@@ -196895,7 +195735,7 @@ function requireClients () {
 	            const extractedCreds = (0, utils_common_js_1.extractConnectionStringParts)(urlOrConnectionString);
 	            if (extractedCreds.kind === "AccountConnString") {
 	                if (core_util_1.isNodeLike) {
-	                    const sharedKeyCredential = new StorageSharedKeyCredential_js_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+	                    const sharedKeyCredential = new storage_common_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
 	                    url = (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName));
 	                    if (!options.proxyOptions) {
 	                        options.proxyOptions = (0, core_rest_pipeline_1.getDefaultProxySettings)(extractedCreds.proxyUri);
@@ -196911,7 +195751,7 @@ function requireClients () {
 	                    (0, utils_common_js_1.appendToURLPath)((0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)), encodeURIComponent(blobName)) +
 	                        "?" +
 	                        extractedCreds.accountSas;
-	                pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	                pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	            }
 	            else {
 	                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
@@ -197630,7 +196470,7 @@ function requireBatchUtils () {
 	BatchUtils.getBodyAsText = getBodyAsText;
 	BatchUtils.utf8ByteLength = utf8ByteLength;
 	const utils_js_1 = requireUtils();
-	const constants_js_1 = requireConstants$2();
+	const constants_js_1 = requireConstants$1();
 	async function getBodyAsText(batchResponse) {
 	    let buffer = Buffer.alloc(constants_js_1.BATCH_MAX_PAYLOAD_IN_BYTES);
 	    const responseLength = await (0, utils_js_1.streamToBuffer2)(batchResponse.readableStreamBody, buffer);
@@ -197654,9 +196494,9 @@ function requireBatchResponseParser () {
 	// Licensed under the MIT License.
 	Object.defineProperty(BatchResponseParser, "__esModule", { value: true });
 	BatchResponseParser.BatchResponseParser = void 0;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_http_compat_1 = /*@__PURE__*/ requireCommonjs$6();
-	const constants_js_1 = requireConstants$2();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_http_compat_1 = /*@__PURE__*/ requireCommonjs$4();
+	const constants_js_1 = requireConstants$1();
 	const BatchUtils_js_1 = requireBatchUtils();
 	const log_js_1 = requireLog$1();
 	const HTTP_HEADER_DELIMITER = ": ";
@@ -197887,21 +196727,19 @@ function requireBlobBatch () {
 	// Licensed under the MIT License.
 	Object.defineProperty(BlobBatch, "__esModule", { value: true });
 	BlobBatch.BlobBatch = void 0;
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const core_auth_1 = /*@__PURE__*/ requireCommonjs$8();
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_util_2 = /*@__PURE__*/ requireCommonjs$b();
-	const AnonymousCredential_js_1 = requireAnonymousCredential$1();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_auth_1 = /*@__PURE__*/ requireCommonjs$6();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_util_2 = /*@__PURE__*/ requireCommonjs$9();
+	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
 	const Clients_js_1 = requireClients();
 	const Mutex_js_1 = requireMutex();
 	const Pipeline_js_1 = requirePipeline();
-	const utils_common_js_1 = requireUtils_common$2();
-	const core_xml_1 = /*@__PURE__*/ requireCommonjs$5();
-	const constants_js_1 = requireConstants$2();
-	const StorageSharedKeyCredential_js_1 = requireStorageSharedKeyCredential$1();
+	const utils_common_js_1 = requireUtils_common$1();
+	const core_xml_1 = /*@__PURE__*/ requireCommonjs$3();
+	const constants_js_1 = requireConstants$1();
 	const tracing_js_1 = requireTracing();
-	const core_client_1 = /*@__PURE__*/ requireCommonjs$7();
-	const StorageSharedKeyCredentialPolicyV2_js_1 = requireStorageSharedKeyCredentialPolicyV2();
+	const core_client_1 = /*@__PURE__*/ requireCommonjs$5();
 	/**
 	 * A BlobBatch represents an aggregated set of operations on blobs.
 	 * Currently, only `delete` and `setAccessTier` are supported.
@@ -197956,8 +196794,8 @@ function requireBlobBatch () {
 	        let url;
 	        let credential;
 	        if (typeof urlOrBlobClient === "string" &&
-	            ((core_util_2.isNodeLike && credentialOrOptions instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	                credentialOrOptions instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	            ((core_util_2.isNodeLike && credentialOrOptions instanceof storage_common_1.StorageSharedKeyCredential) ||
+	                credentialOrOptions instanceof storage_common_1.AnonymousCredential ||
 	                (0, core_auth_1.isTokenCredential)(credentialOrOptions))) {
 	            // First overload
 	            url = urlOrBlobClient;
@@ -197990,8 +196828,8 @@ function requireBlobBatch () {
 	        let credential;
 	        let tier;
 	        if (typeof urlOrBlobClient === "string" &&
-	            ((core_util_2.isNodeLike && credentialOrTier instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	                credentialOrTier instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	            ((core_util_2.isNodeLike && credentialOrTier instanceof storage_common_1.StorageSharedKeyCredential) ||
+	                credentialOrTier instanceof storage_common_1.AnonymousCredential ||
 	                (0, core_auth_1.isTokenCredential)(credentialOrTier))) {
 	            // First overload
 	            url = urlOrBlobClient;
@@ -198079,8 +196917,8 @@ function requireBlobBatch () {
 	                challengeCallbacks: { authorizeRequestOnChallenge: core_client_1.authorizeRequestOnTenantChallenge },
 	            }), { phase: "Sign" });
 	        }
-	        else if (credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) {
-	            corePipeline.addPolicy((0, StorageSharedKeyCredentialPolicyV2_js_1.storageSharedKeyCredentialPolicy)({
+	        else if (credential instanceof storage_common_1.StorageSharedKeyCredential) {
+	            corePipeline.addPolicy((0, storage_common_1.storageSharedKeyCredentialPolicy)({
 	                accountName: credential.accountName,
 	                accountKey: credential.accountKey,
 	            }), { phase: "Sign" });
@@ -198178,10 +197016,10 @@ function requireBlobBatchClient () {
 	const BatchUtils_js_1 = requireBatchUtils();
 	const BlobBatch_js_1 = requireBlobBatch();
 	const tracing_js_1 = requireTracing();
-	const AnonymousCredential_js_1 = requireAnonymousCredential$1();
+	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
 	const StorageContextClient_js_1 = requireStorageContextClient();
 	const Pipeline_js_1 = requirePipeline();
-	const utils_common_js_1 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
 	/**
 	 * A BlobBatchClient allows you to make batched requests to the Azure Storage Blob service.
 	 *
@@ -198199,7 +197037,7 @@ function requireBlobBatchClient () {
 	        }
 	        else if (!credentialOrPipeline) {
 	            // no credential provided
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        else {
 	            pipeline = (0, Pipeline_js_1.newPipeline)(credentialOrPipeline, options);
@@ -198322,9 +197160,9 @@ function requireBlobBatchClient () {
 	        return tracing_js_1.tracingClient.withSpan("BlobBatchClient-submitBatch", options, async (updatedOptions) => {
 	            const batchRequestBody = batchRequest.getHttpRequestBody();
 	            // ServiceSubmitBatchResponseModel and ContainerSubmitBatchResponse are compatible for now.
-	            const rawBatchResponse = (0, utils_common_js_1.assertResponse)(await this.serviceOrContainerContext.submitBatch((0, BatchUtils_js_1.utf8ByteLength)(batchRequestBody), batchRequest.getMultiPartContentType(), batchRequestBody, {
+	            const rawBatchResponse = (0, utils_common_js_1.assertResponse)((await this.serviceOrContainerContext.submitBatch((0, BatchUtils_js_1.utf8ByteLength)(batchRequestBody), batchRequest.getMultiPartContentType(), batchRequestBody, {
 	                ...updatedOptions,
-	            }));
+	            })));
 	            // Parse the sub responses result, if logic reaches here(i.e. the batch request succeeded with status code 202).
 	            const batchResponseParser = new BatchResponseParser_js_1.BatchResponseParser(rawBatchResponse, batchRequest.getSubRequests());
 	            const responseSummary = await batchResponseParser.parseBatchResponse();
@@ -198355,15 +197193,14 @@ function requireContainerClient () {
 	hasRequiredContainerClient = 1;
 	Object.defineProperty(ContainerClient, "__esModule", { value: true });
 	ContainerClient.ContainerClient = void 0;
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
-	const core_auth_1 = /*@__PURE__*/ requireCommonjs$8();
-	const AnonymousCredential_js_1 = requireAnonymousCredential$1();
-	const StorageSharedKeyCredential_js_1 = requireStorageSharedKeyCredential$1();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
+	const core_auth_1 = /*@__PURE__*/ requireCommonjs$6();
+	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
 	const Pipeline_js_1 = requirePipeline();
 	const StorageClient_js_1 = requireStorageClient();
 	const tracing_js_1 = requireTracing();
-	const utils_common_js_1 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
 	const BlobSASSignatureValues_js_1 = requireBlobSASSignatureValues();
 	const BlobLeaseClient_js_1 = requireBlobLeaseClient();
 	const Clients_js_1 = requireClients();
@@ -198395,8 +197232,8 @@ function requireContainerClient () {
 	            url = urlOrConnectionString;
 	            pipeline = credentialOrPipelineOrContainerName;
 	        }
-	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	            credentialOrPipelineOrContainerName instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	        else if ((core_util_1.isNodeLike && credentialOrPipelineOrContainerName instanceof storage_common_1.StorageSharedKeyCredential) ||
+	            credentialOrPipelineOrContainerName instanceof storage_common_1.AnonymousCredential ||
 	            (0, core_auth_1.isTokenCredential)(credentialOrPipelineOrContainerName)) {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            url = urlOrConnectionString;
@@ -198407,7 +197244,7 @@ function requireContainerClient () {
 	            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
 	            // The second parameter is undefined. Use anonymous credential.
 	            url = urlOrConnectionString;
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        else if (credentialOrPipelineOrContainerName &&
 	            typeof credentialOrPipelineOrContainerName === "string") {
@@ -198416,7 +197253,7 @@ function requireContainerClient () {
 	            const extractedCreds = (0, utils_common_js_1.extractConnectionStringParts)(urlOrConnectionString);
 	            if (extractedCreds.kind === "AccountConnString") {
 	                if (core_util_1.isNodeLike) {
-	                    const sharedKeyCredential = new StorageSharedKeyCredential_js_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+	                    const sharedKeyCredential = new storage_common_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
 	                    url = (0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName));
 	                    if (!options.proxyOptions) {
 	                        options.proxyOptions = (0, core_rest_pipeline_1.getDefaultProxySettings)(extractedCreds.proxyUri);
@@ -198432,7 +197269,7 @@ function requireContainerClient () {
 	                    (0, utils_common_js_1.appendToURLPath)(extractedCreds.url, encodeURIComponent(containerName)) +
 	                        "?" +
 	                        extractedCreds.accountSas;
-	                pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	                pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	            }
 	            else {
 	                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
@@ -199571,7 +198408,7 @@ function requireContainerClient () {
 	     */
 	    generateSasUrl(options) {
 	        return new Promise((resolve) => {
-	            if (!(this.credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential)) {
+	            if (!(this.credential instanceof storage_common_1.StorageSharedKeyCredential)) {
 	                throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
 	            }
 	            const sas = (0, BlobSASSignatureValues_js_1.generateBlobSASQueryParameters)({
@@ -199594,7 +198431,7 @@ function requireContainerClient () {
 	     */
 	    /* eslint-disable-next-line @azure/azure-sdk/ts-naming-options*/
 	    generateSasStringToSign(options) {
-	        if (!(this.credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential)) {
+	        if (!(this.credential instanceof storage_common_1.StorageSharedKeyCredential)) {
 	            throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
 	        }
 	        return (0, BlobSASSignatureValues_js_1.generateBlobSASQueryParametersInternal)({
@@ -200082,8 +198919,8 @@ function requireAccountSASSignatureValues () {
 	const AccountSASServices_js_1 = requireAccountSASServices();
 	const SasIPRange_js_1 = requireSasIPRange();
 	const SASQueryParameters_js_1 = requireSASQueryParameters();
-	const constants_js_1 = requireConstants$2();
-	const utils_common_js_1 = requireUtils_common$2();
+	const constants_js_1 = requireConstants$1();
+	const utils_common_js_1 = requireUtils_common$1();
 	/**
 	 * ONLY AVAILABLE IN NODE.JS RUNTIME.
 	 *
@@ -200185,15 +199022,14 @@ function requireBlobServiceClient () {
 	hasRequiredBlobServiceClient = 1;
 	Object.defineProperty(BlobServiceClient, "__esModule", { value: true });
 	BlobServiceClient.BlobServiceClient = void 0;
-	const core_auth_1 = /*@__PURE__*/ requireCommonjs$8();
-	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
-	const core_util_1 = /*@__PURE__*/ requireCommonjs$b();
+	const core_auth_1 = /*@__PURE__*/ requireCommonjs$6();
+	const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
+	const core_util_1 = /*@__PURE__*/ requireCommonjs$9();
 	const Pipeline_js_1 = requirePipeline();
 	const ContainerClient_js_1 = requireContainerClient();
-	const utils_common_js_1 = requireUtils_common$2();
-	const StorageSharedKeyCredential_js_1 = requireStorageSharedKeyCredential$1();
-	const AnonymousCredential_js_1 = requireAnonymousCredential$1();
-	const utils_common_js_2 = requireUtils_common$2();
+	const utils_common_js_1 = requireUtils_common$1();
+	const storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
+	const utils_common_js_2 = requireUtils_common$1();
 	const tracing_js_1 = requireTracing();
 	const BlobBatchClient_js_1 = requireBlobBatchClient();
 	const StorageClient_js_1 = requireStorageClient();
@@ -200229,7 +199065,7 @@ function requireBlobServiceClient () {
 	        const extractedCreds = (0, utils_common_js_1.extractConnectionStringParts)(connectionString);
 	        if (extractedCreds.kind === "AccountConnString") {
 	            if (core_util_1.isNodeLike) {
-	                const sharedKeyCredential = new StorageSharedKeyCredential_js_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+	                const sharedKeyCredential = new storage_common_1.StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
 	                if (!options.proxyOptions) {
 	                    options.proxyOptions = (0, core_rest_pipeline_1.getDefaultProxySettings)(extractedCreds.proxyUri);
 	                }
@@ -200241,7 +199077,7 @@ function requireBlobServiceClient () {
 	            }
 	        }
 	        else if (extractedCreds.kind === "SASConnString") {
-	            const pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            const pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	            return new BlobServiceClient(extractedCreds.url + "?" + extractedCreds.accountSas, pipeline);
 	        }
 	        else {
@@ -200256,14 +199092,14 @@ function requireBlobServiceClient () {
 	        if ((0, Pipeline_js_1.isPipelineLike)(credentialOrPipeline)) {
 	            pipeline = credentialOrPipeline;
 	        }
-	        else if ((core_util_1.isNodeLike && credentialOrPipeline instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential) ||
-	            credentialOrPipeline instanceof AnonymousCredential_js_1.AnonymousCredential ||
+	        else if ((core_util_1.isNodeLike && credentialOrPipeline instanceof storage_common_1.StorageSharedKeyCredential) ||
+	            credentialOrPipeline instanceof storage_common_1.AnonymousCredential ||
 	            (0, core_auth_1.isTokenCredential)(credentialOrPipeline)) {
 	            pipeline = (0, Pipeline_js_1.newPipeline)(credentialOrPipeline, options);
 	        }
 	        else {
 	            // The second parameter is undefined. Use anonymous credential
-	            pipeline = (0, Pipeline_js_1.newPipeline)(new AnonymousCredential_js_1.AnonymousCredential(), options);
+	            pipeline = (0, Pipeline_js_1.newPipeline)(new storage_common_1.AnonymousCredential(), options);
 	        }
 	        super(url, pipeline);
 	        this.serviceContext = this.storageClientContext.service;
@@ -200840,7 +199676,7 @@ function requireBlobServiceClient () {
 	     * @returns An account SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
 	     */
 	    generateAccountSasUrl(expiresOn, permissions = AccountSASPermissions_js_1.AccountSASPermissions.parse("r"), resourceTypes = "sco", options = {}) {
-	        if (!(this.credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential)) {
+	        if (!(this.credential instanceof storage_common_1.StorageSharedKeyCredential)) {
 	            throw RangeError("Can only generate the account SAS when the client is initialized with a shared key credential");
 	        }
 	        if (expiresOn === undefined) {
@@ -200871,7 +199707,7 @@ function requireBlobServiceClient () {
 	     * @returns An account SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
 	     */
 	    generateSasStringToSign(expiresOn, permissions = AccountSASPermissions_js_1.AccountSASPermissions.parse("r"), resourceTypes = "sco", options = {}) {
-	        if (!(this.credential instanceof StorageSharedKeyCredential_js_1.StorageSharedKeyCredential)) {
+	        if (!(this.credential instanceof storage_common_1.StorageSharedKeyCredential)) {
 	            throw RangeError("Can only generate the account SAS when the client is initialized with a shared key credential");
 	        }
 	        if (expiresOn === undefined) {
@@ -200929,15 +199765,15 @@ function requireGeneratedModels () {
 var hasRequiredCommonjs;
 
 function requireCommonjs () {
-	if (hasRequiredCommonjs) return commonjs$e;
+	if (hasRequiredCommonjs) return commonjs$c;
 	hasRequiredCommonjs = 1;
 	(function (exports) {
 		// Copyright (c) Microsoft Corporation.
 		// Licensed under the MIT License.
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.logger = exports.RestError = exports.BaseRequestPolicy = exports.StorageOAuthScopes = exports.newPipeline = exports.isPipelineLike = exports.Pipeline = exports.getBlobServiceAccountAudience = exports.StorageBlobAudience = exports.PremiumPageBlobTier = exports.BlockBlobTier = exports.generateBlobSASQueryParameters = exports.generateAccountSASQueryParameters = void 0;
+		exports.logger = exports.RestError = exports.StorageBrowserPolicyFactory = exports.StorageBrowserPolicy = exports.StorageSharedKeyCredentialPolicy = exports.StorageSharedKeyCredential = exports.StorageRetryPolicyFactory = exports.StorageRetryPolicy = exports.StorageRetryPolicyType = exports.Credential = exports.CredentialPolicy = exports.BaseRequestPolicy = exports.AnonymousCredentialPolicy = exports.AnonymousCredential = exports.StorageOAuthScopes = exports.newPipeline = exports.isPipelineLike = exports.Pipeline = exports.getBlobServiceAccountAudience = exports.StorageBlobAudience = exports.PremiumPageBlobTier = exports.BlockBlobTier = exports.generateBlobSASQueryParameters = exports.generateAccountSASQueryParameters = void 0;
 		const tslib_1 = require$$0$2;
-		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$9();
+		const core_rest_pipeline_1 = /*@__PURE__*/ requireCommonjs$7();
 		Object.defineProperty(exports, "RestError", { enumerable: true, get: function () { return core_rest_pipeline_1.RestError; } });
 		tslib_1.__exportStar(requireBlobServiceClient(), exports);
 		tslib_1.__exportStar(requireClients(), exports);
@@ -200954,11 +199790,7 @@ function requireCommonjs () {
 		tslib_1.__exportStar(requireBlobSASPermissions(), exports);
 		var BlobSASSignatureValues_js_1 = requireBlobSASSignatureValues();
 		Object.defineProperty(exports, "generateBlobSASQueryParameters", { enumerable: true, get: function () { return BlobSASSignatureValues_js_1.generateBlobSASQueryParameters; } });
-		tslib_1.__exportStar(requireStorageBrowserPolicyFactory(), exports);
 		tslib_1.__exportStar(requireContainerSASPermissions(), exports);
-		tslib_1.__exportStar(requireAnonymousCredential$1(), exports);
-		tslib_1.__exportStar(requireCredential$1(), exports);
-		tslib_1.__exportStar(requireStorageSharedKeyCredential$1(), exports);
 		var models_js_1 = requireModels();
 		Object.defineProperty(exports, "BlockBlobTier", { enumerable: true, get: function () { return models_js_1.BlockBlobTier; } });
 		Object.defineProperty(exports, "PremiumPageBlobTier", { enumerable: true, get: function () { return models_js_1.PremiumPageBlobTier; } });
@@ -200969,20 +199801,26 @@ function requireCommonjs () {
 		Object.defineProperty(exports, "isPipelineLike", { enumerable: true, get: function () { return Pipeline_js_1.isPipelineLike; } });
 		Object.defineProperty(exports, "newPipeline", { enumerable: true, get: function () { return Pipeline_js_1.newPipeline; } });
 		Object.defineProperty(exports, "StorageOAuthScopes", { enumerable: true, get: function () { return Pipeline_js_1.StorageOAuthScopes; } });
-		tslib_1.__exportStar(requireStorageRetryPolicyFactory$1(), exports);
-		var RequestPolicy_js_1 = requireRequestPolicy$1();
-		Object.defineProperty(exports, "BaseRequestPolicy", { enumerable: true, get: function () { return RequestPolicy_js_1.BaseRequestPolicy; } });
-		tslib_1.__exportStar(requireAnonymousCredentialPolicy$1(), exports);
-		tslib_1.__exportStar(requireCredentialPolicy$1(), exports);
-		tslib_1.__exportStar(requireStorageRetryPolicyFactory$1(), exports);
-		tslib_1.__exportStar(requireStorageSharedKeyCredentialPolicy$1(), exports);
+		var storage_common_1 = /*@__PURE__*/ requireCommonjs$2();
+		Object.defineProperty(exports, "AnonymousCredential", { enumerable: true, get: function () { return storage_common_1.AnonymousCredential; } });
+		Object.defineProperty(exports, "AnonymousCredentialPolicy", { enumerable: true, get: function () { return storage_common_1.AnonymousCredentialPolicy; } });
+		Object.defineProperty(exports, "BaseRequestPolicy", { enumerable: true, get: function () { return storage_common_1.BaseRequestPolicy; } });
+		Object.defineProperty(exports, "CredentialPolicy", { enumerable: true, get: function () { return storage_common_1.CredentialPolicy; } });
+		Object.defineProperty(exports, "Credential", { enumerable: true, get: function () { return storage_common_1.Credential; } });
+		Object.defineProperty(exports, "StorageRetryPolicyType", { enumerable: true, get: function () { return storage_common_1.StorageRetryPolicyType; } });
+		Object.defineProperty(exports, "StorageRetryPolicy", { enumerable: true, get: function () { return storage_common_1.StorageRetryPolicy; } });
+		Object.defineProperty(exports, "StorageRetryPolicyFactory", { enumerable: true, get: function () { return storage_common_1.StorageRetryPolicyFactory; } });
+		Object.defineProperty(exports, "StorageSharedKeyCredential", { enumerable: true, get: function () { return storage_common_1.StorageSharedKeyCredential; } });
+		Object.defineProperty(exports, "StorageSharedKeyCredentialPolicy", { enumerable: true, get: function () { return storage_common_1.StorageSharedKeyCredentialPolicy; } });
+		Object.defineProperty(exports, "StorageBrowserPolicy", { enumerable: true, get: function () { return storage_common_1.StorageBrowserPolicy; } });
+		Object.defineProperty(exports, "StorageBrowserPolicyFactory", { enumerable: true, get: function () { return storage_common_1.StorageBrowserPolicyFactory; } });
 		tslib_1.__exportStar(requireSASQueryParameters(), exports);
 		tslib_1.__exportStar(requireGeneratedModels(), exports);
 		var log_js_1 = requireLog$1();
 		Object.defineProperty(exports, "logger", { enumerable: true, get: function () { return log_js_1.logger; } });
 		
-	} (commonjs$e));
-	return commonjs$e;
+	} (commonjs$c));
+	return commonjs$c;
 }
 
 var errors = {};
@@ -202196,7 +201034,7 @@ function requireConfig () {
 
 var userAgent = {};
 
-var version = "4.0.5";
+var version = "4.1.0";
 var require$$0$1 = {
 	version: version};
 
@@ -207050,11 +205888,12 @@ function requireCache$1 () {
 		    constructor() {
 		        super("github.actions.results.api.v1.CreateCacheEntryResponse", [
 		            { no: 1, name: "ok", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-		            { no: 2, name: "signed_upload_url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+		            { no: 2, name: "signed_upload_url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+		            { no: 3, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
 		        ]);
 		    }
 		    create(value) {
-		        const message = { ok: false, signedUploadUrl: "" };
+		        const message = { ok: false, signedUploadUrl: "", message: "" };
 		        globalThis.Object.defineProperty(message, runtime_4.MESSAGE_TYPE, { enumerable: false, value: this });
 		        if (value !== undefined)
 		            (0, runtime_3.reflectionMergePartial)(this, message, value);
@@ -207070,6 +205909,9 @@ function requireCache$1 () {
 		                    break;
 		                case /* string signed_upload_url */ 2:
 		                    message.signedUploadUrl = reader.string();
+		                    break;
+		                case /* string message */ 3:
+		                    message.message = reader.string();
 		                    break;
 		                default:
 		                    let u = options.readUnknownField;
@@ -207089,6 +205931,9 @@ function requireCache$1 () {
 		        /* string signed_upload_url = 2; */
 		        if (message.signedUploadUrl !== "")
 		            writer.tag(2, runtime_1.WireType.LengthDelimited).string(message.signedUploadUrl);
+		        /* string message = 3; */
+		        if (message.message !== "")
+		            writer.tag(3, runtime_1.WireType.LengthDelimited).string(message.message);
 		        let u = options.writeUnknownFields;
 		        if (u !== false)
 		            (u == true ? runtime_2.UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -207172,11 +206017,12 @@ function requireCache$1 () {
 		    constructor() {
 		        super("github.actions.results.api.v1.FinalizeCacheEntryUploadResponse", [
 		            { no: 1, name: "ok", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-		            { no: 2, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
+		            { no: 2, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
+		            { no: 3, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
 		        ]);
 		    }
 		    create(value) {
-		        const message = { ok: false, entryId: "0" };
+		        const message = { ok: false, entryId: "0", message: "" };
 		        globalThis.Object.defineProperty(message, runtime_4.MESSAGE_TYPE, { enumerable: false, value: this });
 		        if (value !== undefined)
 		            (0, runtime_3.reflectionMergePartial)(this, message, value);
@@ -207192,6 +206038,9 @@ function requireCache$1 () {
 		                    break;
 		                case /* int64 entry_id */ 2:
 		                    message.entryId = reader.int64().toString();
+		                    break;
+		                case /* string message */ 3:
+		                    message.message = reader.string();
 		                    break;
 		                default:
 		                    let u = options.readUnknownField;
@@ -207211,6 +206060,9 @@ function requireCache$1 () {
 		        /* int64 entry_id = 2; */
 		        if (message.entryId !== "0")
 		            writer.tag(2, runtime_1.WireType.Varint).int64(message.entryId);
+		        /* string message = 3; */
+		        if (message.message !== "")
+		            writer.tag(3, runtime_1.WireType.LengthDelimited).string(message.message);
 		        let u = options.writeUnknownFields;
 		        if (u !== false)
 		            (u == true ? runtime_2.UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -208007,7 +206859,7 @@ function requireCache () {
 	    });
 	};
 	Object.defineProperty(cache$2, "__esModule", { value: true });
-	cache$2.saveCache = cache$2.restoreCache = cache$2.isFeatureAvailable = cache$2.ReserveCacheError = cache$2.ValidationError = void 0;
+	cache$2.saveCache = cache$2.restoreCache = cache$2.isFeatureAvailable = cache$2.FinalizeCacheError = cache$2.ReserveCacheError = cache$2.ValidationError = void 0;
 	const core = __importStar(requireCore());
 	const path = __importStar(path$1);
 	const utils = __importStar(requireCacheUtils());
@@ -208015,7 +206867,6 @@ function requireCache () {
 	const cacheTwirpClient = __importStar(requireCacheTwirpClient());
 	const config_1 = requireConfig();
 	const tar_1 = requireTar();
-	const constants_1 = requireConstants$5();
 	const http_client_1 = requireLib$5();
 	class ValidationError extends Error {
 	    constructor(message) {
@@ -208033,6 +206884,14 @@ function requireCache () {
 	    }
 	}
 	cache$2.ReserveCacheError = ReserveCacheError;
+	class FinalizeCacheError extends Error {
+	    constructor(message) {
+	        super(message);
+	        this.name = 'FinalizeCacheError';
+	        Object.setPrototypeOf(this, FinalizeCacheError.prototype);
+	    }
+	}
+	cache$2.FinalizeCacheError = FinalizeCacheError;
 	function checkPaths(paths) {
 	    if (!paths || paths.length === 0) {
 	        throw new ValidationError(`Path Validation Error: At least one directory or file path is required`);
@@ -208409,10 +207268,6 @@ function requireCache () {
 	            }
 	            const archiveFileSize = utils.getArchiveFileSizeInBytes(archivePath);
 	            core.debug(`File Size: ${archiveFileSize}`);
-	            // For GHES, this check will take place in ReserveCache API with enterprise file size limit
-	            if (archiveFileSize > constants_1.CacheFileSizeLimit && !(0, config_1.isGhes)()) {
-	                throw new Error(`Cache size of ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B) is over the 10GB limit, not saving cache.`);
-	            }
 	            // Set the archive size in the options, will be used to display the upload progress
 	            options.archiveSizeBytes = archiveFileSize;
 	            core.debug('Reserving Cache');
@@ -208425,7 +207280,10 @@ function requireCache () {
 	            try {
 	                const response = yield twirpClient.CreateCacheEntry(request);
 	                if (!response.ok) {
-	                    throw new Error('Response was not ok');
+	                    if (response.message) {
+	                        core.warning(`Cache reservation failed: ${response.message}`);
+	                    }
+	                    throw new Error(response.message || 'Response was not ok');
 	                }
 	                signedUploadUrl = response.signedUploadUrl;
 	            }
@@ -208443,6 +207301,9 @@ function requireCache () {
 	            const finalizeResponse = yield twirpClient.FinalizeCacheEntryUpload(finalizeRequest);
 	            core.debug(`FinalizeCacheEntryUploadResponse: ${finalizeResponse.ok}`);
 	            if (!finalizeResponse.ok) {
+	                if (finalizeResponse.message) {
+	                    throw new FinalizeCacheError(finalizeResponse.message);
+	                }
 	                throw new Error(`Unable to finalize cache with key ${key}, another job may be finalizing this cache.`);
 	            }
 	            cacheId = parseInt(finalizeResponse.entryId);
@@ -208454,6 +207315,9 @@ function requireCache () {
 	            }
 	            else if (typedError.name === ReserveCacheError.name) {
 	                core.info(`Failed to save: ${typedError.message}`);
+	            }
+	            else if (typedError.name === FinalizeCacheError.name) {
+	                core.warning(typedError.message);
 	            }
 	            else {
 	                // Log server errors (5xx) as errors, all other errors as warnings
@@ -209143,6 +208007,11 @@ class OverlayGrader extends Grader {
                 }
                 const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`;
                 const hasUndetectedFaults = mutantsDetected < relevantMutantResults.length;
+                const feedbotConfig = this.config.feedbot;
+                const showFeedbotMutation = (hintsToShow.length > 0 || hasUndetectedFaults === true) &&
+                    feedbotConfig?.enabled === true &&
+                    !part.hideFeedbot &&
+                    !unit.hideFeedbot;
                 return [
                     {
                         name: unit.name,
@@ -209150,14 +208019,14 @@ class OverlayGrader extends Grader {
                         output_format: 'markdown',
                         score: score ?? 0,
                         max_score: maxScore,
-                        ...(hasUndetectedFaults && {
+                        ...(showFeedbotMutation && {
                             extra_data: {
                                 llm: {
                                     prompt: buildFeedBotPrompt(errorOutput, unit.name),
                                     type: 'v1',
-                                    provider: PROVIDER,
-                                    model: PROMPT_MODEL,
-                                    account: PROMPT_ACCOUNT
+                                    provider: feedbotConfig?.provider ?? PROVIDER,
+                                    model: feedbotConfig?.model ?? PROMPT_MODEL,
+                                    account: feedbotConfig?.account ?? PROMPT_ACCOUNT
                                 }
                             }
                         })
@@ -209189,6 +208058,7 @@ class OverlayGrader extends Grader {
             const maxImplHints = this.config.maxImplementationHints;
             let output;
             let hiddenOutput;
+            let failingTestsToShow = failingTests;
             if (unit.hide_output) {
                 output = 'Output for this test is intentionally hidden.';
                 hiddenOutput = `**Tests passed: ${passingTests} / ${expectedTests}**\n${relevantTestResults
@@ -209199,7 +208069,7 @@ class OverlayGrader extends Grader {
             else if (maxImplHints !== undefined) {
                 // Limited mode: only show failing tests, up to the limit
                 const remainingHints = maxImplHints - this.implementationHintsShown;
-                const failingTestsToShow = failingTests
+                failingTestsToShow = failingTests
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .slice(0, Math.max(0, remainingHints));
                 // Update the running tally
@@ -209227,6 +208097,13 @@ class OverlayGrader extends Grader {
                     .join('\n')}`;
             }
             const hasFailingTests = failingTests.length > 0;
+            const feedbotConfigRegular = this.config.feedbot;
+            const showFeedbotRegular = feedbotConfigRegular?.enabled &&
+                (hasFailingTests ||
+                    maxImplHints === undefined ||
+                    failingTestsToShow.length > 0) &&
+                !part.hideFeedbot &&
+                !unit.hideFeedbot;
             return [
                 {
                     name: unit.name,
@@ -209237,14 +208114,14 @@ class OverlayGrader extends Grader {
                     score,
                     hide_until_released: part.hide_until_released,
                     max_score: unit.points,
-                    ...(hasFailingTests && {
+                    ...(showFeedbotRegular && {
                         extra_data: {
                             llm: {
                                 prompt: buildFeedBotPrompt(output, unit.name),
                                 type: 'v1',
-                                provider: PROVIDER,
-                                model: PROMPT_MODEL,
-                                account: PROMPT_ACCOUNT
+                                provider: feedbotConfigRegular?.provider ?? PROVIDER,
+                                model: feedbotConfigRegular?.model ?? PROMPT_MODEL,
+                                account: feedbotConfigRegular?.account ?? PROMPT_ACCOUNT
                             }
                         }
                     })
