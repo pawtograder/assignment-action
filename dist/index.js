@@ -208029,9 +208029,8 @@ class OverlayGrader extends Grader {
                         Math.round((mutantsDetected / maxMutantsToDetect) * maxScore * 100) / 100;
                 }
                 const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`;
-                const hasUndetectedFaults = mutantsDetected < relevantMutantResults.length;
                 const feedbotConfig = this.config.feedbot;
-                const showFeedbotMutation = (hintsToShow.length > 0 || hasUndetectedFaults === true) &&
+                const showFeedbotMutation = hintsToShow.length > 0 &&
                     isFeedbotEnabled(feedbotConfig) &&
                     !part.hideFeedbot &&
                     !unit.hideFeedbot;
