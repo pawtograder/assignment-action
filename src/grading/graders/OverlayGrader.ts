@@ -26,12 +26,12 @@ import {
   OutputFormat,
   PawtograderConfig
 } from '../types.js'
+import {
+  FeedbotValidationResult,
+  validateFeedbotConfig
+} from '../feedbotConfig.js'
 import { buildFeedBotPrompt } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
-
-const PROMPT_MODEL = 'anthropic/claude-sonnet-4.6'
-const PROMPT_ACCOUNT = 'rebecca'
-const PROVIDER = 'openrouter'
 
 function isFeedbotEnabled(cfg: FeedBotConfig | undefined): boolean {
   return Boolean(cfg?.enabled)
@@ -49,6 +49,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
   private mutantHintsShown = 0 // Running tally of mutant hints shown
   private implementationHintsShown = 0 // Running tally of failing test details shown
+  private feedbotValidation: FeedbotValidationResult
 
   constructor(
     solutionDir: string,
@@ -58,6 +59,18 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     regressionTestJob?: number
   ) {
     super(solutionDir, submissionDir, config, regressionTestJob)
+    this.feedbotValidation = validateFeedbotConfig(this.config.feedbot)
+
+    if (
+      this.feedbotValidation.runtimeEnabled === false &&
+      this.feedbotValidation.valid === false
+    ) {
+      const missingList = this.feedbotValidation.missingFields.join(', ')
+      this.logger.log(
+        'visible',
+        `FeedBot configuration error: missing required fields: ${missingList}. FeedBot will be disabled for this run.`
+      )
+    }
     if (this.config.build.preset == 'java-gradle') {
       this.builder = new GradleBuilder(
         this.logger,
@@ -260,6 +273,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           : 'No results from grading tests. Please check overall output for more details.'
         const showFeedbotMutantError =
           isFeedbotEnabled(this.config.feedbot) &&
+          this.feedbotValidation.runtimeEnabled &&
           !part.hideFeedbot &&
           !unit.hideFeedbot
         const feedbotCfg = this.config.feedbot
@@ -274,9 +288,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                       llm: {
                         prompt: buildFeedBotPrompt(errorMessage, unit.name),
                         type: 'v1' as const,
-                        provider: feedbotCfg?.provider ?? PROVIDER,
-                        model: feedbotCfg?.model ?? PROMPT_MODEL,
-                        account: feedbotCfg?.account ?? PROMPT_ACCOUNT
+                        provider: feedbotCfg!.provider,
+                        model: feedbotCfg!.model!,
+                        account: feedbotCfg!.account!
                       }
                     }
                   : {})
@@ -441,6 +455,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const showFeedbotMutation =
           hintsToShow.length > 0 &&
           isFeedbotEnabled(feedbotConfig) &&
+          this.feedbotValidation.runtimeEnabled &&
           !part.hideFeedbot &&
           !unit.hideFeedbot
         return [
@@ -455,9 +470,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 llm: {
                   prompt: buildFeedBotPrompt(errorOutput, unit.name),
                   type: 'v1' as const,
-                  provider: feedbotConfig?.provider ?? PROVIDER,
-                  model: feedbotConfig?.model ?? PROMPT_MODEL,
-                  account: feedbotConfig?.account ?? PROMPT_ACCOUNT
+                  provider: feedbotConfig!.provider,
+                  model: feedbotConfig!.model!,
+                  account: feedbotConfig!.account!
                 }
               }
             })
@@ -547,6 +562,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const feedbotConfigRegular = this.config.feedbot
       const showFeedbotRegular =
         isFeedbotEnabled(feedbotConfigRegular) &&
+        this.feedbotValidation.runtimeEnabled &&
         (hasFailingTests ||
           maxImplHints === undefined ||
           failingTestsToShow.length > 0) &&
@@ -567,9 +583,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
               llm: {
                 prompt: buildFeedBotPrompt(output, unit.name),
                 type: 'v1' as const,
-                provider: feedbotConfigRegular?.provider ?? PROVIDER,
-                model: feedbotConfigRegular?.model ?? PROMPT_MODEL,
-                account: feedbotConfigRegular?.account ?? PROMPT_ACCOUNT
+                provider: feedbotConfigRegular!.provider,
+                model: feedbotConfigRegular!.model!,
+                account: feedbotConfigRegular!.account!
               }
             }
           })

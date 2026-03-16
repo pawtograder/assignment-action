@@ -6,6 +6,16 @@ image: /img/assignments/web/a1.png
 
 ## Update Log
 
+> **FeedBot configuration note (runtime requirement - March 15, 2026)**  
+> When configuring FeedBot in `pawtograder.yml`, if you set
+> `feedbot.enabled: true`, you **must** also provide `feedbot.provider`,
+> `feedbot.model`, and `feedbot.account`. If any of these are missing, FeedBot
+> will be disabled for that grading run and the GitHub Action log will include a
+> clear message like:  
+> `FeedBot configuration error: missing required fields: provider, model, account. FeedBot will be disabled for this run.`  
+> Students will simply not see the FeedBot button in this case (behavior is
+> identical to `enabled: false`).
+
 **January 14, 2026:** A previous version of this handout mistakenly required
 implementing `equals()` and `hashCode()` for `MeasuredIngredient`. This was
 unintentional and is **not required** for Assignment 1. If you already

@@ -207487,6 +207487,29 @@ function isRegularTestUnit(unit) {
     return 'tests' in unit && 'testCount' in unit;
 }
 
+function validateFeedbotConfig(feedbot) {
+    if (!feedbot || !feedbot.enabled) {
+        return {
+            runtimeEnabled: false,
+            valid: true,
+            missingFields: []
+        };
+    }
+    const missingFields = [];
+    if (!feedbot.provider)
+        missingFields.push('provider');
+    if (!feedbot.model)
+        missingFields.push('model');
+    if (!feedbot.account)
+        missingFields.push('account');
+    const valid = missingFields.length === 0;
+    return {
+        runtimeEnabled: valid,
+        valid,
+        missingFields
+    };
+}
+
 const __filename = fileURLToPath$1(import.meta.url);
 const __dirname = dirname(__filename);
 const filePath = join(__dirname, 'README.md');
@@ -207732,9 +207755,6 @@ class Grader {
     }
 }
 
-const PROMPT_MODEL = 'anthropic/claude-sonnet-4.6';
-const PROMPT_ACCOUNT = 'rebecca';
-const PROVIDER = 'openrouter';
 function isFeedbotEnabled(cfg) {
     return Boolean(cfg?.enabled);
 }
@@ -207751,9 +207771,16 @@ class OverlayGrader extends Grader {
     builder;
     mutantHintsShown = 0; // Running tally of mutant hints shown
     implementationHintsShown = 0; // Running tally of failing test details shown
+    feedbotValidation;
     constructor(solutionDir, submissionDir, config, gradingDir, regressionTestJob) {
         super(solutionDir, submissionDir, config, regressionTestJob);
         this.gradingDir = gradingDir;
+        this.feedbotValidation = validateFeedbotConfig(this.config.feedbot);
+        if (this.feedbotValidation.runtimeEnabled === false &&
+            this.feedbotValidation.valid === false) {
+            const missingList = this.feedbotValidation.missingFields.join(', ');
+            this.logger.log('visible', `FeedBot configuration error: missing required fields: ${missingList}. FeedBot will be disabled for this run.`);
+        }
         if (this.config.build.preset == 'java-gradle') {
             this.builder = new GradleBuilder(this.logger, this.gradingDir, this.regressionTestJob);
         }
@@ -207896,6 +207923,7 @@ class OverlayGrader extends Grader {
                     ? `**${mutantError.reason}**\n\n${mutantError.details}`
                     : 'No results from grading tests. Please check overall output for more details.';
                 const showFeedbotMutantError = isFeedbotEnabled(this.config.feedbot) &&
+                    this.feedbotValidation.runtimeEnabled &&
                     !part.hideFeedbot &&
                     !unit.hideFeedbot;
                 const feedbotCfg = this.config.feedbot;
@@ -207909,9 +207937,9 @@ class OverlayGrader extends Grader {
                                 llm: {
                                     prompt: buildFeedBotPrompt(errorMessage, unit.name),
                                     type: 'v1',
-                                    provider: feedbotCfg?.provider ?? PROVIDER,
-                                    model: feedbotCfg?.model ?? PROMPT_MODEL,
-                                    account: feedbotCfg?.account ?? PROMPT_ACCOUNT
+                                    provider: feedbotCfg.provider,
+                                    model: feedbotCfg.model,
+                                    account: feedbotCfg.account
                                 }
                             }
                             : {})
@@ -208032,6 +208060,7 @@ class OverlayGrader extends Grader {
                 const feedbotConfig = this.config.feedbot;
                 const showFeedbotMutation = hintsToShow.length > 0 &&
                     isFeedbotEnabled(feedbotConfig) &&
+                    this.feedbotValidation.runtimeEnabled &&
                     !part.hideFeedbot &&
                     !unit.hideFeedbot;
                 return [
@@ -208046,9 +208075,9 @@ class OverlayGrader extends Grader {
                                 llm: {
                                     prompt: buildFeedBotPrompt(errorOutput, unit.name),
                                     type: 'v1',
-                                    provider: feedbotConfig?.provider ?? PROVIDER,
-                                    model: feedbotConfig?.model ?? PROMPT_MODEL,
-                                    account: feedbotConfig?.account ?? PROMPT_ACCOUNT
+                                    provider: feedbotConfig.provider,
+                                    model: feedbotConfig.model,
+                                    account: feedbotConfig.account
                                 }
                             }
                         })
@@ -208121,6 +208150,7 @@ class OverlayGrader extends Grader {
             const hasFailingTests = failingTests.length > 0;
             const feedbotConfigRegular = this.config.feedbot;
             const showFeedbotRegular = isFeedbotEnabled(feedbotConfigRegular) &&
+                this.feedbotValidation.runtimeEnabled &&
                 (hasFailingTests ||
                     maxImplHints === undefined ||
                     failingTestsToShow.length > 0) &&
@@ -208141,9 +208171,9 @@ class OverlayGrader extends Grader {
                             llm: {
                                 prompt: buildFeedBotPrompt(output, unit.name),
                                 type: 'v1',
-                                provider: feedbotConfigRegular?.provider ?? PROVIDER,
-                                model: feedbotConfigRegular?.model ?? PROMPT_MODEL,
-                                account: feedbotConfigRegular?.account ?? PROMPT_ACCOUNT
+                                provider: feedbotConfigRegular.provider,
+                                model: feedbotConfigRegular.model,
+                                account: feedbotConfigRegular.account
                             }
                         }
                     })
