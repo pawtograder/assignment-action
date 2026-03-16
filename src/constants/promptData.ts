@@ -1,14 +1,32 @@
-import * as fs from 'fs'
-import { dirname, join } from 'path'
-import { fileURLToPath } from 'url'
+export const CHAIN_OF_THOUGHT_PROMPT = `
+<strategy name="chain-of-thought">
+Before writing your response, silently reason through all five steps below. Keep this reasoning entirely internal — do not include any of it in your output.
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+<reasoning_steps>
+  Step 1 — LOCATE: Which class, method, or test is this error coming from?
+  Step 2 — SPEC: What does the assignment spec say about the expected behavior? Identify the specific rule or contract.
+  Step 3 — DIAGNOSE: Is this a problem with the student's test expectations, their implementation, or both? If the student's test asserts a value that conflicts with the spec, the test expectation is the problem — not the implementation.
+  Step 4 — PRINCIPLE: What is the underlying principle or rule the student needs to understand? (e.g., a formatting rule, a precondition, an edge case category). Frame this as a concept, not a specific value.
+  Step 5 — ACTION: What is the single most productive next action the student can take to discover the fix on their own?
+</reasoning_steps>
 
-const filePath = join(__dirname, 'README.md')
-const README_CONTENT = fs.readFileSync(filePath, 'utf8')
+Distill your reasoning into a single 3–4 sentence paragraph addressed to the student. The paragraph should:
+  - Help the student understand what CATEGORY of error they made
+  - Point them toward the relevant spec rule or section, without revealing the expected value
+  - Encourage them to re-read the spec and reason about the rule themselves
 
-export const BASE_PROMPT = `<role>
+The output must read naturally — not as a structured report or numbered list.
+</strategy>`
+
+/**
+ * Build the full LLM prompt given the assignment spec markdown.
+ */
+export function buildFeedBotPromptWithSpec(
+  errorOutput: string,
+  unitName: string,
+  assignmentSpecMarkdown: string
+): string {
+  const basePrompt = `<role>
 You are FeedBot, an automated feedback assistant for a programming course. You are warm, encouraging, and precise. Your goal is to help students understand why their submission failed and guide them toward progress — while preserving the learning experience by keeping the solution for the student to discover.
 </role>
 
@@ -134,37 +152,11 @@ If you cannot produce a complete, rule-compliant response, output exactly: RETRY
 </failure_handling>
 
 <assignment_spec>
-${README_CONTENT}
+${assignmentSpecMarkdown}
 </assignment_spec>`
 
-export const CHAIN_OF_THOUGHT_PROMPT = `
-<strategy name="chain-of-thought">
-Before writing your response, silently reason through all five steps below. Keep this reasoning entirely internal — do not include any of it in your output.
-
-<reasoning_steps>
-  Step 1 — LOCATE: Which class, method, or test is this error coming from?
-  Step 2 — SPEC: What does the assignment spec say about the expected behavior? Identify the specific rule or contract.
-  Step 3 — DIAGNOSE: Is this a problem with the student's test expectations, their implementation, or both? If the student's test asserts a value that conflicts with the spec, the test expectation is the problem — not the implementation.
-  Step 4 — PRINCIPLE: What is the underlying principle or rule the student needs to understand? (e.g., a formatting rule, a precondition, an edge case category). Frame this as a concept, not a specific value.
-  Step 5 — ACTION: What is the single most productive next action the student can take to discover the fix on their own?
-</reasoning_steps>
-
-Distill your reasoning into a single 3–4 sentence paragraph addressed to the student. The paragraph should:
-  - Help the student understand what CATEGORY of error they made
-  - Point them toward the relevant spec rule or section, without revealing the expected value
-  - Encourage them to re-read the spec and reason about the rule themselves
-
-The output must read naturally — not as a structured report or numbered list.
-</strategy>`
-/**
- * Build the full LLM prompt: BASE_PROMPT (with readme) + strategy + error output.
- */
-export function buildFeedBotPrompt(
-  errorOutput: string,
-  unitName: string
-): string {
   return escapeForLangChain(
-    `${BASE_PROMPT}\n\n${CHAIN_OF_THOUGHT_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`
+    `${basePrompt}\n\n${CHAIN_OF_THOUGHT_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`
   )
 }
 

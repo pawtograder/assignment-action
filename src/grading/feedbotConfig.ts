@@ -21,6 +21,7 @@ export function validateFeedbotConfig(
   if (!feedbot.provider) missingFields.push('provider')
   if (!feedbot.model) missingFields.push('model')
   if (!feedbot.account) missingFields.push('account')
+  if (!feedbot.spec_url) missingFields.push('spec_url')
 
   const valid = missingFields.length === 0
 

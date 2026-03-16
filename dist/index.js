@@ -2,7 +2,7 @@ import require$$0$3, { tmpdir } from 'os';
 import require$$0$4 from 'crypto';
 import * as require$$1$2 from 'fs';
 import require$$1__default, { realpathSync as realpathSync$1, readlinkSync, readdirSync, readdir as readdir$1, lstatSync, readFileSync, createWriteStream } from 'fs';
-import path$1, { dirname, join } from 'path';
+import path$1, { join } from 'path';
 import require$$2 from 'http';
 import require$$1$3 from 'https';
 import require$$0$9 from 'net';
@@ -22,7 +22,7 @@ import require$$2$1 from 'perf_hooks';
 import require$$5 from 'util/types';
 import require$$4 from 'async_hooks';
 import require$$1$6 from 'console';
-import require$$5$1, { fileURLToPath as fileURLToPath$1 } from 'url';
+import require$$5$1 from 'url';
 import require$$3 from 'zlib';
 import require$$6 from 'string_decoder';
 import require$$0$e from 'diagnostics_channel';
@@ -207502,6 +207502,8 @@ function validateFeedbotConfig(feedbot) {
         missingFields.push('model');
     if (!feedbot.account)
         missingFields.push('account');
+    if (!feedbot.spec_url)
+        missingFields.push('spec_url');
     const valid = missingFields.length === 0;
     return {
         runtimeEnabled: valid,
@@ -207510,11 +207512,30 @@ function validateFeedbotConfig(feedbot) {
     };
 }
 
-const __filename = fileURLToPath$1(import.meta.url);
-const __dirname = dirname(__filename);
-const filePath = join(__dirname, 'README.md');
-const README_CONTENT = require$$1$2.readFileSync(filePath, 'utf8');
-const BASE_PROMPT = `<role>
+const CHAIN_OF_THOUGHT_PROMPT = `
+<strategy name="chain-of-thought">
+Before writing your response, silently reason through all five steps below. Keep this reasoning entirely internal — do not include any of it in your output.
+
+<reasoning_steps>
+  Step 1 — LOCATE: Which class, method, or test is this error coming from?
+  Step 2 — SPEC: What does the assignment spec say about the expected behavior? Identify the specific rule or contract.
+  Step 3 — DIAGNOSE: Is this a problem with the student's test expectations, their implementation, or both? If the student's test asserts a value that conflicts with the spec, the test expectation is the problem — not the implementation.
+  Step 4 — PRINCIPLE: What is the underlying principle or rule the student needs to understand? (e.g., a formatting rule, a precondition, an edge case category). Frame this as a concept, not a specific value.
+  Step 5 — ACTION: What is the single most productive next action the student can take to discover the fix on their own?
+</reasoning_steps>
+
+Distill your reasoning into a single 3–4 sentence paragraph addressed to the student. The paragraph should:
+  - Help the student understand what CATEGORY of error they made
+  - Point them toward the relevant spec rule or section, without revealing the expected value
+  - Encourage them to re-read the spec and reason about the rule themselves
+
+The output must read naturally — not as a structured report or numbered list.
+</strategy>`;
+/**
+ * Build the full LLM prompt given the assignment spec markdown.
+ */
+function buildFeedBotPromptWithSpec(errorOutput, unitName, assignmentSpecMarkdown) {
+    const basePrompt = `<role>
 You are FeedBot, an automated feedback assistant for a programming course. You are warm, encouraging, and precise. Your goal is to help students understand why their submission failed and guide them toward progress — while preserving the learning experience by keeping the solution for the student to discover.
 </role>
 
@@ -207640,32 +207661,9 @@ If you cannot produce a complete, rule-compliant response, output exactly: RETRY
 </failure_handling>
 
 <assignment_spec>
-${README_CONTENT}
+${assignmentSpecMarkdown}
 </assignment_spec>`;
-const CHAIN_OF_THOUGHT_PROMPT = `
-<strategy name="chain-of-thought">
-Before writing your response, silently reason through all five steps below. Keep this reasoning entirely internal — do not include any of it in your output.
-
-<reasoning_steps>
-  Step 1 — LOCATE: Which class, method, or test is this error coming from?
-  Step 2 — SPEC: What does the assignment spec say about the expected behavior? Identify the specific rule or contract.
-  Step 3 — DIAGNOSE: Is this a problem with the student's test expectations, their implementation, or both? If the student's test asserts a value that conflicts with the spec, the test expectation is the problem — not the implementation.
-  Step 4 — PRINCIPLE: What is the underlying principle or rule the student needs to understand? (e.g., a formatting rule, a precondition, an edge case category). Frame this as a concept, not a specific value.
-  Step 5 — ACTION: What is the single most productive next action the student can take to discover the fix on their own?
-</reasoning_steps>
-
-Distill your reasoning into a single 3–4 sentence paragraph addressed to the student. The paragraph should:
-  - Help the student understand what CATEGORY of error they made
-  - Point them toward the relevant spec rule or section, without revealing the expected value
-  - Encourage them to re-read the spec and reason about the rule themselves
-
-The output must read naturally — not as a structured report or numbered list.
-</strategy>`;
-/**
- * Build the full LLM prompt: BASE_PROMPT (with readme) + strategy + error output.
- */
-function buildFeedBotPrompt(errorOutput, unitName) {
-    return escapeForLangChain(`${BASE_PROMPT}\n\n${CHAIN_OF_THOUGHT_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`);
+    return escapeForLangChain(`${basePrompt}\n\n${CHAIN_OF_THOUGHT_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`);
 }
 function escapeForLangChain(text) {
     return text.replace(/\{/g, '{{').replace(/\}/g, '}}');
@@ -207772,6 +207770,39 @@ class OverlayGrader extends Grader {
     mutantHintsShown = 0; // Running tally of mutant hints shown
     implementationHintsShown = 0; // Running tally of failing test details shown
     feedbotValidation;
+    feedbotSpecMarkdown;
+    feedbotSpecLoadFailed = false;
+    async ensureFeedbotSpecLoaded() {
+        if (this.feedbotSpecMarkdown ||
+            this.feedbotSpecLoadFailed ||
+            !this.config.feedbot ||
+            !this.config.feedbot.enabled ||
+            !this.feedbotValidation.runtimeEnabled) {
+            return;
+        }
+        const specUrl = this.config.feedbot.spec_url;
+        if (!specUrl) {
+            this.feedbotSpecLoadFailed = true;
+            this.feedbotValidation.runtimeEnabled = false;
+            return;
+        }
+        try {
+            const response = await fetch(specUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            const text = await response.text();
+            this.feedbotSpecMarkdown = text;
+            const preview = text.slice(0, 80).replace(/\s+/g, ' ');
+            this.logger.log('visible', `FeedBot spec_url loaded, first chars: "${preview}..."`);
+        }
+        catch (err) {
+            const reason = err instanceof Error ? err.message : 'Unknown error fetching spec_url';
+            this.logger.log('visible', `FeedBot configuration error: could not fetch spec_url '${specUrl}': ${reason}. FeedBot will be disabled for this run.`);
+            this.feedbotSpecLoadFailed = true;
+            this.feedbotValidation.runtimeEnabled = false;
+        }
+    }
     constructor(solutionDir, submissionDir, config, gradingDir, regressionTestJob) {
         super(solutionDir, submissionDir, config, regressionTestJob);
         this.gradingDir = gradingDir;
@@ -207924,6 +207955,7 @@ class OverlayGrader extends Grader {
                     : 'No results from grading tests. Please check overall output for more details.';
                 const showFeedbotMutantError = isFeedbotEnabled(this.config.feedbot) &&
                     this.feedbotValidation.runtimeEnabled &&
+                    !!this.feedbotSpecMarkdown &&
                     !part.hideFeedbot &&
                     !unit.hideFeedbot;
                 const feedbotCfg = this.config.feedbot;
@@ -207935,7 +207967,7 @@ class OverlayGrader extends Grader {
                         ...(showFeedbotMutantError
                             ? {
                                 llm: {
-                                    prompt: buildFeedBotPrompt(errorMessage, unit.name),
+                                    prompt: buildFeedBotPromptWithSpec(errorMessage, unit.name, this.feedbotSpecMarkdown),
                                     type: 'v1',
                                     provider: feedbotCfg.provider,
                                     model: feedbotCfg.model,
@@ -208061,6 +208093,7 @@ class OverlayGrader extends Grader {
                 const showFeedbotMutation = hintsToShow.length > 0 &&
                     isFeedbotEnabled(feedbotConfig) &&
                     this.feedbotValidation.runtimeEnabled &&
+                    !!this.feedbotSpecMarkdown &&
                     !part.hideFeedbot &&
                     !unit.hideFeedbot;
                 return [
@@ -208073,7 +208106,7 @@ class OverlayGrader extends Grader {
                         ...(showFeedbotMutation && {
                             extra_data: {
                                 llm: {
-                                    prompt: buildFeedBotPrompt(errorOutput, unit.name),
+                                    prompt: buildFeedBotPromptWithSpec(errorOutput, unit.name, this.feedbotSpecMarkdown),
                                     type: 'v1',
                                     provider: feedbotConfig.provider,
                                     model: feedbotConfig.model,
@@ -208151,6 +208184,7 @@ class OverlayGrader extends Grader {
             const feedbotConfigRegular = this.config.feedbot;
             const showFeedbotRegular = isFeedbotEnabled(feedbotConfigRegular) &&
                 this.feedbotValidation.runtimeEnabled &&
+                !!this.feedbotSpecMarkdown &&
                 (hasFailingTests ||
                     maxImplHints === undefined ||
                     failingTestsToShow.length > 0) &&
@@ -208169,7 +208203,7 @@ class OverlayGrader extends Grader {
                     ...(showFeedbotRegular && {
                         extra_data: {
                             llm: {
-                                prompt: buildFeedBotPrompt(output, unit.name),
+                                prompt: buildFeedBotPromptWithSpec(output, unit.name, this.feedbotSpecMarkdown),
                                 type: 'v1',
                                 provider: feedbotConfigRegular.provider,
                                 model: feedbotConfigRegular.model,
@@ -208364,6 +208398,8 @@ class OverlayGrader extends Grader {
         await this.copyStudentFiles('files');
         await this.copyFallbackFiles();
         const gradedParts = this.config.gradedParts || [];
+        // Attempt to load FeedBot assignment spec (if enabled and otherwise valid)
+        await this.ensureFeedbotSpecLoaded();
         try {
             this.logger.log('visible', 'Building project with student submission and running instructor tests');
             await this.builder.buildClean({

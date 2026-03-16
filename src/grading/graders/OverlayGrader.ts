@@ -30,7 +30,7 @@ import {
   FeedbotValidationResult,
   validateFeedbotConfig
 } from '../feedbotConfig.js'
-import { buildFeedBotPrompt } from '../../constants/promptData.js'
+import { buildFeedBotPromptWithSpec } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
 
 function isFeedbotEnabled(cfg: FeedBotConfig | undefined): boolean {
@@ -50,6 +50,48 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private mutantHintsShown = 0 // Running tally of mutant hints shown
   private implementationHintsShown = 0 // Running tally of failing test details shown
   private feedbotValidation: FeedbotValidationResult
+  private feedbotSpecMarkdown?: string
+  private feedbotSpecLoadFailed = false
+
+  private async ensureFeedbotSpecLoaded() {
+    if (
+      this.feedbotSpecMarkdown ||
+      this.feedbotSpecLoadFailed ||
+      !this.config.feedbot ||
+      !this.config.feedbot.enabled ||
+      !this.feedbotValidation.runtimeEnabled
+    ) {
+      return
+    }
+    const specUrl = this.config.feedbot.spec_url
+    if (!specUrl) {
+      this.feedbotSpecLoadFailed = true
+      this.feedbotValidation.runtimeEnabled = false
+      return
+    }
+    try {
+      const response = await fetch(specUrl)
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText}`)
+      }
+      const text = await response.text()
+      this.feedbotSpecMarkdown = text
+      const preview = text.slice(0, 80).replace(/\s+/g, ' ')
+      this.logger.log(
+        'visible',
+        `FeedBot spec_url loaded, first chars: "${preview}..."`
+      )
+    } catch (err) {
+      const reason =
+        err instanceof Error ? err.message : 'Unknown error fetching spec_url'
+      this.logger.log(
+        'visible',
+        `FeedBot configuration error: could not fetch spec_url '${specUrl}': ${reason}. FeedBot will be disabled for this run.`
+      )
+      this.feedbotSpecLoadFailed = true
+      this.feedbotValidation.runtimeEnabled = false
+    }
+  }
 
   constructor(
     solutionDir: string,
@@ -274,6 +316,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const showFeedbotMutantError =
           isFeedbotEnabled(this.config.feedbot) &&
           this.feedbotValidation.runtimeEnabled &&
+          !!this.feedbotSpecMarkdown &&
           !part.hideFeedbot &&
           !unit.hideFeedbot
         const feedbotCfg = this.config.feedbot
@@ -286,7 +329,11 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 ...(showFeedbotMutantError
                   ? {
                       llm: {
-                        prompt: buildFeedBotPrompt(errorMessage, unit.name),
+                        prompt: buildFeedBotPromptWithSpec(
+                          errorMessage,
+                          unit.name,
+                          this.feedbotSpecMarkdown!
+                        ),
                         type: 'v1' as const,
                         provider: feedbotCfg!.provider,
                         model: feedbotCfg!.model!,
@@ -456,6 +503,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           hintsToShow.length > 0 &&
           isFeedbotEnabled(feedbotConfig) &&
           this.feedbotValidation.runtimeEnabled &&
+          !!this.feedbotSpecMarkdown &&
           !part.hideFeedbot &&
           !unit.hideFeedbot
         return [
@@ -468,7 +516,11 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             ...(showFeedbotMutation && {
               extra_data: {
                 llm: {
-                  prompt: buildFeedBotPrompt(errorOutput, unit.name),
+                  prompt: buildFeedBotPromptWithSpec(
+                    errorOutput,
+                    unit.name,
+                    this.feedbotSpecMarkdown!
+                  ),
                   type: 'v1' as const,
                   provider: feedbotConfig!.provider,
                   model: feedbotConfig!.model!,
@@ -563,6 +615,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const showFeedbotRegular =
         isFeedbotEnabled(feedbotConfigRegular) &&
         this.feedbotValidation.runtimeEnabled &&
+        !!this.feedbotSpecMarkdown &&
         (hasFailingTests ||
           maxImplHints === undefined ||
           failingTestsToShow.length > 0) &&
@@ -581,7 +634,11 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           ...(showFeedbotRegular && {
             extra_data: {
               llm: {
-                prompt: buildFeedBotPrompt(output, unit.name),
+                prompt: buildFeedBotPromptWithSpec(
+                  output,
+                  unit.name,
+                  this.feedbotSpecMarkdown!
+                ),
                 type: 'v1' as const,
                 provider: feedbotConfigRegular!.provider,
                 model: feedbotConfigRegular!.model!,
@@ -827,6 +884,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     await this.copyStudentFiles('files')
     await this.copyFallbackFiles()
     const gradedParts = this.config.gradedParts || []
+
+    // Attempt to load FeedBot assignment spec (if enabled and otherwise valid)
+    await this.ensureFeedbotSpecLoaded()
 
     try {
       this.logger.log(
