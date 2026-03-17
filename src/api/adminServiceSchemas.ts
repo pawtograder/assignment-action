@@ -63,7 +63,11 @@ export type LLMExtraData = {
   provider?: LLMProvider
   temperature?: number
   max_tokens?: number
-  rate_limit?: object
+  rate_limit?: {
+    cooldown?: number
+    assignment_total?: number
+    class_total?: number
+  }
   type: 'v1'
 }
 
