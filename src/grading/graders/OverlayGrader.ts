@@ -45,6 +45,14 @@ function icon(result: TestResult) {
   }
 }
 
+function getFeedbotRateLimit(cfg: FeedBotConfig | undefined) {
+  return (
+    (cfg as { rate_limit?: { cooldown?: number } } | undefined)?.rate_limit ?? {
+      cooldown: 5
+    }
+  )
+}
+
 export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
   private mutantHintsShown = 0 // Running tally of mutant hints shown
@@ -69,8 +77,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       this.feedbotValidation.runtimeEnabled = false
       return
     }
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10_000)
     try {
-      const response = await fetch(specUrl)
+      const response = await fetch(specUrl, { signal: controller.signal })
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} ${response.statusText}`)
       }
@@ -82,14 +92,25 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         `FeedBot spec_url loaded, first chars: "${preview}..."`
       )
     } catch (err) {
-      const reason =
-        err instanceof Error ? err.message : 'Unknown error fetching spec_url'
+      const isTimeout =
+        (err instanceof Error && err.name === 'AbortError') ||
+        (typeof err === 'object' &&
+          err !== null &&
+          'name' in err &&
+          (err as { name?: unknown }).name === 'AbortError')
+      const reason = isTimeout
+        ? 'Timed out after 10 seconds'
+        : err instanceof Error
+          ? err.message
+          : 'Unknown error fetching spec_url'
       this.logger.log(
         'visible',
         `FeedBot configuration error: could not fetch spec_url '${specUrl}': ${reason}. FeedBot will be disabled for this run.`
       )
       this.feedbotSpecLoadFailed = true
       this.feedbotValidation.runtimeEnabled = false
+    } finally {
+      clearTimeout(timeoutId)
     }
   }
 
@@ -337,7 +358,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                         type: 'v1' as const,
                         provider: feedbotCfg!.provider,
                         model: feedbotCfg!.model!,
-                        account: feedbotCfg!.account!
+                        account: feedbotCfg!.account!,
+                        rate_limit: getFeedbotRateLimit(feedbotCfg)
                       }
                     }
                   : {})
@@ -524,7 +546,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                   type: 'v1' as const,
                   provider: feedbotConfig!.provider,
                   model: feedbotConfig!.model!,
-                  account: feedbotConfig!.account!
+                  account: feedbotConfig!.account!,
+                  rate_limit: getFeedbotRateLimit(feedbotConfig)
                 }
               }
             })
@@ -642,7 +665,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 type: 'v1' as const,
                 provider: feedbotConfigRegular!.provider,
                 model: feedbotConfigRegular!.model!,
-                account: feedbotConfigRegular!.account!
+                account: feedbotConfigRegular!.account!,
+                rate_limit: getFeedbotRateLimit(feedbotConfigRegular)
               }
             }
           })
