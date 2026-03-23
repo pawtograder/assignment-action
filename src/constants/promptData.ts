@@ -21,15 +21,23 @@ The output must read naturally — not as a structured report or numbered list.
 </strategy>`
 
 export const CHECKLIST_PROMPT = `
-<strategy name="checklist">
-Before writing your response, silently work through this checklist (do not show the checklist to the student):
+<strategy name="checklist-strategy">
+Before writing your response, silently work through the diagnostic checklist below. Keep this reasoning entirely internal — do not include any part of the checklist or your reasoning in the output.
 
-- What is the single most important failure signal in the output?
-- Which part of the assignment spec defines the expected behavior for that situation?
-- Is the issue in the student's tests, their implementation, or unclear expectations — and what category of mistake is it?
-- What is one concrete next action the student can take using only the spec and their own code?
+<diagnostic_checklist>
+  - WHERE is this error located? (Which class, method, or test is failing?)
+  - WHAT does the spec require for this behavior? (What is the rule or contract?)
+  - WHAT category of issue is this?
+    - Incorrect test expectation (student's test asserts the wrong value)
+    - Missing boundary/edge case (e.g., singular vs. plural, zero, empty)
+    - Incorrect implementation logic
+    - Missing or incomplete test coverage
+  - DIFFERENT: What specific condition or input might cause the student's code to diverge from the spec?
+</diagnostic_checklist>
 
-Then write 3–4 sentences of plain prose for the student that follow the same non-disclosure rules as the default strategy: guide toward principles and spec sections, never exact expected values or fixes. End the last sentence with "Next step:" and one action.
+Select the single most diagnostic checklist item for this error. Write your 3–4 sentence hint based on that item alone. The hint should help the student identify the CATEGORY of their mistake and point them to the relevant part of the spec — without revealing the specific fix or expected value.
+
+The output must read as a single, natural paragraph of encouragement and guidance — not a structured report.
 </strategy>`
 
 function resolveFeedBotStrategySection(
