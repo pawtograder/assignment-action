@@ -144,6 +144,21 @@
         "provider": {
           "$ref": "#/definitions/LLMProvider"
         },
+        "rate_limit": {
+          "additionalProperties": false,
+          "properties": {
+            "assignment_total": {
+              "type": "number"
+            },
+            "class_total": {
+              "type": "number"
+            },
+            "cooldown": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
         "spec_url": {
           "type": "string"
         }

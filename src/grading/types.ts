@@ -155,14 +155,27 @@ export interface LLMConfig {
   rate_limit?: object
 }
 
+/** Optional caps passed through to autograder extra_data for FeedBot / LLM usage. */
+export interface FeedBotRateLimit {
+  cooldown?: number
+  assignment_total?: number
+  class_total?: number
+}
+
 // FeedBot configuration - assignment-level
 export interface FeedBotConfig {
   enabled?: boolean
   spec_url?: string
+  /**
+   * Response strategy: built-in `chain_of_thought` (default when omitted), built-in `checklist`,
+   * or any other string treated as custom strategy instructions (same slot as the built-ins;
+   * role, rules, and embedded assignment spec are unchanged).
+   */
   prompt?: 'chain_of_thought' | 'checklist' | string
   provider?: LLMProvider
   model?: string
   account?: string
+  rate_limit?: FeedBotRateLimit
 }
 
 // Main configuration type

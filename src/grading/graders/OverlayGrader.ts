@@ -45,12 +45,18 @@ function icon(result: TestResult) {
   }
 }
 
+/** Cooldown default only; assignment/class totals are omitted unless set in config so the service can apply its own limits. */
+const DEFAULT_FEEDBOT_COOLDOWN = 5
+
 function getFeedbotRateLimit(cfg: FeedBotConfig | undefined) {
-  return (
-    (cfg as { rate_limit?: { cooldown?: number } } | undefined)?.rate_limit ?? {
-      cooldown: 5
-    }
-  )
+  const partial = cfg?.rate_limit
+  return {
+    cooldown: partial?.cooldown ?? DEFAULT_FEEDBOT_COOLDOWN,
+    ...(partial?.assignment_total !== undefined
+      ? { assignment_total: partial.assignment_total }
+      : {}),
+    ...(partial?.class_total !== undefined ? { class_total: partial.class_total } : {})
+  }
 }
 
 export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
@@ -353,7 +359,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                         prompt: buildFeedBotPromptWithSpec(
                           errorMessage,
                           unit.name,
-                          this.feedbotSpecMarkdown!
+                          this.feedbotSpecMarkdown!,
+                          feedbotCfg?.prompt
                         ),
                         type: 'v1' as const,
                         provider: feedbotCfg!.provider,
@@ -541,7 +548,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                   prompt: buildFeedBotPromptWithSpec(
                     errorOutput,
                     unit.name,
-                    this.feedbotSpecMarkdown!
+                    this.feedbotSpecMarkdown!,
+                    feedbotConfig?.prompt
                   ),
                   type: 'v1' as const,
                   provider: feedbotConfig!.provider,
@@ -660,7 +668,8 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
                 prompt: buildFeedBotPromptWithSpec(
                   output,
                   unit.name,
-                  this.feedbotSpecMarkdown!
+                  this.feedbotSpecMarkdown!,
+                  feedbotConfigRegular?.prompt
                 ),
                 type: 'v1' as const,
                 provider: feedbotConfigRegular!.provider,

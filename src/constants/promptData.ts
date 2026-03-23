@@ -1,3 +1,5 @@
+import type { FeedBotConfig } from '../grading/types.js'
+
 export const CHAIN_OF_THOUGHT_PROMPT = `
 <strategy name="chain-of-thought">
 Before writing your response, silently reason through all five steps below. Keep this reasoning entirely internal — do not include any of it in your output.
@@ -18,13 +20,40 @@ Distill your reasoning into a single 3–4 sentence paragraph addressed to the s
 The output must read naturally — not as a structured report or numbered list.
 </strategy>`
 
+export const CHECKLIST_PROMPT = `
+<strategy name="checklist">
+Before writing your response, silently work through this checklist (do not show the checklist to the student):
+
+- What is the single most important failure signal in the output?
+- Which part of the assignment spec defines the expected behavior for that situation?
+- Is the issue in the student's tests, their implementation, or unclear expectations — and what category of mistake is it?
+- What is one concrete next action the student can take using only the spec and their own code?
+
+Then write 3–4 sentences of plain prose for the student that follow the same non-disclosure rules as the default strategy: guide toward principles and spec sections, never exact expected values or fixes. End the last sentence with "Next step:" and one action.
+</strategy>`
+
+function resolveFeedBotStrategySection(
+  prompt: FeedBotConfig['prompt'] | undefined
+): string {
+  if (prompt === 'checklist') {
+    return CHECKLIST_PROMPT
+  }
+  if (prompt === 'chain_of_thought' || prompt === undefined) {
+    return CHAIN_OF_THOUGHT_PROMPT
+  }
+  const trimmed = prompt.trim()
+  return trimmed === '' ? CHAIN_OF_THOUGHT_PROMPT : trimmed
+}
+
 /**
  * Build the full LLM prompt given the assignment spec markdown.
+ * @param feedbotPrompt - `chain_of_thought` (default), `checklist`, or instructor-authored strategy text (inserted in place of the built-in strategy; role, rules, and spec wrapper are unchanged).
  */
 export function buildFeedBotPromptWithSpec(
   errorOutput: string,
   unitName: string,
-  assignmentSpecMarkdown: string
+  assignmentSpecMarkdown: string,
+  feedbotPrompt?: FeedBotConfig['prompt']
 ): string {
   const basePrompt = `<role>
 You are FeedBot, an automated feedback assistant for a programming course. You are warm, encouraging, and precise. Your goal is to help students understand why their submission failed and guide them toward progress — while preserving the learning experience by keeping the solution for the student to discover.
@@ -142,7 +171,8 @@ Output ONLY the student-facing message — no preamble, reasoning, or meta-comme
     - No bold (**text**) or italic (*text*)
     - No bullet points or numbered lists
     - No code fences (\`\`\`) or inline code backticks (\`)
-- This includes class names, method names, and variable names — write them in plain text (e.g., "the toString method" not "\`toString()\`")    - No links or anchors: NEVER output [text](url) or [text](#anchor) syntax
+- This includes class names, method names, and variable names — write them in plain text (e.g., "the toString method" not "\`toString()\`")
+    - No links or anchors: NEVER output [text](url) or [text](#anchor) syntax
     - No HTML tags
 If you want to mention a section of the spec, write it in plain English (e.g., "the toString formatting rules in section 5.3.5")
 </output_format>
@@ -155,8 +185,10 @@ If you cannot produce a complete, rule-compliant response, output exactly: RETRY
 ${assignmentSpecMarkdown}
 </assignment_spec>`
 
+  const strategy = resolveFeedBotStrategySection(feedbotPrompt)
+
   return escapeForLangChain(
-    `${basePrompt}\n\n${CHAIN_OF_THOUGHT_PROMPT}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`
+    `${basePrompt}\n\n${strategy}\n\nError output / failing test output:\n\n${errorOutput}\n\nUnit name: ${unitName}`
   )
 }
 
