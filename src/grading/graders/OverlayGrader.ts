@@ -4,10 +4,15 @@ import { access, readdir, stat } from 'fs/promises'
 import { tmpdir } from 'os'
 import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
+import { buildFeedBotPromptWithSpec } from '../../constants/promptData.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder, { GradleBuildError } from '../builders/GradleBuilder.js'
 import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
 import { generateStudentFriendlyError } from '../builders/javacErrorParser.js'
+import {
+  FeedbotValidationResult,
+  validateFeedbotConfig
+} from '../feedbotConfig.js'
 import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
@@ -16,21 +21,16 @@ import {
   GradedPart,
   GradedUnit,
   GraderArtifact,
-  MutantAdvice,
-  OverlayPawtograderConfig,
   isMutationTestUnit,
-  isRegularTestUnit,
   isPartDependency,
-  isUnitDependency,
+  isRegularTestUnit,
   isSimpleDependency,
+  isUnitDependency,
+  MutantAdvice,
   OutputFormat,
+  OverlayPawtograderConfig,
   PawtograderConfig
 } from '../types.js'
-import {
-  FeedbotValidationResult,
-  validateFeedbotConfig
-} from '../feedbotConfig.js'
-import { buildFeedBotPromptWithSpec } from '../../constants/promptData.js'
 import { Grader } from './Grader.js'
 
 function isFeedbotEnabled(cfg: FeedBotConfig | undefined): boolean {
@@ -55,7 +55,9 @@ function getFeedbotRateLimit(cfg: FeedBotConfig | undefined) {
     ...(partial?.assignment_total !== undefined
       ? { assignment_total: partial.assignment_total }
       : {}),
-    ...(partial?.class_total !== undefined ? { class_total: partial.class_total } : {})
+    ...(partial?.class_total !== undefined
+      ? { class_total: partial.class_total }
+      : {})
   }
 }
 

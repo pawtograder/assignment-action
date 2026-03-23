@@ -55,7 +55,7 @@ function resolveFeedBotStrategySection(
 
 /**
  * Build the full LLM prompt given the assignment spec markdown.
- * @param feedbotPrompt - `chain_of_thought` (default), `checklist`, or instructor-authored strategy text (inserted in place of the built-in strategy; role, rules, and spec wrapper are unchanged).
+ * @param feedbotPrompt - `chain_of_thought` (default), `checklist`, or instructor-authored strategy text (inserted in place of the built-in strategy).
  */
 export function buildFeedBotPromptWithSpec(
   errorOutput: string,

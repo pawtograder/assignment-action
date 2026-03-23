@@ -12,10 +12,7 @@
           "type": "number"
         }
       },
-      "required": [
-        "minimumMutantsDetected",
-        "pointsToAward"
-      ],
+      "required": ["minimumMutantsDetected", "pointsToAward"],
       "type": "object"
     },
     "BuildConfig": {
@@ -34,10 +31,7 @@
           "additionalProperties": false,
           "properties": {
             "policy": {
-              "enum": [
-                "fail",
-                "ignore"
-              ],
+              "enum": ["fail", "ignore"],
               "type": "string"
             },
             "preset": {
@@ -45,18 +39,11 @@
               "type": "string"
             }
           },
-          "required": [
-            "preset",
-            "policy"
-          ],
+          "required": ["preset", "policy"],
           "type": "object"
         },
         "preset": {
-          "enum": [
-            "java-gradle",
-            "python-script",
-            "none"
-          ],
+          "enum": ["java-gradle", "python-script", "none"],
           "type": "string"
         },
         "script_info": {
@@ -123,9 +110,7 @@
           "$ref": "#/definitions/VenvInfo"
         }
       },
-      "required": [
-        "preset"
-      ],
+      "required": ["preset"],
       "type": "object"
     },
     "Dependency": {
@@ -210,10 +195,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "gradedUnits"
-      ],
+      "required": ["name", "gradedUnits"],
       "type": "object"
     },
     "GradedUnit": {
@@ -246,10 +228,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "total_faults",
-                "points"
-              ],
+              "required": ["total_faults", "points"],
               "type": "object"
             },
             "locations": {
@@ -262,10 +241,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "locations",
-            "name"
-          ],
+          "required": ["locations", "name"],
           "type": "object"
         },
         {
@@ -309,12 +285,7 @@
               ]
             }
           },
-          "required": [
-            "name",
-            "points",
-            "testCount",
-            "tests"
-          ],
+          "required": ["name", "points", "testCount", "tests"],
           "type": "object"
         }
       ]
@@ -332,10 +303,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "path"
-      ],
+      "required": ["name", "path"],
       "type": "object"
     },
     "LLMConfig": {
@@ -357,19 +325,11 @@
           "type": "number"
         }
       },
-      "required": [
-        "model",
-        "provider"
-      ],
+      "required": ["model", "provider"],
       "type": "object"
     },
     "LLMProvider": {
-      "enum": [
-        "openai",
-        "azure",
-        "anthropic",
-        "openrouter"
-      ],
+      "enum": ["openai", "azure", "anthropic", "openrouter"],
       "type": "string"
     },
     "MutantAdvice": {
@@ -388,12 +348,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "prompt",
-        "sourceClass",
-        "targetClass"
-      ],
+      "required": ["name", "prompt", "sourceClass", "targetClass"],
       "type": "object"
     },
     "OverlayPawtograderConfig": {
@@ -449,18 +404,11 @@
               "type": "array"
             }
           },
-          "required": [
-            "files",
-            "testFiles"
-          ],
+          "required": ["files", "testFiles"],
           "type": "object"
         }
       },
-      "required": [
-        "grader",
-        "build",
-        "submissionFiles"
-      ],
+      "required": ["grader", "build", "submissionFiles"],
       "type": "object"
     },
     "PartDependencyRef": {
@@ -473,9 +421,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "part"
-      ],
+      "required": ["part"],
       "type": "object"
     },
     "PawtograderConfig": {
@@ -531,9 +477,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "unit"
-      ],
+      "required": ["unit"],
       "type": "object"
     },
     "VenvInfo": {
@@ -546,10 +490,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "cache_key",
-        "dir_name"
-      ],
+      "required": ["cache_key", "dir_name"],
       "type": "object"
     }
   }
