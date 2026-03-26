@@ -34,6 +34,7 @@ export default async function grade(
   submissionDir: string,
   regressionTestJob?: number
 ): Promise<AutograderFeedback> {
+  // Config (including feedbot) is read from the grader/solution repo's pawtograder.yml
   const _config = await readFile(
     path.join(solutionDir, 'pawtograder.yml'),
     'utf8'

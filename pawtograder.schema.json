@@ -126,6 +126,50 @@
         }
       ]
     },
+    "FeedBotConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "prompt": {
+          "description": "Response strategy: built-in `chain_of_thought` (default when omitted), built-in `checklist`, or any other string treated as custom strategy instructions (same slot as the built-ins; role, rules, and embedded assignment spec are unchanged).",
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/definitions/LLMProvider"
+        },
+        "rate_limit": {
+          "$ref": "#/definitions/FeedBotRateLimit"
+        },
+        "spec_url": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FeedBotRateLimit": {
+      "additionalProperties": false,
+      "description": "Optional caps passed through to autograder extra_data for FeedBot / LLM usage.",
+      "properties": {
+        "assignment_total": {
+          "type": "number"
+        },
+        "class_total": {
+          "type": "number"
+        },
+        "cooldown": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
     "GradedPart": {
       "additionalProperties": false,
       "properties": {
@@ -140,6 +184,9 @@
             "$ref": "#/definitions/GradedUnit"
           },
           "type": "array"
+        },
+        "hideFeedbot": {
+          "type": "boolean"
         },
         "hide_until_released": {
           "type": "boolean"
@@ -167,6 +214,9 @@
                 "$ref": "#/definitions/Dependency"
               },
               "type": "array"
+            },
+            "hideFeedbot": {
+              "type": "boolean"
             },
             "linearScoring": {
               "additionalProperties": false,
@@ -205,6 +255,9 @@
                 "$ref": "#/definitions/Dependency"
               },
               "type": "array"
+            },
+            "hideFeedbot": {
+              "type": "boolean"
             },
             "hide_output": {
               "type": "boolean"
@@ -253,6 +306,32 @@
       "required": ["name", "path"],
       "type": "object"
     },
+    "LLMConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "max_tokens": {
+          "type": "number"
+        },
+        "model": {
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/definitions/LLMProvider"
+        },
+        "rate_limit": {
+          "type": "object"
+        },
+        "temperature": {
+          "type": "number"
+        }
+      },
+      "required": ["model", "provider"],
+      "type": "object"
+    },
+    "LLMProvider": {
+      "enum": ["openai", "azure", "anthropic", "openrouter"],
+      "type": "string"
+    },
     "MutantAdvice": {
       "additionalProperties": false,
       "properties": {
@@ -281,6 +360,9 @@
         "fallbackFiles": {
           "type": "string"
         },
+        "feedbot": {
+          "$ref": "#/definitions/FeedBotConfig"
+        },
         "gradedParts": {
           "items": {
             "$ref": "#/definitions/GradedPart"
@@ -290,6 +372,9 @@
         "grader": {
           "const": "overlay",
           "type": "string"
+        },
+        "llm": {
+          "$ref": "#/definitions/LLMConfig"
         },
         "maxImplementationHints": {
           "type": "number"

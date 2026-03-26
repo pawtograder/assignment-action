@@ -4,28 +4,38 @@ import { access, readdir, stat } from 'fs/promises'
 import { tmpdir } from 'os'
 import path from 'path'
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js'
+import { buildFeedBotPromptWithSpec } from '../../constants/promptData.js'
 import { Builder, MutantResult, TestResult } from '../builders/Builder.js'
 import GradleBuilder, { GradleBuildError } from '../builders/GradleBuilder.js'
 import PythonScriptBuilder from '../builders/PythonScriptBuilder.js'
 import { generateStudentFriendlyError } from '../builders/javacErrorParser.js'
 import {
+  FeedbotValidationResult,
+  validateFeedbotConfig
+} from '../feedbotConfig.js'
+import {
   AutograderTestFeedback,
   DEFAULT_TIMEOUTS,
   Dependency,
+  FeedBotConfig,
   GradedPart,
   GradedUnit,
   GraderArtifact,
-  MutantAdvice,
-  OverlayPawtograderConfig,
   isMutationTestUnit,
-  isRegularTestUnit,
   isPartDependency,
-  isUnitDependency,
+  isRegularTestUnit,
   isSimpleDependency,
+  isUnitDependency,
+  MutantAdvice,
   OutputFormat,
+  OverlayPawtograderConfig,
   PawtograderConfig
 } from '../types.js'
 import { Grader } from './Grader.js'
+
+function isFeedbotEnabled(cfg: FeedBotConfig | undefined): boolean {
+  return Boolean(cfg?.enabled)
+}
 
 function icon(result: TestResult) {
   if (result.status === 'pass') {
@@ -35,10 +45,82 @@ function icon(result: TestResult) {
   }
 }
 
+/** Cooldown default only; assignment/class totals are omitted unless set in config so the service can apply its own limits. */
+const DEFAULT_FEEDBOT_COOLDOWN = 5
+
+function getFeedbotRateLimit(cfg: FeedBotConfig | undefined) {
+  const partial = cfg?.rate_limit
+  return {
+    cooldown: partial?.cooldown ?? DEFAULT_FEEDBOT_COOLDOWN,
+    ...(partial?.assignment_total !== undefined
+      ? { assignment_total: partial.assignment_total }
+      : {}),
+    ...(partial?.class_total !== undefined
+      ? { class_total: partial.class_total }
+      : {})
+  }
+}
+
 export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
   private mutantHintsShown = 0 // Running tally of mutant hints shown
   private implementationHintsShown = 0 // Running tally of failing test details shown
+  private feedbotValidation: FeedbotValidationResult
+  private feedbotSpecMarkdown?: string
+  private feedbotSpecLoadFailed = false
+
+  private async ensureFeedbotSpecLoaded() {
+    if (
+      this.feedbotSpecMarkdown ||
+      this.feedbotSpecLoadFailed ||
+      !this.config.feedbot ||
+      !this.config.feedbot.enabled ||
+      !this.feedbotValidation.runtimeEnabled
+    ) {
+      return
+    }
+    const specUrl = this.config.feedbot.spec_url
+    if (!specUrl) {
+      this.feedbotSpecLoadFailed = true
+      this.feedbotValidation.runtimeEnabled = false
+      return
+    }
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10_000)
+    try {
+      const response = await fetch(specUrl, { signal: controller.signal })
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText}`)
+      }
+      const text = await response.text()
+      this.feedbotSpecMarkdown = text
+      const preview = text.slice(0, 80).replace(/\s+/g, ' ')
+      this.logger.log(
+        'visible',
+        `FeedBot spec_url loaded, first chars: "${preview}..."`
+      )
+    } catch (err) {
+      const isTimeout =
+        (err instanceof Error && err.name === 'AbortError') ||
+        (typeof err === 'object' &&
+          err !== null &&
+          'name' in err &&
+          (err as { name?: unknown }).name === 'AbortError')
+      const reason = isTimeout
+        ? 'Timed out after 10 seconds'
+        : err instanceof Error
+          ? err.message
+          : 'Unknown error fetching spec_url'
+      this.logger.log(
+        'visible',
+        `FeedBot configuration error: could not fetch spec_url '${specUrl}': ${reason}. FeedBot will be disabled for this run.`
+      )
+      this.feedbotSpecLoadFailed = true
+      this.feedbotValidation.runtimeEnabled = false
+    } finally {
+      clearTimeout(timeoutId)
+    }
+  }
 
   constructor(
     solutionDir: string,
@@ -48,6 +130,18 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     regressionTestJob?: number
   ) {
     super(solutionDir, submissionDir, config, regressionTestJob)
+    this.feedbotValidation = validateFeedbotConfig(this.config.feedbot)
+
+    if (
+      this.feedbotValidation.runtimeEnabled === false &&
+      this.feedbotValidation.valid === false
+    ) {
+      const missingList = this.feedbotValidation.missingFields.join(', ')
+      this.logger.log(
+        'visible',
+        `FeedBot configuration error: missing required fields: ${missingList}. FeedBot will be disabled for this run.`
+      )
+    }
     if (this.config.build.preset == 'java-gradle') {
       this.builder = new GradleBuilder(
         this.logger,
@@ -248,6 +342,38 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
         const errorMessage = mutantError
           ? `**${mutantError.reason}**\n\n${mutantError.details}`
           : 'No results from grading tests. Please check overall output for more details.'
+        const showFeedbotMutantError =
+          isFeedbotEnabled(this.config.feedbot) &&
+          this.feedbotValidation.runtimeEnabled &&
+          !!this.feedbotSpecMarkdown &&
+          !part.hideFeedbot &&
+          !unit.hideFeedbot
+        const feedbotCfg = this.config.feedbot
+        const extra_data =
+          mutantError || showFeedbotMutantError
+            ? {
+                ...(mutantError
+                  ? { icon: 'FaExclamationTriangle' as const }
+                  : {}),
+                ...(showFeedbotMutantError
+                  ? {
+                      llm: {
+                        prompt: buildFeedBotPromptWithSpec(
+                          errorMessage,
+                          unit.name,
+                          this.feedbotSpecMarkdown!,
+                          feedbotCfg?.prompt
+                        ),
+                        type: 'v1' as const,
+                        provider: feedbotCfg!.provider,
+                        model: feedbotCfg!.model!,
+                        account: feedbotCfg!.account!,
+                        rate_limit: getFeedbotRateLimit(feedbotCfg)
+                      }
+                    }
+                  : {})
+              }
+            : undefined
         return [
           {
             name: unit.name,
@@ -256,9 +382,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             score: 0,
             max_score:
               unit.breakPoints?.[0].pointsToAward ?? unit.linearScoring?.points,
-            extra_data: mutantError
-              ? { icon: 'FaExclamationTriangle' }
-              : undefined
+            extra_data
           }
         ]
       } else {
@@ -404,13 +528,39 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             ) / 100
         }
 
+        const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
+        const feedbotConfig = this.config.feedbot
+        const showFeedbotMutation =
+          hintsToShow.length > 0 &&
+          isFeedbotEnabled(feedbotConfig) &&
+          this.feedbotValidation.runtimeEnabled &&
+          !!this.feedbotSpecMarkdown &&
+          !part.hideFeedbot &&
+          !unit.hideFeedbot
         return [
           {
             name: unit.name,
-            output: `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`,
+            output: errorOutput,
             output_format: 'markdown',
             score: score ?? 0,
-            max_score: maxScore
+            max_score: maxScore,
+            ...(showFeedbotMutation && {
+              extra_data: {
+                llm: {
+                  prompt: buildFeedBotPromptWithSpec(
+                    errorOutput,
+                    unit.name,
+                    this.feedbotSpecMarkdown!,
+                    feedbotConfig?.prompt
+                  ),
+                  type: 'v1' as const,
+                  provider: feedbotConfig!.provider,
+                  model: feedbotConfig!.model!,
+                  account: feedbotConfig!.account!,
+                  rate_limit: getFeedbotRateLimit(feedbotConfig)
+                }
+              }
+            })
           }
         ]
       }
@@ -442,6 +592,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       const maxImplHints = this.config.maxImplementationHints
       let output: string
       let hiddenOutput: string | undefined
+      let failingTestsToShow: typeof failingTests = failingTests
 
       if (unit.hide_output) {
         output = 'Output for this test is intentionally hidden.'
@@ -455,7 +606,7 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
       } else if (maxImplHints !== undefined) {
         // Limited mode: only show failing tests, up to the limit
         const remainingHints = maxImplHints - this.implementationHintsShown
-        const failingTestsToShow = failingTests
+        failingTestsToShow = failingTests
           .sort((a, b) => a.name.localeCompare(b.name))
           .slice(0, Math.max(0, remainingHints))
 
@@ -492,6 +643,17 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           .join('\n')}`
       }
 
+      const hasFailingTests = failingTests.length > 0
+      const feedbotConfigRegular = this.config.feedbot
+      const showFeedbotRegular =
+        isFeedbotEnabled(feedbotConfigRegular) &&
+        this.feedbotValidation.runtimeEnabled &&
+        !!this.feedbotSpecMarkdown &&
+        (hasFailingTests ||
+          maxImplHints === undefined ||
+          failingTestsToShow.length > 0) &&
+        !part.hideFeedbot &&
+        !unit.hideFeedbot
       return [
         {
           name: unit.name,
@@ -501,7 +663,24 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           hidden_output_format: unit.hide_output ? 'markdown' : undefined,
           score,
           hide_until_released: part.hide_until_released,
-          max_score: unit.points
+          max_score: unit.points,
+          ...(showFeedbotRegular && {
+            extra_data: {
+              llm: {
+                prompt: buildFeedBotPromptWithSpec(
+                  output,
+                  unit.name,
+                  this.feedbotSpecMarkdown!,
+                  feedbotConfigRegular?.prompt
+                ),
+                type: 'v1' as const,
+                provider: feedbotConfigRegular!.provider,
+                model: feedbotConfigRegular!.model!,
+                account: feedbotConfigRegular!.account!,
+                rate_limit: getFeedbotRateLimit(feedbotConfigRegular)
+              }
+            }
+          })
         }
       ]
     }
@@ -740,6 +919,9 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     await this.copyStudentFiles('files')
     await this.copyFallbackFiles()
     const gradedParts = this.config.gradedParts || []
+
+    // Attempt to load FeedBot assignment spec (if enabled and otherwise valid)
+    await this.ensureFeedbotSpecLoaded()
 
     try {
       this.logger.log(

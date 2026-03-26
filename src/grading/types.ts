@@ -122,9 +122,10 @@ export function isSimpleDependency(dep: Dependency): dep is string {
   return typeof dep === 'string'
 }
 
-// GradedUnit with optional dependencies
+// GradedUnit with optional dependencies and optional FeedBot hide override (default false)
 export type GradedUnit = GradedUnitBase & {
   dependencies?: Dependency[]
+  hideFeedbot?: boolean
 }
 
 // Graded part type
@@ -133,6 +134,7 @@ export interface GradedPart {
   gradedUnits: GradedUnit[]
   hide_until_released?: boolean
   dependencies?: Dependency[]
+  hideFeedbot?: boolean
 }
 
 // Mutant advice configuration
@@ -141,6 +143,39 @@ export interface MutantAdvice {
   prompt: string
   sourceClass: string
   targetClass: string
+}
+
+export type LLMProvider = 'openai' | 'azure' | 'anthropic' | 'openrouter'
+
+export interface LLMConfig {
+  model: string
+  provider: LLMProvider
+  temperature?: number
+  max_tokens?: number
+  rate_limit?: object
+}
+
+/** Optional caps passed through to autograder extra_data for FeedBot / LLM usage. */
+export interface FeedBotRateLimit {
+  cooldown?: number
+  assignment_total?: number
+  class_total?: number
+}
+
+// FeedBot configuration - assignment-level
+export interface FeedBotConfig {
+  enabled?: boolean
+  spec_url?: string
+  /**
+   * Response strategy: built-in `chain_of_thought` (default when omitted), built-in `checklist`,
+   * or any other string treated as custom strategy instructions (same slot as the built-ins;
+   * role, rules, and embedded assignment spec are unchanged).
+   */
+  prompt?: 'chain_of_thought' | 'checklist' | string
+  provider?: LLMProvider
+  model?: string
+  account?: string
+  rate_limit?: FeedBotRateLimit
 }
 
 // Main configuration type
@@ -156,6 +191,8 @@ export interface OverlayPawtograderConfig {
   mutantAdvice?: MutantAdvice[]
   maxMutantHints?: number // Maximum number of mutant hints to show across all units. If undefined, shows all.
   maxImplementationHints?: number // Maximum number of failing test details to show across all units. If set, only shows failing tests (not passing). If undefined, shows all test results.
+  llm?: LLMConfig
+  feedbot?: FeedBotConfig
 }
 
 export type PawtograderConfig = OverlayPawtograderConfig
