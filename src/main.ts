@@ -58,6 +58,34 @@ async function zipDirectory(dirPath: string): Promise<Buffer> {
   return await zip.generateAsync({ type: 'nodebuffer' })
 }
 
+// Map common file extensions to MIME types for artifact uploads. The Supabase
+// SDK's uploadToSignedUrl requires an explicit contentType when given a Buffer.
+function getContentType(filePath: string): string {
+  const ext = filePath.toLowerCase().split('.').pop() ?? ''
+  const mimeTypes: Record<string, string> = {
+    txt: 'text/plain',
+    log: 'text/plain',
+    html: 'text/html',
+    htm: 'text/html',
+    css: 'text/css',
+    js: 'text/javascript',
+    json: 'application/json',
+    csv: 'text/csv',
+    xml: 'application/xml',
+    md: 'text/markdown',
+    pdf: 'application/pdf',
+    zip: 'application/zip',
+    gz: 'application/gzip',
+    tar: 'application/x-tar',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    svg: 'image/svg+xml'
+  }
+  return mimeTypes[ext] || 'application/octet-stream'
+}
+
 async function prepareForGrading(
   graderConfig: Awaited<ReturnType<typeof createSubmission>>
 ) {
@@ -260,19 +288,27 @@ export async function run(): Promise<void> {
                 const stats = await stat(artifact.path)
                 let fileToUpload: Buffer
 
+                let contentType: string
                 if (stats.isDirectory()) {
                   // Create a zip file for the directory using JSZip
                   fileToUpload = await zipDirectory(artifact.path)
+                  contentType = 'application/zip'
                 } else {
                   fileToUpload = readFileSync(artifact.path)
+                  contentType = getContentType(artifact.path)
                 }
 
+                // Explicitly set contentType: when a Buffer (not a Blob) is
+                // passed, the Supabase SDK's uploadToSignedUrl does not apply
+                // its default content-type, so an unset value yields a 415
+                // "Invalid Content-Type header" error.
                 const { error } = await supabase.storage
                   .from('submission-artifacts')
                   .uploadToSignedUrl(
                     artifactRemote.path,
                     artifactRemote.token,
-                    fileToUpload
+                    fileToUpload,
+                    { contentType }
                   )
                 if (error) {
                   console.error(error)
