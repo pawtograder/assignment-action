@@ -18,6 +18,66 @@ export class NonRetriableError extends Error {
   }
 }
 
+/**
+ * Non-5xx statuses that still represent a transient condition worth retrying.
+ * Everything else in the 4xx range (bad token, bad payload) is the client's
+ * fault and will fail identically on every attempt.
+ */
+const RETRIABLE_STATUS = new Set([408, 425, 429])
+
+type ApiError = { message: string; recoverable: boolean; details: string }
+
+/**
+ * Turn a fetch Response into a typed API payload, or throw.
+ *
+ * The gateway in front of the grading API returns its own errors as JSON that
+ * does not carry an `error` field (e.g. a 502 body of
+ * `{"msg":"internal edge function error"}` when an edge function pod is
+ * killed mid-request). Inferring failure from the body alone therefore reads a
+ * gateway error as a successful, empty response. The HTTP status is checked
+ * first so those surface as retriable errors instead.
+ *
+ * @param response The raw fetch response.
+ * @param what Human-readable prefix for error messages, e.g. 'Failed to submit
+ *   feedback'.
+ * @returns The parsed body.
+ */
+async function parseApiResponse<T extends { error?: ApiError }>(
+  response: Response,
+  what: string
+): Promise<T> {
+  // Read the body once, as text: a non-2xx response is frequently HTML or an
+  // empty body, and response.json() would throw a SyntaxError whose message
+  // hides the status that actually explains the failure.
+  const text = await response.text()
+
+  if (!response.ok) {
+    const message = `${what}: HTTP ${response.status} ${response.statusText} ${text.slice(0, 500)}`
+    if (response.status >= 500 || RETRIABLE_STATUS.has(response.status)) {
+      throw new Error(message)
+    }
+    throw new NonRetriableError(message)
+  }
+
+  let resp: T
+  try {
+    resp = JSON.parse(text) as T
+  } catch {
+    throw new Error(
+      `${what}: HTTP ${response.status} returned a non-JSON body: ${text.slice(0, 500)}`
+    )
+  }
+
+  if (resp.error) {
+    const message = `${what}: ${resp.error.message} ${resp.error.details}`
+    if (!resp.error.recoverable) {
+      throw new NonRetriableError(message)
+    }
+    throw new Error(message)
+  }
+  return resp
+}
+
 export async function retryWithExponentialBackoff<T>(
   operation: () => Promise<T>,
   maxRetries: number = 5,
@@ -81,18 +141,10 @@ export async function submitFeedback(
         }
       }
     )
-    const resp = (await response.json()) as GradeResponse
-    if (resp.error) {
-      if (!resp.error.recoverable) {
-        throw new NonRetriableError(
-          `Failed to submit feedback: ${resp.error.details}`
-        )
-      }
-      throw new Error(
-        `Failed to submit feedback: ${resp.error.message} ${resp.error.details}`
-      )
-    }
-    return resp
+    return parseApiResponse<GradeResponse>(
+      response,
+      'Failed to submit feedback'
+    )
   })
 }
 
@@ -110,18 +162,10 @@ export async function createSubmission(token: string) {
         }
       }
     )
-    const resp = (await response.json()) as SubmissionResponse
-    if (resp.error) {
-      if (!resp.error.recoverable) {
-        throw new NonRetriableError(
-          `Failed to create submission: ${resp.error.message} ${resp.error.details}`
-        )
-      }
-      throw new Error(
-        `Failed to create submission: ${resp.error.message} ${resp.error.details}`
-      )
-    }
-    return resp
+    return parseApiResponse<SubmissionResponse>(
+      response,
+      'Failed to create submission'
+    )
   })
 }
 
@@ -142,17 +186,9 @@ export async function createRegressionTestRun(
         }
       }
     )
-    const resp = (await response.json()) as RegressionTestRunResponse
-    if (resp.error) {
-      if (!resp.error.recoverable) {
-        throw new NonRetriableError(
-          `Failed to create regression test run: ${resp.error.message} ${resp.error.details}`
-        )
-      }
-      throw new Error(
-        `Failed to create regression test run: ${resp.error.message} ${resp.error.details}`
-      )
-    }
-    return resp
+    return parseApiResponse<RegressionTestRunResponse>(
+      response,
+      'Failed to create regression test run'
+    )
   })
 }
