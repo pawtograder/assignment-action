@@ -19,6 +19,14 @@ import grade from './grading/grade.js'
 
 async function downloadTarballAndExtractTo(url: string, dir: string) {
   const file = await fetch(url)
+  // Without this, an error response (an expired signed URL, or a gateway 502)
+  // is streamed into archive.tgz and only surfaces later as a confusing tar
+  // failure.
+  if (!file.ok) {
+    throw new Error(
+      `Failed to download ${url}: HTTP ${file.status} ${file.statusText}`
+    )
+  }
   if (!file.body) {
     throw new Error('No body in response')
   }
@@ -215,17 +223,26 @@ export async function run(): Promise<void> {
     }
 
     const start = Date.now()
+    // Set immediately before the request is sent, not after it returns: if the
+    // server accepts a submission but the response is lost (a gateway 502 on a
+    // dropped connection, for example), the action must still treat the result
+    // as recorded. Re-submitting an empty result in that window makes the
+    // server discard the real one.
+    let feedbackSubmissionAttempted = false
+    // Hoisted out of the try so the failure path below can post to the same
+    // endpoint as the success path.
+    const queryParams = regressionTestJob
+      ? {
+          autograder_regression_test_id: Number.parseInt(regressionTestJob)
+        }
+      : undefined
     try {
       const results = await grade(
         graderDir,
         assignmentDir,
         regressionTestJob ? Number.parseInt(regressionTestJob) : undefined
       )
-      const queryParams = regressionTestJob
-        ? {
-            autograder_regression_test_id: Number.parseInt(regressionTestJob)
-          }
-        : undefined
+      feedbackSubmissionAttempted = true
       const gradeResponse = await submitFeedback(
         {
           ret_code: 0,
@@ -290,25 +307,46 @@ export async function run(): Promise<void> {
       if (error instanceof Error) {
         core.setFailed(error.message)
         console.error(error)
-        await submitFeedback(
-          {
-            ret_code: 1,
-            output: `${error.message}`,
-            execution_time: Date.now() - start,
-            grader_sha: graderSha,
-            feedback: {
-              output: {},
-              tests: [],
-              lint: {
-                output: 'Unknown error',
-                status: 'fail'
-              }
-            },
-            action_ref,
-            action_repository
-          },
-          token
-        )
+        if (feedbackSubmissionAttempted) {
+          // A submission was already sent for this run. Posting the empty
+          // failure result now would replace a real grade with a zero, so
+          // report the failure to the workflow log only.
+          core.warning(
+            'A grading result was already sent to Pawtograder for this submission, so it will not be replaced with an empty failure result. Check this submission in Pawtograder for the recorded result.'
+          )
+        } else {
+          try {
+            await submitFeedback(
+              {
+                ret_code: 1,
+                output: `${error.message}`,
+                execution_time: Date.now() - start,
+                grader_sha: graderSha,
+                feedback: {
+                  output: {},
+                  tests: [],
+                  lint: {
+                    output: 'Unknown error',
+                    status: 'fail'
+                  }
+                },
+                action_ref,
+                action_repository
+              },
+              token,
+              queryParams
+            )
+          } catch (submitError) {
+            // Reported here rather than rethrown: the outer catch would call
+            // setFailed a second time and replace the message above, which
+            // describes the actual grading failure.
+            core.error(
+              `Failed to report the grading failure to Pawtograder: ${submitError}`
+            )
+          }
+        }
+      } else {
+        core.setFailed(`An unexpected value was thrown: ${String(error)}`)
       }
     }
   } catch (error) {
