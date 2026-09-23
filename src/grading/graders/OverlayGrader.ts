@@ -573,6 +573,12 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           return unit.tests.some((test) => testName.startsWith(test))
         }
       })
+      if (relevantTestResults.length === 0) {
+        this.logger.log(
+          'hidden',
+          `No relevant test results found for unit ${unit.name}, wanted ${unit.tests} but test names found: ${testResults.map((result) => result.name).join(', ')}`
+        )
+      }
       const expectedTests = unit.testCount
       const passingTests = relevantTestResults.filter(
         (result) => result.status === 'pass'
