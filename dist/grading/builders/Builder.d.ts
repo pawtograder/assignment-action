@@ -20,6 +20,11 @@ export type MutantResult = {
     prompt?: string;
     shortName?: string;
     output_format?: OutputFormat;
+    /**
+     * Set when the mutant could not be evaluated at all (e.g. PIT RUN_ERROR),
+     * so its status says nothing about the student's tests. Holds the PIT status.
+     */
+    error?: string;
 };
 export declare abstract class Builder {
     protected logger: Logger;

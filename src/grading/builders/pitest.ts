@@ -23,6 +23,7 @@ export interface Mutation {
     | 'TIMED_OUT'
     | 'MEMORY_ERROR'
     | 'RUN_ERROR'
+    | 'NON_VIABLE'
   numberOfTestsRun: number
   sourceFile: string
   mutatedClass: string
@@ -143,6 +144,38 @@ export function parsePitestXml(filePath: string): MutationTestSummary {
   }
 
   return report
+}
+
+/**
+ * PIT statuses meaning the mutant never ran against the tests, so neither
+ * "killed" nor "survived" applies. PIT's console summary counts RUN_ERROR as
+ * detected ("Killed 1 (100%)"), which hides these from instructors.
+ */
+export const UNEVALUATED_MUTANT_STATUSES: ReadonlySet<string> = new Set([
+  'RUN_ERROR',
+  'NON_VIABLE'
+])
+
+/**
+ * Extracts the distinct reasons PIT gave for mutants that errored, with counts,
+ * from the pitest task output. Each reason is the exception line that follows
+ * PIT's "Error during mutation test" warning, e.g. "class redefinition failed:
+ * attempted to change superclass or interfaces" for a pre-baked mutant whose
+ * shape differs from the class it replaces.
+ */
+export function extractPitestRunErrorReasons(
+  output: string
+): { reason: string; count: number }[] {
+  const counts = new Map<string, number>()
+  const pattern =
+    /Error during mutation test\s*\n(?:stderr\s*:\s*)?\s*([^\n]+)/g
+  for (const match of output.matchAll(pattern)) {
+    const reason = match[1].trim()
+    counts.set(reason, (counts.get(reason) ?? 0) + 1)
+  }
+  return [...counts.entries()]
+    .map(([reason, count]) => ({ reason, count }))
+    .sort((a, b) => b.count - a.count)
 }
 
 // Helper function to get mutations for a specific location range

@@ -153948,6 +153948,33 @@ function parsePitestXml(filePath) {
     }
     return report;
 }
+/**
+ * PIT statuses meaning the mutant never ran against the tests, so neither
+ * "killed" nor "survived" applies. PIT's console summary counts RUN_ERROR as
+ * detected ("Killed 1 (100%)"), which hides these from instructors.
+ */
+const UNEVALUATED_MUTANT_STATUSES = new Set([
+    'RUN_ERROR',
+    'NON_VIABLE'
+]);
+/**
+ * Extracts the distinct reasons PIT gave for mutants that errored, with counts,
+ * from the pitest task output. Each reason is the exception line that follows
+ * PIT's "Error during mutation test" warning, e.g. "class redefinition failed:
+ * attempted to change superclass or interfaces" for a pre-baked mutant whose
+ * shape differs from the class it replaces.
+ */
+function extractPitestRunErrorReasons(output) {
+    const counts = new Map();
+    const pattern = /Error during mutation test\s*\n(?:stderr\s*:\s*)?\s*([^\n]+)/g;
+    for (const match of output.matchAll(pattern)) {
+        const reason = match[1].trim();
+        counts.set(reason, (counts.get(reason) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+        .map(([reason, count]) => ({ reason, count }))
+        .sort((a, b) => b.count - a.count);
+}
 
 /* eslint-disable */
 function trimJunitStackTrace(stackTrace) {
@@ -154351,7 +154378,7 @@ class GradleBuilder extends Builder {
     }
     async mutationTest({ timeoutSeconds }) {
         this.logger.log('hidden', 'Running Pitest');
-        await this.executeCommandAndGetOutput('./gradlew', [
+        const { output } = await this.executeCommandAndGetOutput('./gradlew', [
             '--console=plain',
             'pitest',
             '-x',
@@ -154362,6 +154389,19 @@ class GradleBuilder extends Builder {
         this.logger.log('hidden', 'Reading mutation test results');
         const mutationTestResults = `${this.gradingDir}/build/reports/pitest/mutations.xml`;
         const mutationTestResultsContents = await parsePitestXml(mutationTestResults);
+        const unevaluated = mutationTestResultsContents.mutations.filter((m) => UNEVALUATED_MUTANT_STATUSES.has(m.status));
+        if (unevaluated.length > 0) {
+            const reasons = extractPitestRunErrorReasons(output);
+            this.logger.log('hidden', `AUTOGRADER CONFIGURATION ERROR: ${unevaluated.length} of ${mutationTestResultsContents.mutations.length} mutants could not be run (${[
+                ...new Set(unevaluated.map((m) => m.status))
+            ].join(', ')}), so they count as undetected. ` +
+                `PIT's "Killed" summary line counts these as detected; check each mutant's RUN_ERROR count instead.\n` +
+                unevaluated.map((m) => `  - ${m.mutator} (${m.status})`).join('\n') +
+                (reasons.length > 0
+                    ? `\nReasons reported by PIT:\n` +
+                        reasons.map((r) => `  - ${r.count}x ${r.reason}`).join('\n')
+                    : ''));
+        }
         return mutationTestResultsContents.mutations.map((eachMutation) => {
             return {
                 name: eachMutation.mutator,
@@ -154373,7 +154413,10 @@ class GradleBuilder extends Builder {
                 output: eachMutation.killingTest
                     ? 'Found by ' + eachMutation.killingTest
                     : '',
-                output_format: 'text'
+                output_format: 'text',
+                ...(UNEVALUATED_MUTANT_STATUSES.has(eachMutation.status) && {
+                    error: eachMutation.status
+                })
             };
         });
     }
@@ -208974,6 +209017,23 @@ function getFeedbotRateLimit(cfg) {
             : {})
     };
 }
+/**
+ * Instructor-only explanation for mutants that PIT could not run. PIT's own
+ * summary prints "Killed 1 (100%)" for these, so without this an instructor
+ * sees a clean PIT run and a zero score and has no way to connect the two.
+ */
+function formatUnevaluatedMutantsForInstructors(mutants) {
+    return (`**Autograder configuration error: ${mutants.length} mutant${mutants.length > 1 ? 's' : ''} in this unit never ran**, so ${mutants.length > 1 ? 'they count' : 'it counts'} as undetected for every student.\n\n` +
+        mutants
+            .map((mr) => `- \`${mr.name}\` (PIT status ${mr.error})`)
+            .join('\n') +
+        `\n\nPIT counts these as detected in its console summary (\`Generated 1 Killed 1 (100%)\`), so check the \`KILLED\` and \`RUN_ERROR\` counts under each mutant instead. ` +
+        `For whole-class (pre-baked) mutants, the usual cause is that the buggy class does not have exactly the same shape as the class it replaces. ` +
+        `The JVM can only swap in changes to method bodies: the superclass, interfaces, fields, method and constructor signatures, and nested classes (including ones javac generates for enum switches) must all match. ` +
+        `Records can also fail with a NestHost/Record error even when the shapes match, because of a known bug in Pawtograder's PIT fork; if the shapes match, report it to the Pawtograder team. ` +
+        `The reason PIT reported is in the grader output under "AUTOGRADER CONFIGURATION ERROR".\n\n` +
+        `To reproduce, run \`./gradlew pitest\` in the solution repository and look for \`RUN_ERROR 1\` and \`class redefinition failed\` in the output.`);
+}
 class OverlayGrader extends Grader {
     gradingDir;
     builder;
@@ -209271,8 +209331,11 @@ class OverlayGrader extends Grader {
                     });
                 });
                 const mutantsDetected = relevantMutantResults.filter((mr) => mr.status === 'pass').length;
+                // Mutants that never ran (e.g. PIT RUN_ERROR) are an autograder
+                // configuration problem, not a gap in the student's tests.
+                const unevaluatedMutants = relevantMutantResults.filter((mr) => mr.error);
                 // Collect advice for non-killed mutants from config
-                const nonKilledMutants = relevantMutantResults.filter((mr) => mr.status === 'fail');
+                const nonKilledMutants = relevantMutantResults.filter((mr) => mr.status === 'fail' && !mr.error);
                 const mutantsWithAdvice = nonKilledMutants
                     .map((mr) => {
                     // Extract targetClass from mutant name (format: "sourceClass targetClass")
@@ -209313,7 +209376,13 @@ class OverlayGrader extends Grader {
                     score =
                         Math.round((mutantsDetected / maxMutantsToDetect) * maxScore * 100) / 100;
                 }
-                const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`;
+                const unevaluatedNotice = unevaluatedMutants.length > 0
+                    ? `\n\n**${unevaluatedMutants.length} of these faults could not be run because of an autograder configuration problem, so they could not be detected.** This is not a problem with your tests; your instructor can see the details.`
+                    : '';
+                const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${unevaluatedNotice}${adviceSection}`;
+                const unevaluatedHiddenOutput = unevaluatedMutants.length > 0
+                    ? formatUnevaluatedMutantsForInstructors(unevaluatedMutants)
+                    : undefined;
                 const feedbotConfig = this.config.feedbot;
                 const showFeedbotMutation = hintsToShow.length > 0 &&
                     isFeedbotEnabled(feedbotConfig) &&
@@ -209326,6 +209395,10 @@ class OverlayGrader extends Grader {
                         name: unit.name,
                         output: errorOutput,
                         output_format: 'markdown',
+                        ...(unevaluatedHiddenOutput && {
+                            hidden_output: unevaluatedHiddenOutput,
+                            hidden_output_format: 'markdown'
+                        }),
                         score: score ?? 0,
                         max_score: maxScore,
                         ...(showFeedbotMutation && {

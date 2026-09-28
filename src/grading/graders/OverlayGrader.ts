@@ -61,6 +61,28 @@ function getFeedbotRateLimit(cfg: FeedBotConfig | undefined) {
   }
 }
 
+/**
+ * Instructor-only explanation for mutants that PIT could not run. PIT's own
+ * summary prints "Killed 1 (100%)" for these, so without this an instructor
+ * sees a clean PIT run and a zero score and has no way to connect the two.
+ */
+export function formatUnevaluatedMutantsForInstructors(
+  mutants: MutantResult[]
+): string {
+  return (
+    `**Autograder configuration error: ${mutants.length} mutant${mutants.length > 1 ? 's' : ''} in this unit never ran**, so ${mutants.length > 1 ? 'they count' : 'it counts'} as undetected for every student.\n\n` +
+    mutants
+      .map((mr) => `- \`${mr.name}\` (PIT status ${mr.error})`)
+      .join('\n') +
+    `\n\nPIT counts these as detected in its console summary (\`Generated 1 Killed 1 (100%)\`), so check the \`KILLED\` and \`RUN_ERROR\` counts under each mutant instead. ` +
+    `For whole-class (pre-baked) mutants, the usual cause is that the buggy class does not have exactly the same shape as the class it replaces. ` +
+    `The JVM can only swap in changes to method bodies: the superclass, interfaces, fields, method and constructor signatures, and nested classes (including ones javac generates for enum switches) must all match. ` +
+    `Records can also fail with a NestHost/Record error even when the shapes match, because of a known bug in Pawtograder's PIT fork; if the shapes match, report it to the Pawtograder team. ` +
+    `The reason PIT reported is in the grader output under "AUTOGRADER CONFIGURATION ERROR".\n\n` +
+    `To reproduce, run \`./gradlew pitest\` in the solution repository and look for \`RUN_ERROR 1\` and \`class redefinition failed\` in the output.`
+  )
+}
+
 export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
   private mutantHintsShown = 0 // Running tally of mutant hints shown
@@ -460,9 +482,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           (mr) => mr.status === 'pass'
         ).length
 
+        // Mutants that never ran (e.g. PIT RUN_ERROR) are an autograder
+        // configuration problem, not a gap in the student's tests.
+        const unevaluatedMutants = relevantMutantResults.filter(
+          (mr) => mr.error
+        )
+
         // Collect advice for non-killed mutants from config
         const nonKilledMutants = relevantMutantResults.filter(
-          (mr) => mr.status === 'fail'
+          (mr) => mr.status === 'fail' && !mr.error
         )
         const mutantsWithAdvice = nonKilledMutants
           .map((mr) => {
@@ -528,7 +556,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             ) / 100
         }
 
-        const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
+        const unevaluatedNotice =
+          unevaluatedMutants.length > 0
+            ? `\n\n**${unevaluatedMutants.length} of these faults could not be run because of an autograder configuration problem, so they could not be detected.** This is not a problem with your tests; your instructor can see the details.`
+            : ''
+        const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${unevaluatedNotice}${adviceSection}`
+        const unevaluatedHiddenOutput =
+          unevaluatedMutants.length > 0
+            ? formatUnevaluatedMutantsForInstructors(unevaluatedMutants)
+            : undefined
         const feedbotConfig = this.config.feedbot
         const showFeedbotMutation =
           hintsToShow.length > 0 &&
@@ -542,6 +578,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             name: unit.name,
             output: errorOutput,
             output_format: 'markdown',
+            ...(unevaluatedHiddenOutput && {
+              hidden_output: unevaluatedHiddenOutput,
+              hidden_output_format: 'markdown' as const
+            }),
             score: score ?? 0,
             max_score: maxScore,
             ...(showFeedbotMutation && {

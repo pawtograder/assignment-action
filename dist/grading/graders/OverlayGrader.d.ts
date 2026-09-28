@@ -1,6 +1,13 @@
 import { AutograderFeedback } from '../../api/adminServiceSchemas.js';
+import { MutantResult } from '../builders/Builder.js';
 import { OverlayPawtograderConfig, PawtograderConfig } from '../types.js';
 import { Grader } from './Grader.js';
+/**
+ * Instructor-only explanation for mutants that PIT could not run. PIT's own
+ * summary prints "Killed 1 (100%)" for these, so without this an instructor
+ * sees a clean PIT run and a zero score and has no way to connect the two.
+ */
+export declare function formatUnevaluatedMutantsForInstructors(mutants: MutantResult[]): string;
 export declare class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     private gradingDir;
     private builder;
