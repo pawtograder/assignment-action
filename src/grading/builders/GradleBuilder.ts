@@ -7,7 +7,11 @@ import {
 } from './Builder.js'
 import { parseLintingReports } from './checkstyle.js'
 import { getCoverageSummary, parseJacocoCsv } from './jacoco.js'
-import { parsePitestXml } from './pitest.js'
+import {
+  extractPitestRunErrorReasons,
+  parsePitestXml,
+  UNEVALUATED_MUTANT_STATUSES
+} from './pitest.js'
 import { processXMLResults } from './surefire.js'
 import { parseJavacErrors, JavacError } from './javacErrorParser.js'
 
@@ -100,7 +104,7 @@ export default class GradleBuilder extends Builder {
     timeoutSeconds
   }: BuildStepOptions): Promise<MutantResult[]> {
     this.logger.log('hidden', 'Running Pitest')
-    await this.executeCommandAndGetOutput(
+    const { output } = await this.executeCommandAndGetOutput(
       './gradlew',
       [
         '--console=plain',
@@ -118,6 +122,29 @@ export default class GradleBuilder extends Builder {
     const mutationTestResults = `${this.gradingDir}/build/reports/pitest/mutations.xml`
     const mutationTestResultsContents =
       await parsePitestXml(mutationTestResults)
+    const unevaluated = mutationTestResultsContents.mutations.filter((m) =>
+      UNEVALUATED_MUTANT_STATUSES.has(m.status)
+    )
+    if (unevaluated.length > 0) {
+      const reasons = extractPitestRunErrorReasons(output)
+      this.logger.log(
+        'hidden',
+        `AUTOGRADER CONFIGURATION ERROR: ${unevaluated.length} of ${mutationTestResultsContents.mutations.length} mutants could not be run (${[
+          ...new Set(unevaluated.map((m) => m.status))
+        ].join(', ')}), so they count as undetected. ` +
+          `PIT's "Killed" summary line counts these as detected; check each mutant's RUN_ERROR count instead.\n` +
+          unevaluated
+            .map(
+              (m) =>
+                `  - ${m.mutator} at ${m.mutatedClass}:${m.lineNumber} (${m.status})`
+            )
+            .join('\n') +
+          (reasons.length > 0
+            ? `\nReasons reported by PIT:\n` +
+              reasons.map((r) => `  - ${r.count}x ${r.reason}`).join('\n')
+            : '')
+      )
+    }
     return mutationTestResultsContents.mutations.map((eachMutation) => {
       return {
         name: eachMutation.mutator,
@@ -129,7 +156,10 @@ export default class GradleBuilder extends Builder {
         output: eachMutation.killingTest
           ? 'Found by ' + eachMutation.killingTest
           : '',
-        output_format: 'text'
+        output_format: 'text',
+        ...(UNEVALUATED_MUTANT_STATUSES.has(eachMutation.status) && {
+          error: eachMutation.status
+        })
       }
     })
   }

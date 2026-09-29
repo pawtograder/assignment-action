@@ -61,6 +61,62 @@ function getFeedbotRateLimit(cfg: FeedBotConfig | undefined) {
   }
 }
 
+/**
+ * Instructor-only explanation for mutants that PIT could not run. PIT's own
+ * summary prints "Killed 1 (100%)" for these, so without this an instructor
+ * sees a clean PIT run and a zero score and has no way to connect the two.
+ */
+export function formatUnevaluatedMutantsForInstructors(
+  mutants: MutantResult[]
+): string {
+  const statuses = new Set(mutants.map((mr) => mr.error))
+  const lookFor = [
+    ...(statuses.has('RUN_ERROR')
+      ? [
+          '`RUN_ERROR 1` under a mutant, with `class redefinition failed` nearby, means the JVM refused to swap the mutant in.'
+        ]
+      : []),
+    ...(statuses.has('NON_VIABLE')
+      ? [
+          '`NON_VIABLE 1` under a mutant means its bytecode could not be loaded at all, e.g. it fails verification or refers to something the solution does not have.'
+        ]
+      : [])
+  ]
+  return (
+    `**Autograder configuration error: ${mutants.length} mutant${mutants.length > 1 ? 's' : ''} in this unit never ran**, so ${mutants.length > 1 ? 'they count' : 'it counts'} as undetected for every student.\n\n` +
+    mutants
+      .map((mr) => `- \`${mr.name}\` (PIT status ${mr.error})`)
+      .join('\n') +
+    `\n\nPIT counts these as detected in its console summary (\`Generated 1 Killed 1 (100%)\`), so check the status counts under each mutant instead. ` +
+    `For whole-class (pre-baked) mutants, the usual cause is that the buggy class does not have exactly the same shape as the class it replaces. ` +
+    `The JVM can only swap in changes to method bodies: the superclass, interfaces, fields, method and constructor signatures, and nested classes (including ones javac generates for enum switches) must all match. ` +
+    `Records whose components have type annotations (e.g. \`@Nullable\`) can also fail with a NestHost/Record error even when the shapes match, because of a JDK 21 bug; PIT 2.0.1 (gradle-pitest-plugin 1.0.1) works around it, so upgrade if you are on an older version. ` +
+    `The reason PIT reported is in the grader output under "AUTOGRADER CONFIGURATION ERROR".\n\n` +
+    `To reproduce, run \`./gradlew pitest\` in the solution repository and read the status counts under each mutant listed above. ` +
+    lookFor.join(' ')
+  )
+}
+
+/**
+ * "Faults that could not run" section for the fault coverage reports, so
+ * mutants PIT never ran are not listed as faults the student's tests missed.
+ */
+export function formatUnevaluatedFaultsSection(
+  mutantResults: MutantResult[]
+): string {
+  const unevaluated = mutantResults.filter((mr) => mr.error)
+  if (unevaluated.length === 0) {
+    return ''
+  }
+  return (
+    `\n\nFaults that could not run(${unevaluated.length}):\n` +
+    unevaluated
+      .map((mr) => `* ${mr.shortName ?? mr.name} (PIT status ${mr.error})`)
+      .join('\n') +
+    `\n\nThese faults could not be run because of an autograder configuration problem, so no tests could detect them. This is not a problem with your tests; your instructor can see the details.`
+  )
+}
+
 export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
   private builder: Builder | undefined
   private mutantHintsShown = 0 // Running tally of mutant hints shown
@@ -460,9 +516,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
           (mr) => mr.status === 'pass'
         ).length
 
+        // Mutants that never ran (e.g. PIT RUN_ERROR) are an autograder
+        // configuration problem, not a gap in the student's tests.
+        const unevaluatedMutants = relevantMutantResults.filter(
+          (mr) => mr.error
+        )
+
         // Collect advice for non-killed mutants from config
         const nonKilledMutants = relevantMutantResults.filter(
-          (mr) => mr.status === 'fail'
+          (mr) => mr.status === 'fail' && !mr.error
         )
         const mutantsWithAdvice = nonKilledMutants
           .map((mr) => {
@@ -528,7 +590,15 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             ) / 100
         }
 
-        const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${adviceSection}`
+        const unevaluatedNotice =
+          unevaluatedMutants.length > 0
+            ? `\n\n**${unevaluatedMutants.length} of these faults could not be run because of an autograder configuration problem, so they could not be detected.** This is not a problem with your tests; your instructor can see the details.`
+            : ''
+        const errorOutput = `**Faults detected: ${mutantsDetected} / ${relevantMutantResults.length}**.\n${unit.breakPoints ? `Minimum mutants to detect to get full points: ${maxMutantsToDetect}` : ''}${unevaluatedNotice}${adviceSection}`
+        const unevaluatedHiddenOutput =
+          unevaluatedMutants.length > 0
+            ? formatUnevaluatedMutantsForInstructors(unevaluatedMutants)
+            : undefined
         const feedbotConfig = this.config.feedbot
         const showFeedbotMutation =
           hintsToShow.length > 0 &&
@@ -542,6 +612,10 @@ export class OverlayGrader extends Grader<OverlayPawtograderConfig> {
             name: unit.name,
             output: errorOutput,
             output_format: 'markdown',
+            ...(unevaluatedHiddenOutput && {
+              hidden_output: unevaluatedHiddenOutput,
+              hidden_output_format: 'markdown' as const
+            }),
             score: score ?? 0,
             max_score: maxScore,
             ...(showFeedbotMutation && {
@@ -1376,7 +1450,7 @@ The following tests expect incorrect output:
             return `* ${shortName} (${mr.prompt ?? 'No prompt provided for this bug :( '})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = mutantResults
-          .filter((mr) => mr.status === 'fail')
+          .filter((mr) => mr.status === 'fail' && !mr.error)
           .map((mr) => {
             const shortName = mr.shortName ?? mr.name
             return `* **${shortName}** (${mr.prompt ?? 'No prompt provided for this bug :( '})`
@@ -1385,6 +1459,7 @@ The following tests expect incorrect output:
         studentMutationOutput += `${mutantsDetected.join('\n')}\n\n`
         studentMutationOutput += `Faults not detected(${mutantsNotDetected.length}):\n`
         studentMutationOutput += `${mutantsNotDetected.join('\n')}`
+        studentMutationOutput += formatUnevaluatedFaultsSection(mutantResults)
       }
       this.logger.log('hidden', studentMutationOutput)
       testFeedbacks.push({
@@ -1416,7 +1491,7 @@ The following tests expect incorrect output:
             return `* ${shortName} (${prompt})\n\t * Detected by: ${mr.tests.join(', ')}`
           })
         const mutantsNotDetected = studentImplMutantResults
-          .filter((mr) => mr.status === 'fail')
+          .filter((mr) => mr.status === 'fail' && !mr.error)
           .map((mr) => {
             const prompt = getMutantPrompt(mr)
             return `* **${mr.name}** (${prompt})`
@@ -1425,6 +1500,9 @@ The following tests expect incorrect output:
         studentImplMutationOutput += `${mutantsDetected.join('\n')}\n\n`
         studentImplMutationOutput += `Faults not detected: ${mutantsNotDetected.length}:\n`
         studentImplMutationOutput += `${mutantsNotDetected.join('\n')}`
+        studentImplMutationOutput += formatUnevaluatedFaultsSection(
+          studentImplMutantResults
+        )
       }
       this.logger.log('hidden', studentImplMutationOutput)
       testFeedbacks.push({
