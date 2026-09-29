@@ -133,7 +133,12 @@ export default class GradleBuilder extends Builder {
           ...new Set(unevaluated.map((m) => m.status))
         ].join(', ')}), so they count as undetected. ` +
           `PIT's "Killed" summary line counts these as detected; check each mutant's RUN_ERROR count instead.\n` +
-          unevaluated.map((m) => `  - ${m.mutator} (${m.status})`).join('\n') +
+          unevaluated
+            .map(
+              (m) =>
+                `  - ${m.mutator} at ${m.mutatedClass}:${m.lineNumber} (${m.status})`
+            )
+            .join('\n') +
           (reasons.length > 0
             ? `\nReasons reported by PIT:\n` +
               reasons.map((r) => `  - ${r.count}x ${r.reason}`).join('\n')

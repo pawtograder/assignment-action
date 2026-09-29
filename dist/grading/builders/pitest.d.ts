@@ -33,6 +33,7 @@ export interface MutationTestSummary {
         timedOut: number;
         memoryError: number;
         runError: number;
+        nonViable: number;
         mutationScore: number;
     };
     mutations: Mutation[];

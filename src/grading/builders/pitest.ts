@@ -47,6 +47,7 @@ export interface MutationTestSummary {
     timedOut: number
     memoryError: number
     runError: number
+    nonViable: number
     mutationScore: number // percentage of mutations killed
   }
   mutations: Mutation[]
@@ -72,6 +73,7 @@ export function parsePitestXml(filePath: string): MutationTestSummary {
       timedOut: 0,
       memoryError: 0,
       runError: 0,
+      nonViable: 0,
       mutationScore: 0
     },
     mutations: []
@@ -131,6 +133,9 @@ export function parsePitestXml(filePath: string): MutationTestSummary {
         break
       case 'RUN_ERROR':
         report.statistics.runError++
+        break
+      case 'NON_VIABLE':
+        report.statistics.nonViable++
         break
     }
 

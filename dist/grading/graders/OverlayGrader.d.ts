@@ -8,6 +8,11 @@ import { Grader } from './Grader.js';
  * sees a clean PIT run and a zero score and has no way to connect the two.
  */
 export declare function formatUnevaluatedMutantsForInstructors(mutants: MutantResult[]): string;
+/**
+ * "Faults that could not run" section for the fault coverage reports, so
+ * mutants PIT never ran are not listed as faults the student's tests missed.
+ */
+export declare function formatUnevaluatedFaultsSection(mutantResults: MutantResult[]): string;
 export declare class OverlayGrader extends Grader<OverlayPawtograderConfig> {
     private gradingDir;
     private builder;

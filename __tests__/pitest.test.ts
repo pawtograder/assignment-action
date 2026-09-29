@@ -12,7 +12,11 @@ import {
   parsePitestXml,
   UNEVALUATED_MUTANT_STATUSES
 } from '../src/grading/builders/pitest.js'
-import { formatUnevaluatedMutantsForInstructors } from '../src/grading/graders/OverlayGrader.js'
+import type { MutantResult } from '../src/grading/builders/Builder.js'
+import {
+  formatUnevaluatedFaultsSection,
+  formatUnevaluatedMutantsForInstructors
+} from '../src/grading/graders/OverlayGrader.js'
 
 // Shape of the pitest task output from a real grading run, trimmed.
 const PIT_OUTPUT = `> Task :pitest
@@ -58,16 +62,21 @@ describe('parsePitestXml', () => {
 <mutations>
 <mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>ConversionRule.java</sourceFile><mutatedClass>app.ConversionRule</mutatedClass><mutatedMethod>__mutate_entire_class</mutatedMethod><methodDescription>()V</methodDescription><lineNumber>0</lineNumber><mutator>app.ConversionRule app.ConversionRule_CI1</mutator><index>-1</index><block>0</block><killingTest>app.ConversionRuleTest</killingTest><description>Replace</description></mutation>
 <mutation detected='true' status='RUN_ERROR' numberOfTestsRun='0'><sourceFile>SimpleRecipe.java</sourceFile><mutatedClass>app.SimpleRecipe</mutatedClass><mutatedMethod>__mutate_entire_class</mutatedMethod><methodDescription>()V</methodDescription><lineNumber>0</lineNumber><mutator>app.SimpleRecipe app.Recipe_SC1</mutator><index>-1</index><block>0</block><description>Replace</description></mutation>
+<mutation detected='true' status='NON_VIABLE' numberOfTestsRun='0'><sourceFile>RangeQuantity.java</sourceFile><mutatedClass>app.RangeQuantity</mutatedClass><mutatedMethod>__mutate_entire_class</mutatedMethod><methodDescription>()V</methodDescription><lineNumber>0</lineNumber><mutator>app.RangeQuantity app.RangeQuantity_SC4</mutator><index>-1</index><block>0</block><description>Replace</description></mutation>
 </mutations>`
     )
     const report = parsePitestXml(file)
     expect(report.statistics.killed).toBe(1)
     expect(report.statistics.runError).toBe(1)
+    expect(report.statistics.nonViable).toBe(1)
     expect(
       report.mutations
         .filter((m) => UNEVALUATED_MUTANT_STATUSES.has(m.status))
         .map((m) => m.mutator)
-    ).toEqual(['app.SimpleRecipe app.Recipe_SC1'])
+    ).toEqual([
+      'app.SimpleRecipe app.Recipe_SC1',
+      'app.RangeQuantity app.RangeQuantity_SC4'
+    ])
   })
 })
 
@@ -88,5 +97,60 @@ describe('formatUnevaluatedMutantsForInstructors', () => {
       '`app.SimpleRecipe app.Recipe_SC1` (PIT status RUN_ERROR)'
     )
     expect(out).toContain('Killed 1 (100%)')
+    expect(out).toContain('`RUN_ERROR 1`')
+    expect(out).toContain('class redefinition failed')
+    expect(out).not.toContain('`NON_VIABLE 1`')
+  })
+
+  it('gives NON_VIABLE-only reproduction steps without RUN_ERROR markers', () => {
+    const out = formatUnevaluatedMutantsForInstructors([
+      unevaluated('app.RangeQuantity app.RangeQuantity_SC4', 'NON_VIABLE')
+    ])
+    expect(out).toContain('(PIT status NON_VIABLE)')
+    expect(out).toContain('`NON_VIABLE 1`')
+    expect(out).not.toContain('RUN_ERROR')
   })
 })
+
+describe('formatUnevaluatedFaultsSection', () => {
+  it('lists faults that could not run separately', () => {
+    const out = formatUnevaluatedFaultsSection([
+      { ...unevaluated('app.A app.A_BUG1', 'RUN_ERROR'), shortName: 'BUG1' },
+      {
+        name: 'app.A app.A_BUG2',
+        location: 'app.A:0',
+        status: 'fail',
+        tests: [],
+        output: ''
+      }
+    ])
+    expect(out).toContain('Faults that could not run(1)')
+    expect(out).toContain('* BUG1 (PIT status RUN_ERROR)')
+    expect(out).not.toContain('BUG2')
+  })
+
+  it('adds nothing when every mutant ran', () => {
+    expect(
+      formatUnevaluatedFaultsSection([
+        {
+          name: 'app.A app.A_BUG1',
+          location: 'app.A:0',
+          status: 'pass',
+          tests: ['T'],
+          output: ''
+        }
+      ])
+    ).toBe('')
+  })
+})
+
+function unevaluated(name: string, error: string): MutantResult {
+  return {
+    name,
+    location: name.split(' ')[0] + ':0',
+    status: 'fail',
+    tests: [],
+    output: '',
+    error
+  }
+}
